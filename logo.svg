@@ -1,0 +1,29 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Book illustration -->
+  <g transform="translate(20, 5)">
+    <!-- Hands holding book -->
+    <path d="M30 15 Q35 10 40 15 Q45 20 40 25 L35 30 Q30 35 25 30 L20 25 Q15 20 20 15 Q25 10 30 15" 
+          fill="#8B9DC3" stroke="#6B7B9A" stroke-width="1"/>
+    
+    <!-- Book -->
+    <rect x="25" y="20" width="30" height="20" fill="#2563eb" rx="2"/>
+    <rect x="26" y="21" width="28" height="18" fill="#f8fafc" rx="1"/>
+    
+    <!-- Book pages -->
+    <line x1="28" y1="25" x2="52" y2="25" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="28" y1="28" x2="52" y2="28" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="28" y1="31" x2="52" y2="31" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="28" y1="34" x2="45" y2="34" stroke="#e2e8f0" stroke-width="1"/>
+  </g>
+  
+  <!-- Shiksha text -->
+  <text x="100" y="55" font-family="Georgia, serif" font-size="18" font-weight="bold" 
+        fill="#2563eb" text-anchor="middle">
+    <tspan x="100" dy="0">S</tspan>
+    <tspan dx="-2">hiksha</tspan>
+  </text>
+  
+  <!-- Sathi text -->
+  <text x="100" y="70" font-family="Arial, sans-serif" font-size="12" 
+        fill="#FF9A8B" text-anchor="middle">Sathi</text>
+</svg> 
