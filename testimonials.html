@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Testimonials - ShikshaSathi</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .testimonials-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+        
+        .testimonials-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonials-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 4rem 0;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .testimonial-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: #1f2937;
+        }
+        
+        .testimonial-info p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .testimonial-content {
+            color: #374151;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        .testimonial-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 1rem;
+        }
+        
+        .testimonial-rating i {
+            color: #fbbf24;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2563eb;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .testimonials-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem 0;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <!-- Testimonials Hero -->
+    <section class="testimonials-hero">
+        <div class="container">
+            <h1>Student Testimonials</h1>
+            <p>Hear from our students about their transformative learning journey with ShikshaSathi tutors</p>
+        </div>
+    </section>
+
+    <!-- Testimonials Grid -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Priya Sharma</h3>
+                            <p>Class 10th Student, CBSE</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "My ShikshaSathi tutor helped me improve my Maths from 65% to 92% in just 3 months! The personalized attention and regular practice tests made all the difference. I'm now confident about my board exams."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Rahul Patel</h3>
+                            <p>Class 8th Student, State Board</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "I was struggling with Science concepts, but my tutor made everything so simple and interesting. Now I love Science and my grades have improved significantly. The home-based learning is so convenient!"
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Anjali Deshmukh</h3>
+                            <p>Class 12th Student, CBSE</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "My Physics tutor from ShikshaSathi is amazing! She explains complex concepts in such a simple way. My confidence has grown tremendously, and I'm now aiming for engineering. Thank you for the excellent guidance!"
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 4 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Vikram Singh</h3>
+                            <p>Class 6th Student, ICSE</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "I was very weak in English, but my tutor helped me build strong foundations. Now I can read and write English confidently. The regular assessments and feedback have been very helpful."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 5 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Meera Joshi</h3>
+                            <p>Class 9th Student, CBSE</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "The Chemistry tutor assigned to me is so knowledgeable and patient. She makes learning fun with practical examples. My understanding of the subject has improved dramatically, and I'm scoring much better now."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 6 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Aditya Kumar</h3>
+                            <p>Class 7th Student, State Board</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "My Hindi tutor is excellent! She not only teaches the language but also helps me understand our culture better. My Hindi has improved a lot, and I'm now participating in school competitions."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 7 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Zara Khan</h3>
+                            <p>Class 11th Student, CBSE</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "My Computer Science tutor is fantastic! He explains programming concepts so clearly. I'm now confident about pursuing Computer Science in college. The practical approach to learning is exactly what I needed."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 8 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Riya Verma</h3>
+                            <p>Class 5th Student, ICSE</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "I love my Marathi tutor! She makes learning our state language so much fun with stories and games. My Marathi has improved a lot, and I'm proud to speak it fluently now."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ShikshaSathi</h3>
+                    <p>Empowering Educators. Enabling Learning.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#program">Register</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 ShikshaSathi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <div class="whatsapp-button">
+        <a href="https://wa.me/919422835926" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="src/js/script.js"></script>
+</body>
+</html> 
