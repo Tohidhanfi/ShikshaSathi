@@ -671,6 +671,7 @@ body {
     border-color: #2563eb;
 }
 
+<<<<<<< HEAD
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
@@ -705,6 +706,8 @@ body {
     cursor: pointer;
 }
 
+=======
+>>>>>>> 55dbbc2fb11a597a2aa6448ee68d18d5c0395ff6
 /* Footer */
 .footer {
     background: #1f2937;
@@ -795,6 +798,7 @@ body {
     animation: modalSlideIn 0.3s ease;
 }
 
+<<<<<<< HEAD
 .scrollable-modal {
     max-height: 80vh;
     overflow-y: auto;
@@ -819,6 +823,8 @@ body {
     background: #1d4ed8;
 }
 
+=======
+>>>>>>> 55dbbc2fb11a597a2aa6448ee68d18d5c0395ff6
 @keyframes modalSlideIn {
     from {
         opacity: 0;
@@ -953,6 +959,7 @@ body {
         margin: 10% auto;
         width: 95%;
     }
+<<<<<<< HEAD
     
     .scrollable-modal {
         max-height: 85vh;
@@ -962,4 +969,6 @@ body {
     .checkbox-group {
         grid-template-columns: 1fr;
     }
+=======
+>>>>>>> 55dbbc2fb11a597a2aa6448ee68d18d5c0395ff6
 } 
