@@ -475,7 +475,7 @@
                 
                 <div class="form-group">
                     <label for="qualification">3. Select Qualification *</label>
-                    <select id="qualification" name="qualification" required>
+                    <select id="qualification" name="qualification" required onchange="toggleQualificationOther()">
                         <option value="">Select Qualification</option>
                         <option value="ba">B.A</option>
                         <option value="bsc">B.Sc</option>
@@ -485,8 +485,13 @@
                         <option value="msc">M.Sc</option>
                         <option value="mcom">M.Com</option>
                         <option value="mtech">M.Tech/M.E</option>
-                        <option value="mtech">Others</option>
+                        <option value="other">Others</option>
                     </select>
+                </div>
+                
+                <div class="form-group" id="qualificationOtherGroup" style="display: none;">
+                    <label for="qualificationOther">Please specify your qualification *</label>
+                    <input type="text" id="qualificationOther" name="qualificationOther" placeholder="Enter your qualification">
                 </div>
                 
                 <div class="form-group">
@@ -530,10 +535,15 @@
                             <label for="computer">Computer</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="Others" name="subjects" value="Others">
-                            <label for="Others">Others</label>
+                            <input type="checkbox" id="subjectsOther" name="subjects" value="other" onchange="toggleSubjectsOther()">
+                            <label for="subjectsOther">Others</label>
                         </div>
                     </div>
+                </div>
+                
+                <div class="form-group" id="subjectsOtherGroup" style="display: none;">
+                    <label for="subjectsOtherText">Please specify other subjects you can teach *</label>
+                    <input type="text" id="subjectsOtherText" name="subjectsOtherText" placeholder="Enter other subjects (e.g., Physics, Chemistry, Biology, etc.)">
                 </div>
                 
                 <div class="form-group">

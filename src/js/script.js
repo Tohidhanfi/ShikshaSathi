@@ -381,4 +381,35 @@ navStyles.textContent = `
         }
     }
 `;
-document.head.appendChild(navStyles); 
+document.head.appendChild(navStyles);
+
+// Toggle functions for "Others" options in registration form
+function toggleQualificationOther() {
+    const qualificationSelect = document.getElementById('qualification');
+    const qualificationOtherGroup = document.getElementById('qualificationOtherGroup');
+    const qualificationOtherInput = document.getElementById('qualificationOther');
+    
+    if (qualificationSelect.value === 'other') {
+        qualificationOtherGroup.style.display = 'block';
+        qualificationOtherInput.required = true;
+    } else {
+        qualificationOtherGroup.style.display = 'none';
+        qualificationOtherInput.required = false;
+        qualificationOtherInput.value = '';
+    }
+}
+
+function toggleSubjectsOther() {
+    const subjectsOtherCheckbox = document.getElementById('subjectsOther');
+    const subjectsOtherGroup = document.getElementById('subjectsOtherGroup');
+    const subjectsOtherTextInput = document.getElementById('subjectsOtherText');
+    
+    if (subjectsOtherCheckbox.checked) {
+        subjectsOtherGroup.style.display = 'block';
+        subjectsOtherTextInput.required = true;
+    } else {
+        subjectsOtherGroup.style.display = 'none';
+        subjectsOtherTextInput.required = false;
+        subjectsOtherTextInput.value = '';
+    }
+} 
