@@ -412,4 +412,19 @@ function toggleSubjectsOther() {
         subjectsOtherTextInput.required = false;
         subjectsOtherTextInput.value = '';
     }
+}
+
+function togglePartnerSubjectsOther() {
+    const partnerSubjectsOtherCheckbox = document.getElementById('partnerSubjectsOther');
+    const partnerSubjectsOtherGroup = document.getElementById('partnerSubjectsOtherGroup');
+    const partnerSubjectsOtherTextInput = document.getElementById('partnerSubjectsOtherText');
+    
+    if (partnerSubjectsOtherCheckbox.checked) {
+        partnerSubjectsOtherGroup.style.display = 'block';
+        partnerSubjectsOtherTextInput.required = true;
+    } else {
+        partnerSubjectsOtherGroup.style.display = 'none';
+        partnerSubjectsOtherTextInput.required = false;
+        partnerSubjectsOtherTextInput.value = '';
+    }
 } 
