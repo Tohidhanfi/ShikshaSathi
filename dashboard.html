@@ -36,8 +36,7 @@
         }
 
         .dashboard-container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
+            display: flex;
             min-height: 100vh;
         }
 
@@ -46,10 +45,11 @@
             background: var(--grafana-panel);
             border-right: 1px solid var(--grafana-border);
             padding: 20px;
+            width: 250px;
             position: fixed;
             height: 100vh;
-            width: 250px;
             overflow-y: auto;
+            z-index: 1000;
         }
 
         .sidebar-header {
@@ -82,6 +82,7 @@
             text-decoration: none;
             border-radius: 6px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .nav-menu a:hover,
@@ -97,8 +98,10 @@
 
         /* Main Content */
         .main-content {
+            flex: 1;
             margin-left: 250px;
             padding: 20px;
+            min-height: 100vh;
         }
 
         .top-bar {
@@ -323,6 +326,15 @@
             letter-spacing: 0.5px;
         }
 
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -332,11 +344,14 @@
 
         @media (max-width: 768px) {
             .dashboard-container {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
             
             .sidebar {
-                display: none;
+                position: relative;
+                width: 100%;
+                height: auto;
+                margin-left: 0;
             }
             
             .main-content {
@@ -401,6 +416,15 @@
         .status-offline {
             background: var(--grafana-danger);
         }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -412,12 +436,12 @@
                 <h2>ShikshaSathi</h2>
             </div>
             <ul class="nav-menu">
-                <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Visitors</a></li>
-                <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> Tutors</a></li>
-                <li><a href="#"><i class="fas fa-school"></i> Schools</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-section="visitors"><i class="fas fa-users"></i> Visitors</a></li>
+                <li><a href="#" class="nav-link" data-section="tutors"><i class="fas fa-chalkboard-teacher"></i> Tutors</a></li>
+                <li><a href="#" class="nav-link" data-section="schools"><i class="fas fa-school"></i> Schools</a></li>
+                <li><a href="#" class="nav-link" data-section="analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="#" class="nav-link" data-section="settings"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </div>
 
@@ -426,8 +450,8 @@
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="page-title">
-                    <h1>Dashboard Overview</h1>
-                    <p>Real-time analytics and insights for ShikshaSathi</p>
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageDescription">Real-time analytics and insights for ShikshaSathi</p>
                 </div>
                 <div class="top-actions">
                     <button class="btn btn-secondary" onclick="refreshData()">
@@ -442,131 +466,256 @@
                 </div>
             </div>
 
-            <!-- Key Metrics -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <i class="fas fa-chart-pie panel-icon"></i> Key Performance Indicators
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section active">
+                <!-- Key Metrics -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-chart-pie panel-icon"></i> Key Performance Indicators
+                        </div>
+                        <div class="status-indicator status-online"></div>
                     </div>
-                    <div class="status-indicator status-online"></div>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-value" id="totalVisitors">0</div>
+                            <div class="metric-label">Total Visitors</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="pageViews">0</div>
+                            <div class="metric-label">Page Views</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="todayVisitors">0</div>
+                            <div class="metric-label">Today's Visitors</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="avgTime">0m</div>
+                            <div class="metric-label">Avg. Time</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <div class="metric-value" id="totalVisitors">0</div>
-                        <div class="metric-label">Total Visitors</div>
+
+                <!-- Registration Stats -->
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-chalkboard-teacher panel-icon"></i> Tutor Registrations
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="tutorRegistrations">0</div>
+                            <div class="stat-label">Total Registrations</div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> +12% this week
+                            </div>
+                        </div>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-value" id="pageViews">0</div>
-                        <div class="metric-label">Page Views</div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-school panel-icon"></i> School Partnerships
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="schoolRegistrations">0</div>
+                            <div class="stat-label">Partner Schools</div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> +8% this month
+                            </div>
+                        </div>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-value" id="todayVisitors">0</div>
-                        <div class="metric-label">Today's Visitors</div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-calendar-check panel-icon"></i> Today's Activity
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="todayRegistrations">0</div>
+                            <div class="stat-label">New Registrations</div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> +5 today
+                            </div>
+                        </div>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-value" id="avgTime">0m</div>
-                        <div class="metric-label">Avg. Time</div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-quote-left panel-icon"></i> Testimonials Views
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="testimonialsViews">0</div>
+                            <div class="stat-label">Page Views</div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> +15% this week
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-chart-line panel-icon"></i> Visitor Trends
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="visitorChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-chart-pie panel-icon"></i> Registration Distribution
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="registrationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-history panel-icon"></i> Recent Activity
+                        </div>
+                    </div>
+                    <div class="activity-feed" id="activityList">
+                        <!-- Activity items will be populated here -->
                     </div>
                 </div>
             </div>
 
-            <!-- Registration Stats -->
-            <div class="dashboard-grid">
+            <!-- Visitors Section -->
+            <div id="visitors" class="content-section">
                 <div class="panel">
                     <div class="panel-header">
                         <div class="panel-title">
-                            <i class="fas fa-chalkboard-teacher panel-icon"></i> Tutor Registrations
+                            <i class="fas fa-users panel-icon"></i> Visitor Analytics
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="tutorRegistrations">0</div>
-                        <div class="stat-label">Total Registrations</div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> +12% this week
+                    <div class="dashboard-grid">
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="visitorTotal">0</div>
+                                <div class="stat-label">Total Visitors</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="visitorToday">0</div>
+                                <div class="stat-label">Today's Visitors</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="visitorAvgTime">0m</div>
+                                <div class="stat-label">Avg. Time on Site</div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- Tutors Section -->
+            <div id="tutors" class="content-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-chalkboard-teacher panel-icon"></i> Tutor Management
+                        </div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="tutorTotal">0</div>
+                                <div class="stat-label">Total Tutors</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="tutorActive">0</div>
+                                <div class="stat-label">Active Tutors</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="tutorNew">0</div>
+                                <div class="stat-label">New This Month</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schools Section -->
+            <div id="schools" class="content-section">
                 <div class="panel">
                     <div class="panel-header">
                         <div class="panel-title">
                             <i class="fas fa-school panel-icon"></i> School Partnerships
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="schoolRegistrations">0</div>
-                        <div class="stat-label">Partner Schools</div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> +8% this month
+                    <div class="dashboard-grid">
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="schoolTotal">0</div>
+                                <div class="stat-label">Partner Schools</div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title">
-                            <i class="fas fa-calendar-check panel-icon"></i> Today's Activity
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="schoolActive">0</div>
+                                <div class="stat-label">Active Partners</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="todayRegistrations">0</div>
-                        <div class="stat-label">New Registrations</div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> +5 today
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title">
-                            <i class="fas fa-quote-left panel-icon"></i> Testimonials Views
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="testimonialsViews">0</div>
-                        <div class="stat-label">Page Views</div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> +15% this week
+                        <div class="panel">
+                            <div class="stat-card">
+                                <div class="stat-number" id="schoolNew">0</div>
+                                <div class="stat-label">New This Month</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts Row -->
-            <div class="dashboard-grid">
+            <!-- Analytics Section -->
+            <div id="analytics" class="content-section">
                 <div class="panel">
                     <div class="panel-header">
                         <div class="panel-title">
-                            <i class="fas fa-chart-line panel-icon"></i> Visitor Trends
+                            <i class="fas fa-chart-bar panel-icon"></i> Advanced Analytics
                         </div>
                     </div>
                     <div class="chart-container">
-                        <canvas id="visitorChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title">
-                            <i class="fas fa-chart-pie panel-icon"></i> Registration Distribution
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="registrationChart"></canvas>
+                        <canvas id="analyticsChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Activity Feed -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <i class="fas fa-history panel-icon"></i> Recent Activity
+            <!-- Settings Section -->
+            <div id="settings" class="content-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-cog panel-icon"></i> Dashboard Settings
+                        </div>
                     </div>
-                </div>
-                <div class="activity-feed" id="activityList">
-                    <!-- Activity items will be populated here -->
+                    <div style="padding: 20px;">
+                        <h3 style="margin-bottom: 20px;">Configuration Options</h3>
+                        <p style="color: var(--grafana-text-muted);">Settings panel will be implemented here.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -578,6 +727,7 @@
             checkAuth();
             loadAnalytics();
             initializeCharts();
+            initializeNavigation();
         });
         
         // Authentication check
@@ -594,6 +744,75 @@
         function logout() {
             localStorage.removeItem('shikshaSathiAdminSession');
             window.location.href = 'admin';
+        }
+
+        // Initialize navigation
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all content sections
+                    const sections = document.querySelectorAll('.content-section');
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    // Show selected section
+                    const sectionId = this.getAttribute('data-section');
+                    const targetSection = document.getElementById(sectionId);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                    
+                    // Update page title and description
+                    updatePageInfo(sectionId);
+                });
+            });
+        }
+
+        // Update page title and description
+        function updatePageInfo(sectionId) {
+            const pageTitle = document.getElementById('pageTitle');
+            const pageDescription = document.getElementById('pageDescription');
+            
+            const pageInfo = {
+                dashboard: {
+                    title: 'Dashboard Overview',
+                    description: 'Real-time analytics and insights for ShikshaSathi'
+                },
+                visitors: {
+                    title: 'Visitor Analytics',
+                    description: 'Detailed visitor statistics and behavior analysis'
+                },
+                tutors: {
+                    title: 'Tutor Management',
+                    description: 'Manage tutor registrations and profiles'
+                },
+                schools: {
+                    title: 'School Partnerships',
+                    description: 'Partner school management and statistics'
+                },
+                analytics: {
+                    title: 'Advanced Analytics',
+                    description: 'In-depth data analysis and reporting'
+                },
+                settings: {
+                    title: 'Dashboard Settings',
+                    description: 'Configure dashboard preferences and options'
+                }
+            };
+            
+            if (pageInfo[sectionId]) {
+                pageTitle.textContent = pageInfo[sectionId].title;
+                pageDescription.textContent = pageInfo[sectionId].description;
+            }
         }
 
         // Refresh data
@@ -637,6 +856,19 @@
             document.getElementById('schoolRegistrations').textContent = analytics.schoolRegistrations || 0;
             document.getElementById('todayRegistrations').textContent = analytics.todayRegistrations || 0;
             document.getElementById('testimonialsViews').textContent = analytics.testimonialsViews || 0;
+            
+            // Update section-specific stats
+            document.getElementById('visitorTotal').textContent = analytics.totalVisitors || 0;
+            document.getElementById('visitorToday').textContent = analytics.todayVisitors || 0;
+            document.getElementById('visitorAvgTime').textContent = Math.round(analytics.avgTimeOnSite || 0) + 'm';
+            
+            document.getElementById('tutorTotal').textContent = analytics.tutorRegistrations || 0;
+            document.getElementById('tutorActive').textContent = Math.floor((analytics.tutorRegistrations || 0) * 0.8);
+            document.getElementById('tutorNew').textContent = Math.floor((analytics.tutorRegistrations || 0) * 0.3);
+            
+            document.getElementById('schoolTotal').textContent = analytics.schoolRegistrations || 0;
+            document.getElementById('schoolActive').textContent = Math.floor((analytics.schoolRegistrations || 0) * 0.9);
+            document.getElementById('schoolNew').textContent = Math.floor((analytics.schoolRegistrations || 0) * 0.2);
             
             // Show recent activity
             displayRecentActivity(analytics.visitHistory, analytics.registrationHistory);
