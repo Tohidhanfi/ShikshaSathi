@@ -438,7 +438,7 @@ function loadLiveBlogContent() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    // Education-specific RSS feeds
+    // Education-specific RSS feeds with more variety
     const educationFeeds = [
         {
             url: 'https://api.allorigins.win/raw?url=https://www.edutopia.org/rss.xml',
@@ -464,14 +464,32 @@ function loadLiveBlogContent() {
             url: 'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss',
             source: 'Chronicle',
             sourceUrl: 'https://www.chronicle.com'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.theguardian.com/education/rss',
+            source: 'The Guardian Education',
+            sourceUrl: 'https://www.theguardian.com/education'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.bbc.com/news/education/rss.xml',
+            source: 'BBC Education',
+            sourceUrl: 'https://www.bbc.com/news/education'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.forbes.com/education/feed/',
+            source: 'Forbes Education',
+            sourceUrl: 'https://www.forbes.com/education'
         }
     ];
     
+    // Shuffle feeds to get more variety
+    const shuffledFeeds = [...educationFeeds].sort(() => Math.random() - 0.5);
+    
     // Try each feed until we get content
     const tryFeeds = async () => {
-        for (let i = 0; i < educationFeeds.length; i++) {
+        for (let i = 0; i < shuffledFeeds.length; i++) {
             try {
-                const feed = educationFeeds[i];
+                const feed = shuffledFeeds[i];
                 console.log(`Trying feed: ${feed.source}`);
                 
                 const response = await fetch(feed.url);
@@ -551,13 +569,19 @@ function displayNoContentMessage() {
             <div style="font-size: 3rem; color: #6b7280; margin-bottom: 20px;">
                 <i class="fas fa-wifi-slash"></i>
             </div>
-            <h3 style="color: #374151; margin-bottom: 10px;">Unable to Load News</h3>
-            <p style="color: #6b7280; margin-bottom: 20px;">We're currently unable to fetch the latest education news from external sources.</p>
-            <button onclick="loadLiveBlogContent()" style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+            <h3 style="color: #374151; margin-bottom: 10px;">No External News Available</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">We're currently unable to fetch the latest education news from external sources. Please try again later.</p>
+            <button onclick="retryExternalContent()" style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
                 <i class="fas fa-sync-alt"></i> Try Again
             </button>
         </div>
     `;
+}
+
+// Retry external content function
+function retryExternalContent() {
+    blogLoaded = false; // Reset to allow fresh load
+    loadLiveBlogContent();
 }
 
 // Map live content to our categories
@@ -666,7 +690,7 @@ function displayBlogPosts(posts) {
                 <p style="line-height: 1.6; margin-bottom: 15px;">${truncatedDescription}</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="font-size: 0.8rem; color: #6b7280;">
-                        <i class="fas fa-globe"></i> Source: ${post.source || 'Education News'}
+                        <i class="fas fa-globe"></i> From: <a href="${post.sourceUrl || '#'}" target="_blank" style="color: #2563eb; text-decoration: none;">${post.source || 'Education News'}</a>
                     </div>
                     ${post.link ? `
                         <a href="${post.link}" target="_blank" rel="noopener noreferrer" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
