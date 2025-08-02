@@ -353,6 +353,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const cleanPath = window.location.pathname.replace('.html', '');
             window.history.replaceState({}, document.title, cleanPath);
         }
+        
+        // Also handle any remaining .html in URL after page load
+        setTimeout(() => {
+            if (window.location.pathname.includes('.html')) {
+                const cleanPath = window.location.pathname.replace('.html', '');
+                window.history.replaceState({}, document.title, cleanPath);
+            }
+        }, 100);
     });
 });
 
