@@ -108,6 +108,9 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
+    // Track form submission
+    trackFormSubmission('contact', data);
+    
     // Show success message
     showNotification('Thank you for your message! We will get back to you soon.', 'success');
     
@@ -121,6 +124,9 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
     // Get form data
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
+    
+    // Track form submission
+    trackFormSubmission('tutor', data);
     
     // Show success message
     showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
@@ -137,6 +143,9 @@ document.getElementById('partnerForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
+    // Track form submission
+    trackFormSubmission('school', data);
+    
     // Show success message
     showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
     
@@ -151,6 +160,9 @@ document.getElementById('collaborationForm').addEventListener('submit', function
     // Get form data
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
+    
+    // Track form submission
+    trackFormSubmission('collaboration', data);
     
     // Show success message
     showNotification('Thank you for your collaboration proposal! We will review and contact you soon.', 'success');
@@ -979,12 +991,21 @@ function trackWebsiteAnalytics() {
         avgTimeOnSite: 0,
         visitHistory: [],
         today: new Date().toDateString(),
-        sessionStartTime: Date.now()
+        sessionStartTime: Date.now(),
+        // New tracking fields
+        tutorRegistrations: 0,
+        schoolRegistrations: 0,
+        collaborationRequests: 0,
+        contactSubmissions: 0,
+        testimonialsViews: 0,
+        registrationHistory: [],
+        todayRegistrations: 0
     };
     
     // Check if this is a new day
     if (analytics.today !== new Date().toDateString()) {
         analytics.todayVisitors = 0;
+        analytics.todayRegistrations = 0;
         analytics.today = new Date().toDateString();
     }
     
@@ -1032,4 +1053,56 @@ function trackWebsiteAnalytics() {
         updatedAnalytics.avgTimeOnSite = (updatedAnalytics.avgTimeOnSite + timeOnPage) / 2;
         localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(updatedAnalytics));
     });
+}
+
+// Track form submissions
+function trackFormSubmission(formType, formData) {
+    let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+    
+    // Increment appropriate counter
+    switch(formType) {
+        case 'tutor':
+            analytics.tutorRegistrations = (analytics.tutorRegistrations || 0) + 1;
+            analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
+            break;
+        case 'school':
+            analytics.schoolRegistrations = (analytics.schoolRegistrations || 0) + 1;
+            analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
+            break;
+        case 'collaboration':
+            analytics.collaborationRequests = (analytics.collaborationRequests || 0) + 1;
+            break;
+        case 'contact':
+            analytics.contactSubmissions = (analytics.contactSubmissions || 0) + 1;
+            break;
+    }
+    
+    // Add to registration history
+    if (!analytics.registrationHistory) {
+        analytics.registrationHistory = [];
+    }
+    
+    analytics.registrationHistory.push({
+        timestamp: new Date().toLocaleString(),
+        type: formType,
+        data: formData
+    });
+    
+    // Keep only last 50 registrations
+    if (analytics.registrationHistory.length > 50) {
+        analytics.registrationHistory = analytics.registrationHistory.slice(-50);
+    }
+    
+    localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
+}
+
+// Track page views for specific pages
+function trackPageView(pageName) {
+    let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+    
+    if (pageName === 'testimonials') {
+        analytics.testimonialsViews = (analytics.testimonialsViews || 0) + 1;
+    }
+    
+    localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
 } 

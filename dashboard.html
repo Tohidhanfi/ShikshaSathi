@@ -194,6 +194,38 @@
                 <div class="stat-number" id="avgTime">0m</div>
                 <div class="stat-label">Avg. Time on Site</div>
             </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="stat-number" id="tutorRegistrations">0</div>
+                <div class="stat-label">Tutor Registrations</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-school"></i>
+                </div>
+                <div class="stat-number" id="schoolRegistrations">0</div>
+                <div class="stat-label">School Partnerships</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-number" id="todayRegistrations">0</div>
+                <div class="stat-label">Today's Registrations</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="stat-number" id="testimonialsViews">0</div>
+                <div class="stat-label">Testimonials Views</div>
+            </div>
         </div>
         
         <div class="recent-activity">
@@ -254,48 +286,128 @@
                 todayVisitors: 0,
                 avgTimeOnSite: 0,
                 visitHistory: [],
-                today: new Date().toDateString()
+                today: new Date().toDateString(),
+                tutorRegistrations: 0,
+                schoolRegistrations: 0,
+                collaborationRequests: 0,
+                contactSubmissions: 0,
+                testimonialsViews: 0,
+                todayRegistrations: 0
             };
             
             // Update today's visitors if it's a new day
             if (analytics.today !== new Date().toDateString()) {
                 analytics.todayVisitors = 0;
+                analytics.todayRegistrations = 0;
                 analytics.today = new Date().toDateString();
             }
             
-            // Update display
-            document.getElementById('totalVisitors').textContent = analytics.totalVisitors;
-            document.getElementById('pageViews').textContent = analytics.pageViews;
-            document.getElementById('todayVisitors').textContent = analytics.todayVisitors;
-            document.getElementById('avgTime').textContent = Math.round(analytics.avgTimeOnSite) + 'm';
+            // Update display with real data
+            document.getElementById('totalVisitors').textContent = analytics.totalVisitors || 0;
+            document.getElementById('pageViews').textContent = analytics.pageViews || 0;
+            document.getElementById('todayVisitors').textContent = analytics.todayVisitors || 0;
+            document.getElementById('avgTime').textContent = Math.round(analytics.avgTimeOnSite || 0) + 'm';
+            
+            // Update registration stats
+            document.getElementById('tutorRegistrations').textContent = analytics.tutorRegistrations || 0;
+            document.getElementById('schoolRegistrations').textContent = analytics.schoolRegistrations || 0;
+            document.getElementById('todayRegistrations').textContent = analytics.todayRegistrations || 0;
+            document.getElementById('testimonialsViews').textContent = analytics.testimonialsViews || 0;
             
             // Show recent activity
-            displayRecentActivity(analytics.visitHistory);
+            displayRecentActivity(analytics.visitHistory, analytics.registrationHistory);
         }
         
         // Display recent activity
-        function displayRecentActivity(history) {
+        function displayRecentActivity(visitHistory, registrationHistory) {
             const activityList = document.getElementById('activityList');
             activityList.innerHTML = '';
             
-            const recentVisits = history.slice(-10).reverse(); // Show last 10 visits
+            // Combine and sort all activities by timestamp
+            let allActivities = [];
             
-            recentVisits.forEach(visit => {
+            // Add visitor activities
+            if (visitHistory && visitHistory.length > 0) {
+                visitHistory.forEach(visit => {
+                    allActivities.push({
+                        type: 'visitor',
+                        timestamp: visit.timestamp,
+                        page: visit.page,
+                        icon: 'fas fa-user',
+                        title: 'New Visitor'
+                    });
+                });
+            }
+            
+            // Add registration activities
+            if (registrationHistory && registrationHistory.length > 0) {
+                registrationHistory.forEach(reg => {
+                    let title = '';
+                    let icon = '';
+                    switch(reg.type) {
+                        case 'tutor':
+                            title = 'Tutor Registration';
+                            icon = 'fas fa-chalkboard-teacher';
+                            break;
+                        case 'school':
+                            title = 'School Partnership';
+                            icon = 'fas fa-school';
+                            break;
+                        case 'collaboration':
+                            title = 'Collaboration Request';
+                            icon = 'fas fa-handshake';
+                            break;
+                        case 'contact':
+                            title = 'Contact Form';
+                            icon = 'fas fa-envelope';
+                            break;
+                    }
+                    
+                    allActivities.push({
+                        type: 'registration',
+                        timestamp: reg.timestamp,
+                        title: title,
+                        icon: icon,
+                        data: reg.data
+                    });
+                });
+            }
+            
+            // Sort by timestamp (newest first) and take last 15
+            allActivities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const recentActivities = allActivities.slice(0, 15);
+            
+            recentActivities.forEach(activity => {
                 const activityItem = document.createElement('div');
                 activityItem.className = 'activity-item';
+                
+                let details = activity.timestamp;
+                if (activity.type === 'visitor') {
+                    details += ` - ${activity.page}`;
+                } else if (activity.data) {
+                    // Show key information from registration
+                    if (activity.data.fullName) {
+                        details += ` - ${activity.data.fullName}`;
+                    } else if (activity.data.schoolName) {
+                        details += ` - ${activity.data.schoolName}`;
+                    } else if (activity.data.name) {
+                        details += ` - ${activity.data.name}`;
+                    }
+                }
+                
                 activityItem.innerHTML = `
                     <div class="activity-icon">
-                        <i class="fas fa-user"></i>
+                        <i class="${activity.icon}"></i>
                     </div>
                     <div class="activity-details">
-                        <h4>New Visitor</h4>
-                        <p>${visit.timestamp} - ${visit.page}</p>
+                        <h4>${activity.title}</h4>
+                        <p>${details}</p>
                     </div>
                 `;
                 activityList.appendChild(activityItem);
             });
             
-            if (recentVisits.length === 0) {
+            if (recentActivities.length === 0) {
                 activityList.innerHTML = '<p style="color: #64748b; text-align: center;">No recent activity</p>';
             }
         }
