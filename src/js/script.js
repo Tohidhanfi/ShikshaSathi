@@ -397,53 +397,82 @@ function loadBlogPosts() {
         </div>
     `;
     
-    // Fetch education news from multiple sources
-    Promise.all([
-        fetchEducationNews(),
-        fetchTeachingTips(),
-        fetchCareerNews()
-    ]).then(results => {
-        const allPosts = results.flat().slice(0, 3); // Get top 3 posts
-        displayBlogPosts(allPosts);
-    }).catch(error => {
-        console.error('Error loading blog posts:', error);
-        displayFallbackPosts();
-    });
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+        // Try to fetch live content, fallback to curated content
+        fetchLiveContent().then(posts => {
+            if (posts.length > 0) {
+                displayBlogPosts(posts);
+            } else {
+                displayCuratedPosts();
+            }
+        }).catch(error => {
+            console.error('Error loading blog posts:', error);
+            displayCuratedPosts();
+        });
+    }, 1500);
 }
 
-// Fetch education news from RSS feeds
-async function fetchEducationNews() {
+// Fetch live content with better error handling
+async function fetchLiveContent() {
     try {
-        // Using a CORS proxy to access RSS feeds
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/education-news');
-        const data = await response.json();
-        return data.items?.slice(0, 2) || [];
+        // Try multiple sources with timeout
+        const timeout = 5000; // 5 second timeout
+        
+        const promises = [
+            fetchWithTimeout('https://api.allorigins.win/raw?url=https://feeds.feedburner.com/education-news', timeout),
+            fetchWithTimeout('https://api.allorigins.win/raw?url=https://www.edutopia.org/rss.xml', timeout),
+            fetchWithTimeout('https://api.allorigins.win/raw?url=https://www.tes.com/rss', timeout)
+        ];
+        
+        const results = await Promise.allSettled(promises);
+        const successfulResults = results
+            .filter(result => result.status === 'fulfilled')
+            .map(result => result.value);
+        
+        if (successfulResults.length === 0) {
+            return [];
+        }
+        
+        // Parse successful results
+        const allPosts = [];
+        for (const text of successfulResults) {
+            try {
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(text, 'text/xml');
+                const items = xml.querySelectorAll('item');
+                
+                const posts = Array.from(items).slice(0, 1).map(item => ({
+                    title: item.querySelector('title')?.textContent || 'Education News',
+                    description: item.querySelector('description')?.textContent || 'Latest education updates.',
+                    pubDate: item.querySelector('pubDate')?.textContent || new Date().toISOString(),
+                    link: item.querySelector('link')?.textContent || ''
+                }));
+                
+                allPosts.push(...posts);
+            } catch (parseError) {
+                console.log('Parse error:', parseError);
+            }
+        }
+        
+        return allPosts.slice(0, 3);
     } catch (error) {
+        console.log('Fetch error:', error);
         return [];
     }
 }
 
-// Fetch teaching tips and strategies
-async function fetchTeachingTips() {
-    try {
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.edutopia.org/rss.xml');
-        const data = await response.json();
-        return data.items?.slice(0, 2) || [];
-    } catch (error) {
-        return [];
-    }
+// Fetch with timeout
+function fetchWithTimeout(url, timeout) {
+    return Promise.race([
+        fetch(url),
+        new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), timeout)
+        )
+    ]).then(response => response.text());
 }
 
-// Fetch career and teaching profession news
-async function fetchCareerNews() {
-    try {
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tes.com/rss');
-        const data = await response.json();
-        return data.items?.slice(0, 2) || [];
-    } catch (error) {
-        return [];
-    }
-}
+
 
 // Display blog posts
 function displayBlogPosts(posts) {
@@ -467,35 +496,42 @@ function displayBlogPosts(posts) {
     `).join('');
 }
 
-// Display fallback posts if API fails
-function displayFallbackPosts() {
+// Display curated posts with dynamic content
+function displayCuratedPosts() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    const fallbackPosts = [
+    const curatedPosts = [
         {
             title: "How Local Tutors are Changing Education in Maharashtra",
-            description: "Discover the transformative impact of local tutors on education quality and accessibility across Maharashtra.",
-            date: new Date()
+            description: "Discover the transformative impact of local tutors on education quality and accessibility across Maharashtra. Our community-driven approach is revolutionizing how students access quality education.",
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+            category: "Community Impact"
         },
         {
             title: "5 Ways to Make Home Tuition More Effective",
-            description: "Learn proven strategies to maximize the effectiveness of home-based learning and improve student outcomes.",
-            date: new Date()
+            description: "Learn proven strategies to maximize the effectiveness of home-based learning. From personalized lesson plans to interactive teaching methods, discover how to create engaging learning experiences.",
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+            category: "Teaching Tips"
         },
         {
             title: "Building Careers through Teaching: A Lifelong Profession",
-            description: "Explore how teaching can become a rewarding and sustainable career path with proper training and support.",
-            date: new Date()
+            description: "Explore how teaching can become a rewarding and sustainable career path with proper training and support. Join thousands of educators who have found their calling in the noble profession of teaching.",
+            date: new Date(),
+            category: "Career Development"
         }
     ];
     
-    blogGrid.innerHTML = fallbackPosts.map(post => `
+    blogGrid.innerHTML = curatedPosts.map(post => `
         <div class="blog-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="background: #e0f2fe; color: #0284c7; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${post.category}</span>
+                <span style="font-size: 0.8rem; color: #6b7280;">${formatDate(post.date)}</span>
+            </div>
             <h3>${post.title}</h3>
             <p>${post.description}</p>
-            <div style="margin-top: 15px; font-size: 0.9rem; color: #6b7280;">
-                <i class="fas fa-calendar"></i> ${formatDate(post.date)}
+            <div style="margin-top: 15px; font-size: 0.9rem; color: #2563eb;">
+                <i class="fas fa-eye"></i> Featured Article
             </div>
         </div>
     `).join('');
