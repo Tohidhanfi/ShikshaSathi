@@ -231,13 +231,10 @@
                 <p>Capturing moments from our training programs, community events, and success stories</p>
             </div>
             
-            <!-- Upload Section -->
+            <!-- Gallery Info Section -->
             <div class="upload-section">
-                <h3>Share Your Photos</h3>
-                <p>Have photos from our training sessions or events? Share them with us!</p>
-                <button class="upload-btn" onclick="openUploadModal()">
-                    <i class="fas fa-upload"></i> Upload Photos
-                </button>
+                <h3>Our Photo Collection</h3>
+                <p>Curated collection of moments from our training programs, events, and success stories</p>
             </div>
             
             <!-- Gallery Filters -->
@@ -370,47 +367,7 @@
         </div>
     </section>
 
-    <!-- Upload Modal -->
-    <div id="uploadModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Upload Photos</h2>
-            <form id="uploadForm">
-                <div class="form-group">
-                    <label for="photoTitle">Photo Title *</label>
-                    <input type="text" id="photoTitle" name="photoTitle" placeholder="Enter photo title" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="photoCategory">Category *</label>
-                    <select id="photoCategory" name="photoCategory" required>
-                        <option value="">Select Category</option>
-                        <option value="training">Training Programs</option>
-                        <option value="events">Events</option>
-                        <option value="community">Community Outreach</option>
-                        <option value="success">Success Stories</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="photoDescription">Description</label>
-                    <textarea id="photoDescription" name="photoDescription" placeholder="Describe the photo and event" rows="3"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="photoFile">Upload Photo *</label>
-                    <input type="file" id="photoFile" name="photoFile" accept="image/*" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="photographerName">Photographer Name</label>
-                    <input type="text" id="photographerName" name="photographerName" placeholder="Enter photographer name">
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Upload Photo</button>
-            </form>
-        </div>
-    </div>
+
 
     <script src="src/js/script.js"></script>
     <script>
@@ -433,38 +390,7 @@
             });
         }
         
-        // Upload modal functionality
-        function openUploadModal() {
-            document.getElementById('uploadModal').style.display = 'block';
-        }
-        
-        // Close modal when clicking on X
-        document.addEventListener('DOMContentLoaded', function() {
-            const closeButtons = document.querySelectorAll('.close');
-            closeButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    this.closest('.modal').style.display = 'none';
-                });
-            });
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
-                const modals = document.querySelectorAll('.modal');
-                modals.forEach(modal => {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
-            
-            // Handle form submission
-            document.getElementById('uploadForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Thank you for sharing your photos! We will review and add them to our gallery soon.');
-                document.getElementById('uploadModal').style.display = 'none';
-                this.reset();
-            });
-        });
+
     </script>
 </body>
 </html> 
