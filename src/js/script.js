@@ -415,11 +415,14 @@ function loadBlogPosts() {
             refreshButton.parentNode.replaceChild(newRefreshButton, refreshButton);
             
             newRefreshButton.addEventListener('click', function() {
-                console.log('Refresh button clicked - loading fresh content');
+                console.log('Refresh button clicked - loading fresh external content');
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
                 this.disabled = true;
                 
-                // Force immediate refresh with new content
+                // Reset blog loaded flag to allow fresh load
+                blogLoaded = false;
+                
+                // Force immediate refresh with new external content
                 setTimeout(() => {
                     loadLiveBlogContent();
                     this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
@@ -451,6 +454,16 @@ function loadLiveBlogContent() {
             url: 'https://api.allorigins.win/raw?url=https://feeds.feedburner.com/education-news',
             source: 'Education News',
             sourceUrl: 'https://feeds.feedburner.com'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.edweek.org/rss',
+            source: 'Education Week',
+            sourceUrl: 'https://www.edweek.org'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss',
+            source: 'Chronicle',
+            sourceUrl: 'https://www.chronicle.com'
         }
     ];
     
@@ -520,12 +533,31 @@ function loadLiveBlogContent() {
             }
         }
         
-        // If no education content found, use curated content
-        console.log('No education content found, using curated content');
-        displayCuratedPosts();
+        // If no education content found, show error message
+        console.log('No education content found from external sources');
+        displayNoContentMessage();
     };
     
     tryFeeds();
+}
+
+// Display message when no external content is available
+function displayNoContentMessage() {
+    const blogGrid = document.getElementById('blogGrid');
+    if (!blogGrid) return;
+    
+    blogGrid.innerHTML = `
+        <div class="blog-card" style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 3rem; color: #6b7280; margin-bottom: 20px;">
+                <i class="fas fa-wifi-slash"></i>
+            </div>
+            <h3 style="color: #374151; margin-bottom: 10px;">Unable to Load News</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">We're currently unable to fetch the latest education news from external sources.</p>
+            <button onclick="loadLiveBlogContent()" style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                <i class="fas fa-sync-alt"></i> Try Again
+            </button>
+        </div>
+    `;
 }
 
 // Map live content to our categories
@@ -613,34 +645,42 @@ function displayBlogPosts(posts) {
     if (!blogGrid) return;
     
     if (posts.length === 0) {
-        displayCuratedPosts();
+        displayNoContentMessage();
         return;
     }
     
-    blogGrid.innerHTML = posts.map(post => `
-        <div class="blog-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span style="background: ${getCategoryColor(post.category)}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${post.category || 'Education News'}</span>
-                <span style="font-size: 0.8rem; color: #6b7280;">${formatDate(post.date || post.pubDate)}</span>
-            </div>
-            <h3>${post.title || 'Education News'}</h3>
-            <p>${post.description || post.content || 'Latest updates from the education sector.'}</p>
-            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-size: 0.8rem; color: #6b7280;">
-                    <i class="fas fa-globe"></i> Source: ${post.source || 'Education News'}
+    blogGrid.innerHTML = posts.map(post => {
+        // Truncate description to ~5 lines (approximately 200 characters)
+        const fullDescription = post.description || post.content || 'Latest updates from the education sector.';
+        const truncatedDescription = fullDescription.length > 200 ? 
+            fullDescription.substring(0, 200) + '...' : 
+            fullDescription;
+        
+        return `
+            <div class="blog-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="background: ${getCategoryColor(post.category)}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${post.category || 'Education News'}</span>
+                    <span style="font-size: 0.8rem; color: #6b7280;">${formatDate(post.date || post.pubDate)}</span>
                 </div>
-                ${post.link ? `
-                    <a href="${post.link}" target="_blank" rel="noopener noreferrer" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
-                        <i class="fas fa-external-link-alt"></i> Read Full Article
-                    </a>
-                ` : `
-                    <span style="background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-star"></i> Featured
-                    </span>
-                `}
+                <h3>${post.title || 'Education News'}</h3>
+                <p style="line-height: 1.6; margin-bottom: 15px;">${truncatedDescription}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 0.8rem; color: #6b7280;">
+                        <i class="fas fa-globe"></i> Source: ${post.source || 'Education News'}
+                    </div>
+                    ${post.link ? `
+                        <a href="${post.link}" target="_blank" rel="noopener noreferrer" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
+                            <i class="fas fa-external-link-alt"></i> Read More
+                        </a>
+                    ` : `
+                        <span style="background: #6b7280; color: white; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-link-slash"></i> No Link
+                        </span>
+                    `}
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Manual refresh function for testing
