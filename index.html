@@ -342,23 +342,39 @@
         <div class="container">
             <div class="section-header">
                 <h2>Blog / News</h2>
+                <p>Latest updates from the education sector</p>
             </div>
             
-            <div class="blog-grid">
-                <div class="blog-card">
-                    <h3>"How Local Tutors are Changing the Face of Education in Maharashtra"</h3>
-                    <p>Discover the transformative impact of local tutors on education quality and accessibility.</p>
+            <div class="blog-grid" id="blogGrid">
+                <div class="blog-card loading">
+                    <div class="loading-placeholder">
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                    </div>
                 </div>
                 
-                <div class="blog-card">
-                    <h3>"5 Ways to Make Home Tuition More Effective"</h3>
-                    <p>Learn proven strategies to maximize the effectiveness of home-based learning.</p>
+                <div class="blog-card loading">
+                    <div class="loading-placeholder">
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                    </div>
                 </div>
                 
-                <div class="blog-card">
-                    <h3>"Building Careers through Teaching: A Lifelong Profession"</h3>
-                    <p>Explore how teaching can become a rewarding and sustainable career path.</p>
+                <div class="blog-card loading">
+                    <div class="loading-placeholder">
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="blog-refresh">
+                <button class="btn btn-outline" onclick="loadBlogPosts()">
+                    <i class="fas fa-sync-alt"></i> Refresh News
+                </button>
             </div>
         </div>
     </section>

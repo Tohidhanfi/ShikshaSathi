@@ -570,6 +570,41 @@ body {
     color: #6b7280;
 }
 
+.blog-refresh {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.loading-placeholder {
+    padding: 20px;
+}
+
+.loading-bar {
+    height: 12px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.loading-bar:first-child {
+    width: 80%;
+}
+
+.loading-bar:nth-child(2) {
+    width: 60%;
+}
+
+.loading-bar:nth-child(3) {
+    width: 40%;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 /* Vision Section */
 .vision {
     padding: 5rem 0;

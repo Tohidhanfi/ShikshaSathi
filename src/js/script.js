@@ -361,8 +361,159 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.history.replaceState({}, document.title, cleanPath);
             }
         }, 100);
+        
+        // Load live blog posts
+        loadBlogPosts();
     });
 });
+
+// Load live blog posts from RSS feeds and news APIs
+function loadBlogPosts() {
+    const blogGrid = document.getElementById('blogGrid');
+    if (!blogGrid) return;
+    
+    // Show loading state
+    blogGrid.innerHTML = `
+        <div class="blog-card loading">
+            <div class="loading-placeholder">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+        <div class="blog-card loading">
+            <div class="loading-placeholder">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+        <div class="blog-card loading">
+            <div class="loading-placeholder">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+    `;
+    
+    // Fetch education news from multiple sources
+    Promise.all([
+        fetchEducationNews(),
+        fetchTeachingTips(),
+        fetchCareerNews()
+    ]).then(results => {
+        const allPosts = results.flat().slice(0, 3); // Get top 3 posts
+        displayBlogPosts(allPosts);
+    }).catch(error => {
+        console.error('Error loading blog posts:', error);
+        displayFallbackPosts();
+    });
+}
+
+// Fetch education news from RSS feeds
+async function fetchEducationNews() {
+    try {
+        // Using a CORS proxy to access RSS feeds
+        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/education-news');
+        const data = await response.json();
+        return data.items?.slice(0, 2) || [];
+    } catch (error) {
+        return [];
+    }
+}
+
+// Fetch teaching tips and strategies
+async function fetchTeachingTips() {
+    try {
+        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.edutopia.org/rss.xml');
+        const data = await response.json();
+        return data.items?.slice(0, 2) || [];
+    } catch (error) {
+        return [];
+    }
+}
+
+// Fetch career and teaching profession news
+async function fetchCareerNews() {
+    try {
+        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tes.com/rss');
+        const data = await response.json();
+        return data.items?.slice(0, 2) || [];
+    } catch (error) {
+        return [];
+    }
+}
+
+// Display blog posts
+function displayBlogPosts(posts) {
+    const blogGrid = document.getElementById('blogGrid');
+    if (!blogGrid) return;
+    
+    if (posts.length === 0) {
+        displayFallbackPosts();
+        return;
+    }
+    
+    blogGrid.innerHTML = posts.map(post => `
+        <div class="blog-card">
+            <h3>${post.title || 'Education News'}</h3>
+            <p>${post.description || post.content || 'Latest updates from the education sector.'}</p>
+            <div style="margin-top: 15px; font-size: 0.9rem; color: #6b7280;">
+                <i class="fas fa-calendar"></i> ${formatDate(post.pubDate)}
+                ${post.link ? `<a href="${post.link}" target="_blank" style="color: #2563eb; text-decoration: none; margin-left: 10px;">Read More</a>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Display fallback posts if API fails
+function displayFallbackPosts() {
+    const blogGrid = document.getElementById('blogGrid');
+    if (!blogGrid) return;
+    
+    const fallbackPosts = [
+        {
+            title: "How Local Tutors are Changing Education in Maharashtra",
+            description: "Discover the transformative impact of local tutors on education quality and accessibility across Maharashtra.",
+            date: new Date()
+        },
+        {
+            title: "5 Ways to Make Home Tuition More Effective",
+            description: "Learn proven strategies to maximize the effectiveness of home-based learning and improve student outcomes.",
+            date: new Date()
+        },
+        {
+            title: "Building Careers through Teaching: A Lifelong Profession",
+            description: "Explore how teaching can become a rewarding and sustainable career path with proper training and support.",
+            date: new Date()
+        }
+    ];
+    
+    blogGrid.innerHTML = fallbackPosts.map(post => `
+        <div class="blog-card">
+            <h3>${post.title}</h3>
+            <p>${post.description}</p>
+            <div style="margin-top: 15px; font-size: 0.9rem; color: #6b7280;">
+                <i class="fas fa-calendar"></i> ${formatDate(post.date)}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Format date for display
+function formatDate(dateString) {
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    } catch (error) {
+        return 'Recent';
+    }
+}
 
 // Add CSS for active navigation state
 const navStyles = document.createElement('style');
