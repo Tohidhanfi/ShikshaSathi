@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ShikshaSathi</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-dashboard {
+            padding: 20px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .admin-header h1 {
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        
+        .admin-header p {
+            color: #64748b;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+        
+        .recent-activity {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #2563eb;
+        }
+        
+        .activity-details h4 {
+            margin: 0 0 5px 0;
+            color: #1e293b;
+        }
+        
+        .activity-details p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .back-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .export-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .export-btn:hover {
+            background: #059669;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <i class="fas fa-arrow-left"></i> Back to Website
+            </button>
+            <button class="export-btn" onclick="logout()" style="background: #dc2626;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        
+        <div class="admin-header">
+            <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
+            <p>Website Analytics & Visitor Statistics</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="totalVisitors">0</div>
+                <div class="stat-label">Total Visitors</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-number" id="pageViews">0</div>
+                <div class="stat-label">Page Views</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-number" id="todayVisitors">0</div>
+                <div class="stat-label">Today's Visitors</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="avgTime">0m</div>
+                <div class="stat-label">Avg. Time on Site</div>
+            </div>
+        </div>
+        
+        <div class="recent-activity">
+            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+            <div id="activityList">
+                <!-- Activity items will be populated here -->
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="export-btn" onclick="exportData()">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadAnalytics();
+        });
+        
+        // Authentication check
+        function checkAuth() {
+            const adminSession = localStorage.getItem('shikshaSathiAdminSession');
+            const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
+            
+            if (!adminSession || !loginTime) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            // Check if session is expired (24 hours)
+            const now = Date.now();
+            const sessionAge = now - parseInt(loginTime);
+            const sessionValid = sessionAge < 24 * 60 * 60 * 1000; // 24 hours
+            
+            if (!sessionValid) {
+                localStorage.removeItem('shikshaSathiAdminSession');
+                localStorage.removeItem('shikshaSathiAdminLoginTime');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('shikshaSathiAdminLoginTime');
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Load analytics data
+        function loadAnalytics() {
+            const analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {
+                totalVisitors: 0,
+                pageViews: 0,
+                todayVisitors: 0,
+                avgTimeOnSite: 0,
+                visitHistory: [],
+                today: new Date().toDateString()
+            };
+            
+            // Update today's visitors if it's a new day
+            if (analytics.today !== new Date().toDateString()) {
+                analytics.todayVisitors = 0;
+                analytics.today = new Date().toDateString();
+            }
+            
+            // Update display
+            document.getElementById('totalVisitors').textContent = analytics.totalVisitors;
+            document.getElementById('pageViews').textContent = analytics.pageViews;
+            document.getElementById('todayVisitors').textContent = analytics.todayVisitors;
+            document.getElementById('avgTime').textContent = Math.round(analytics.avgTimeOnSite) + 'm';
+            
+            // Show recent activity
+            displayRecentActivity(analytics.visitHistory);
+        }
+        
+        // Display recent activity
+        function displayRecentActivity(history) {
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = '';
+            
+            const recentVisits = history.slice(-10).reverse(); // Show last 10 visits
+            
+            recentVisits.forEach(visit => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="activity-details">
+                        <h4>New Visitor</h4>
+                        <p>${visit.timestamp} - ${visit.page}</p>
+                    </div>
+                `;
+                activityList.appendChild(activityItem);
+            });
+            
+            if (recentVisits.length === 0) {
+                activityList.innerHTML = '<p style="color: #64748b; text-align: center;">No recent activity</p>';
+            }
+        }
+        
+        // Export data function
+        function exportData() {
+            const analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+            const dataStr = JSON.stringify(analytics, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'shikshaSathi-analytics.json';
+            link.click();
+        }
+        
+        // Check authentication and load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadAnalytics();
+        });
+    </script>
+</body>
+</html> 

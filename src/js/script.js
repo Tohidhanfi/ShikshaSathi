@@ -473,4 +473,72 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-}); 
+    
+    // Track website analytics
+    trackWebsiteAnalytics();
+});
+
+// Website analytics tracking
+function trackWebsiteAnalytics() {
+    // Get existing analytics data
+    let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {
+        totalVisitors: 0,
+        pageViews: 0,
+        todayVisitors: 0,
+        avgTimeOnSite: 0,
+        visitHistory: [],
+        today: new Date().toDateString(),
+        sessionStartTime: Date.now()
+    };
+    
+    // Check if this is a new day
+    if (analytics.today !== new Date().toDateString()) {
+        analytics.todayVisitors = 0;
+        analytics.today = new Date().toDateString();
+    }
+    
+    // Check if this is a new visitor (no session in last 30 minutes)
+    const lastVisit = localStorage.getItem('shikshaSathiLastVisit');
+    const now = Date.now();
+    const isNewVisitor = !lastVisit || (now - parseInt(lastVisit)) > 30 * 60 * 1000; // 30 minutes
+    
+    if (isNewVisitor) {
+        analytics.totalVisitors++;
+        analytics.todayVisitors++;
+        localStorage.setItem('shikshaSathiLastVisit', now.toString());
+        
+        // Add to visit history
+        analytics.visitHistory.push({
+            timestamp: new Date().toLocaleString(),
+            page: window.location.pathname || 'index.html',
+            userAgent: navigator.userAgent.substring(0, 100) // Truncated for privacy
+        });
+        
+        // Keep only last 100 visits
+        if (analytics.visitHistory.length > 100) {
+            analytics.visitHistory = analytics.visitHistory.slice(-100);
+        }
+    }
+    
+    // Increment page views
+    analytics.pageViews++;
+    
+    // Calculate average time on site
+    if (analytics.sessionStartTime) {
+        const sessionTime = (now - analytics.sessionStartTime) / 1000 / 60; // in minutes
+        analytics.avgTimeOnSite = (analytics.avgTimeOnSite + sessionTime) / 2;
+    }
+    
+    // Save analytics data
+    localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
+    
+    // Track time on page when user leaves
+    window.addEventListener('beforeunload', function() {
+        const endTime = Date.now();
+        const timeOnPage = (endTime - now) / 1000 / 60; // in minutes
+        
+        let updatedAnalytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || analytics;
+        updatedAnalytics.avgTimeOnSite = (updatedAnalytics.avgTimeOnSite + timeOnPage) / 2;
+        localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(updatedAnalytics));
+    });
+} 
