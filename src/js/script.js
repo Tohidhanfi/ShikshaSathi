@@ -382,6 +382,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Network speed detection for optimized loading
+let networkSpeed = 'fast'; // Default to fast
+
+// Detect network speed
+function detectNetworkSpeed() {
+    if ('connection' in navigator) {
+        const connection = navigator.connection;
+        if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+            networkSpeed = 'slow';
+        } else if (connection.effectiveType === '3g') {
+            networkSpeed = 'medium';
+        } else {
+            networkSpeed = 'fast';
+        }
+        console.log('Network speed detected:', networkSpeed);
+    }
+}
+
 // Load live blog posts from RSS feeds and news APIs
 function loadBlogPosts() {
     const blogGrid = document.getElementById('blogGrid');
@@ -414,53 +432,87 @@ function loadBlogPosts() {
         </div>
     `;
     
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-        // Try to load live content first, fallback to curated
-        loadLiveBlogContent();
-        
-        // Add refresh button functionality
-        const refreshButton = document.querySelector('.blog-refresh');
-        if (refreshButton) {
-            // Remove any existing event listeners to prevent duplicates
-            const newRefreshButton = refreshButton.cloneNode(true);
-            refreshButton.parentNode.replaceChild(newRefreshButton, refreshButton);
-            
-            newRefreshButton.addEventListener('click', function() {
-                console.log('Refresh button clicked - loading fresh external content');
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-                this.disabled = true;
-                
-                // Reset blog loaded flag to allow fresh load
-                blogLoaded = false;
-                
-                // Force immediate refresh with new external content
-                setTimeout(() => {
-                    loadLiveBlogContent();
-                    this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
-                    this.disabled = false;
-                }, 300);
-            });
+    // Detect network speed first
+    detectNetworkSpeed();
+    
+    // Check for cached content first (fastest option)
+    const cachedContent = localStorage.getItem('shikshaSathiBlogCache');
+    const cacheTimestamp = localStorage.getItem('shikshaSathiBlogCacheTime');
+    const now = Date.now();
+    const cacheAge = now - (cacheTimestamp || 0);
+    const cacheValid = cacheAge < (30 * 60 * 1000); // 30 minutes cache
+    
+    if (cachedContent && cacheValid) {
+        console.log('Loading cached blog content (fast)');
+        try {
+            const posts = JSON.parse(cachedContent);
+            displayBlogPosts(posts);
+            return;
+        } catch (e) {
+            console.log('Cache parse error, loading fresh content');
         }
-    }, 1500);
+    }
+    
+    // Show curated content immediately (fast fallback)
+    console.log('Loading curated content immediately');
+    displayCuratedPosts();
+    
+    // Load live content based on network speed
+    if (networkSpeed === 'fast') {
+        // Fast network: try live content immediately
+        setTimeout(() => {
+            loadLiveBlogContent();
+        }, 100);
+    } else if (networkSpeed === 'medium') {
+        // Medium network: delay live content loading
+        setTimeout(() => {
+            loadLiveBlogContent();
+        }, 2000);
+    } else {
+        // Slow network: only load curated content, skip live content
+        console.log('Slow network detected, skipping live content loading');
+    }
+    
+    // Add refresh button functionality
+    const refreshButton = document.querySelector('.blog-refresh');
+    if (refreshButton) {
+        // Remove any existing event listeners to prevent duplicates
+        const newRefreshButton = refreshButton.cloneNode(true);
+        refreshButton.parentNode.replaceChild(newRefreshButton, refreshButton);
+        
+        newRefreshButton.addEventListener('click', function() {
+            console.log('Refresh button clicked - loading fresh content');
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            this.disabled = true;
+            
+            // Clear cache to force fresh load
+            localStorage.removeItem('shikshaSathiBlogCache');
+            localStorage.removeItem('shikshaSathiBlogCacheTime');
+            
+            // Reset blog loaded flag to allow fresh load
+            blogLoaded = false;
+            
+            // Force immediate refresh
+            setTimeout(() => {
+                loadBlogPosts();
+                this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
+                this.disabled = false;
+            }, 300);
+        });
+    }
 }
 
-// Load live blog content with better API - only education topics
+// Load live blog content with optimized API calls
 function loadLiveBlogContent() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    // Education-specific RSS feeds with more variety
-    const educationFeeds = [
+    // Select feeds based on network speed
+    const allFeeds = [
         {
             url: 'https://api.allorigins.win/raw?url=https://www.edutopia.org/rss.xml',
             source: 'Edutopia',
             sourceUrl: 'https://www.edutopia.org'
-        },
-        {
-            url: 'https://api.allorigins.win/raw?url=https://www.tes.com/rss',
-            source: 'TES',
-            sourceUrl: 'https://www.tes.com'
         },
         {
             url: 'https://api.allorigins.win/raw?url=https://feeds.feedburner.com/education-news',
@@ -468,44 +520,25 @@ function loadLiveBlogContent() {
             sourceUrl: 'https://feeds.feedburner.com'
         },
         {
-            url: 'https://api.allorigins.win/raw?url=https://www.edweek.org/rss',
-            source: 'Education Week',
-            sourceUrl: 'https://www.edweek.org'
-        },
-        {
-            url: 'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss',
-            source: 'Chronicle',
-            sourceUrl: 'https://www.chronicle.com'
-        },
-        {
             url: 'https://api.allorigins.win/raw?url=https://www.theguardian.com/education/rss',
             source: 'The Guardian Education',
             sourceUrl: 'https://www.theguardian.com/education'
-        },
-        {
-            url: 'https://api.allorigins.win/raw?url=https://www.bbc.com/news/education/rss.xml',
-            source: 'BBC Education',
-            sourceUrl: 'https://www.bbc.com/news/education'
-        },
-        {
-            url: 'https://api.allorigins.win/raw?url=https://www.forbes.com/education/feed/',
-            source: 'Forbes Education',
-            sourceUrl: 'https://www.forbes.com/education'
         }
     ];
     
-    // Shuffle feeds to get more variety
-    const shuffledFeeds = [...educationFeeds].sort(() => Math.random() - 0.5);
+    // Use fewer feeds for slower networks
+    const educationFeeds = networkSpeed === 'fast' ? allFeeds : 
+                          networkSpeed === 'medium' ? allFeeds.slice(0, 2) : 
+                          allFeeds.slice(0, 1);
     
-    // Try each feed until we get content
+    // Try feeds with timeout based on network speed
     const tryFeeds = async () => {
-        for (let i = 0; i < shuffledFeeds.length; i++) {
+        const timeout = networkSpeed === 'fast' ? 3000 : networkSpeed === 'medium' ? 5000 : 8000;
+        const promises = educationFeeds.map(async (feed) => {
             try {
-                const feed = shuffledFeeds[i];
                 console.log(`Trying feed: ${feed.source}`);
-                
-                const response = await fetch(feed.url);
-                const xmlText = await response.text();
+                const response = await fetchWithTimeout(feed.url, timeout);
+                const xmlText = response;
                 
                 const parser = new DOMParser();
                 const xml = parser.parseFromString(xmlText, 'text/xml');
@@ -530,7 +563,7 @@ function loadLiveBlogContent() {
                                    content.includes('tutor') ||
                                    content.includes('training');
                         })
-                        .slice(0, 3)
+                        .slice(0, 2) // Reduced to 2 posts per feed
                         .map(item => {
                             const title = item.querySelector('title')?.textContent || 'Education News';
                             const description = item.querySelector('description')?.textContent || 'Latest education updates.';
@@ -551,21 +584,36 @@ function loadLiveBlogContent() {
                             };
                         });
                     
-                    if (educationPosts.length > 0) {
-                        displayBlogPosts(educationPosts);
-                        console.log(`Education content loaded from: ${feed.source}`);
-                        return; // Success, exit
-                    }
+                    return educationPosts;
                 }
             } catch (error) {
-                console.log(`Feed ${educationFeeds[i].source} failed:`, error);
-                continue; // Try next feed
+                console.log(`Feed ${feed.source} failed:`, error);
+                return [];
             }
+        });
+        
+        try {
+            const results = await Promise.allSettled(promises);
+            const allPosts = results
+                .filter(result => result.status === 'fulfilled')
+                .flatMap(result => result.value)
+                .slice(0, 3); // Take only top 3 posts
+            
+            if (allPosts.length > 0) {
+                // Cache the successful results
+                localStorage.setItem('shikshaSathiBlogCache', JSON.stringify(allPosts));
+                localStorage.setItem('shikshaSathiBlogCacheTime', Date.now().toString());
+                
+                displayBlogPosts(allPosts);
+                console.log(`Live content loaded: ${allPosts.length} posts`);
+                return;
+            }
+        } catch (error) {
+            console.log('All feeds failed:', error);
         }
         
-        // If no education content found, show error message
-        console.log('No education content found from external sources');
-        displayNoContentMessage();
+        // If no live content, keep curated content
+        console.log('No live content available, keeping curated content');
     };
     
     tryFeeds();
@@ -783,25 +831,17 @@ function displayCuratedPosts() {
         }
     ];
     
-    // Force fresh randomization with multiple random factors
-    const timestamp = Date.now();
-    const randomSeed = Math.random() * timestamp;
-    
+    // Simple and fast randomization
     const shuffledPosts = allPosts
-        .map((post, index) => ({ 
-            ...post, 
-            originalIndex: index,
-            randomValue: Math.random() * randomSeed + index
-        }))
-        .sort((a, b) => a.randomValue - b.randomValue)
+        .sort(() => Math.random() - 0.5)
         .slice(0, 3);
     
     console.log('Selected posts:', shuffledPosts.map(p => p.title));
     
-    // Add some random variation to dates
+    // Add minimal date variation for freshness
     const postsWithVariation = shuffledPosts.map(post => ({
         ...post,
-        date: new Date(post.date.getTime() + (Math.random() - 0.5) * 24 * 60 * 60 * 1000) // ±12 hours variation
+        date: new Date(post.date.getTime() + (Math.random() - 0.5) * 12 * 60 * 60 * 1000) // ±6 hours variation
     }));
     
     blogGrid.innerHTML = postsWithVariation.map(post => `
