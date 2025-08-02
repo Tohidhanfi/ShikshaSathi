@@ -430,55 +430,86 @@ function loadLiveBlogContent() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    // Try to fetch from reliable education RSS feeds
+    // Multiple reliable education RSS feeds with source tracking
     const educationFeeds = [
-        'https://api.allorigins.win/raw?url=https://feeds.feedburner.com/edutopia',
-        'https://api.allorigins.win/raw?url=https://www.tes.com/rss',
-        'https://api.allorigins.win/raw?url=https://www.edweek.org/rss',
-        'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss'
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.edutopia.org/rss.xml',
+            source: 'Edutopia',
+            sourceUrl: 'https://www.edutopia.org'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.tes.com/rss',
+            source: 'TES',
+            sourceUrl: 'https://www.tes.com'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.edweek.org/rss',
+            source: 'Education Week',
+            sourceUrl: 'https://www.edweek.org'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss',
+            source: 'Chronicle',
+            sourceUrl: 'https://www.chronicle.com'
+        },
+        {
+            url: 'https://api.allorigins.win/raw?url=https://feeds.feedburner.com/education-news',
+            source: 'Education News',
+            sourceUrl: 'https://feeds.feedburner.com'
+        }
     ];
     
-    // Try to fetch live content
-    Promise.any(educationFeeds.map(url => 
-        fetch(url).then(response => response.text())
-    )).then(xmlText => {
-        try {
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(xmlText, 'text/xml');
-            const items = xml.querySelectorAll('item');
-            
-            if (items.length > 0) {
-                const livePosts = Array.from(items).slice(0, 3).map(item => {
-                    const title = item.querySelector('title')?.textContent || 'Education News';
-                    const description = item.querySelector('description')?.textContent || 'Latest education updates.';
-                    const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString();
-                    const link = item.querySelector('link')?.textContent || '';
-                    
-                    // Map to our categories
-                    const category = mapToCategory(title, description);
-                    
-                    return {
-                        title: title,
-                        description: description,
-                        date: new Date(pubDate),
-                        category: category,
-                        link: link
-                    };
-                });
+    // Try each feed until we get content
+    const tryFeeds = async () => {
+        for (let i = 0; i < educationFeeds.length; i++) {
+            try {
+                const feed = educationFeeds[i];
+                console.log(`Trying feed: ${feed.source}`);
                 
-                displayBlogPosts(livePosts);
-                console.log('Live content loaded successfully');
-            } else {
-                displayCuratedPosts();
+                const response = await fetch(feed.url);
+                const xmlText = await response.text();
+                
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(xmlText, 'text/xml');
+                const items = xml.querySelectorAll('item');
+                
+                if (items.length > 0) {
+                    const livePosts = Array.from(items).slice(0, 3).map(item => {
+                        const title = item.querySelector('title')?.textContent || 'Education News';
+                        const description = item.querySelector('description')?.textContent || 'Latest education updates.';
+                        const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString();
+                        const link = item.querySelector('link')?.textContent || '';
+                        
+                        // Map to our categories
+                        const category = mapToCategory(title, description);
+                        
+                        return {
+                            title: title,
+                            description: description,
+                            date: new Date(pubDate),
+                            category: category,
+                            link: link,
+                            source: feed.source,
+                            sourceUrl: feed.sourceUrl
+                        };
+                    });
+                    
+                    displayBlogPosts(livePosts);
+                    console.log(`Live content loaded from: ${feed.source}`);
+                    return; // Success, exit
+                }
+            } catch (error) {
+                console.log(`Feed ${educationFeeds[i].source} failed:`, error);
+                continue; // Try next feed
             }
-        } catch (error) {
-            console.log('XML parsing error:', error);
-            displayCuratedPosts();
         }
-    }).catch(error => {
-        console.log('Live content fetch failed:', error);
+        
+        // If all feeds fail, use curated content
+        console.log('All feeds failed, using curated content');
         displayCuratedPosts();
-    });
+    };
+    
+    tryFeeds();
 }
 
 // Map live content to our categories
@@ -578,9 +609,19 @@ function displayBlogPosts(posts) {
             </div>
             <h3>${post.title || 'Education News'}</h3>
             <p>${post.description || post.content || 'Latest updates from the education sector.'}</p>
-            <div style="margin-top: 15px; font-size: 0.9rem; color: #2563eb;">
-                <i class="fas fa-external-link-alt"></i> 
-                ${post.link ? `<a href="${post.link}" target="_blank" style="color: #2563eb; text-decoration: none;">Read Full Article</a>` : 'Featured Article'}
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 0.8rem; color: #6b7280;">
+                    <i class="fas fa-globe"></i> Source: ${post.source || 'Education News'}
+                </div>
+                ${post.link ? `
+                    <a href="${post.link}" target="_blank" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-arrow-right"></i> Read Article
+                    </a>
+                ` : `
+                    <span style="background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-star"></i> Featured
+                    </span>
+                `}
             </div>
         </div>
     `).join('');
@@ -679,8 +720,13 @@ function displayCuratedPosts() {
             </div>
             <h3>${post.title}</h3>
             <p>${post.description}</p>
-            <div style="margin-top: 15px; font-size: 0.9rem; color: #2563eb;">
-                <i class="fas fa-eye"></i> Featured Article
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 0.8rem; color: #6b7280;">
+                    <i class="fas fa-star"></i> Source: ShikshaSathi Curated
+                </div>
+                <span style="background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-star"></i> Featured
+                </span>
             </div>
         </div>
     `).join('');
