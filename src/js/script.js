@@ -501,17 +501,17 @@ function displayCuratedPosts() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    const curatedPosts = [
+    const allPosts = [
         {
             title: "How Local Tutors are Changing Education in Maharashtra",
             description: "Discover the transformative impact of local tutors on education quality and accessibility across Maharashtra. Our community-driven approach is revolutionizing how students access quality education.",
-            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
             category: "Community Impact"
         },
         {
             title: "5 Ways to Make Home Tuition More Effective",
             description: "Learn proven strategies to maximize the effectiveness of home-based learning. From personalized lesson plans to interactive teaching methods, discover how to create engaging learning experiences.",
-            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
             category: "Teaching Tips"
         },
         {
@@ -519,13 +519,52 @@ function displayCuratedPosts() {
             description: "Explore how teaching can become a rewarding and sustainable career path with proper training and support. Join thousands of educators who have found their calling in the noble profession of teaching.",
             date: new Date(),
             category: "Career Development"
+        },
+        {
+            title: "The Rise of Digital Learning in Rural Maharashtra",
+            description: "How technology is bridging the educational gap in remote areas. Discover innovative approaches to bring quality education to every corner of Maharashtra through digital platforms and local partnerships.",
+            date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+            category: "Digital Education"
+        },
+        {
+            title: "Success Stories: From Graduate to Professional Tutor",
+            description: "Real stories from our training program graduates who have successfully transitioned into full-time teaching careers. Learn how our comprehensive training opens doors to new opportunities.",
+            date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+            category: "Success Stories"
+        },
+        {
+            title: "Parent-Teacher Collaboration: The Key to Student Success",
+            description: "Understanding the importance of strong communication between parents and tutors. Discover strategies for building effective partnerships that enhance student learning outcomes.",
+            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+            category: "Parent Engagement"
+        },
+        {
+            title: "Innovative Teaching Methods for the Modern Classroom",
+            description: "Explore cutting-edge teaching techniques that make learning more engaging and effective. From gamification to project-based learning, discover methods that work in today's educational landscape.",
+            date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+            category: "Innovation"
+        },
+        {
+            title: "The Future of Education: Personalized Learning Paths",
+            description: "How individualized learning approaches are transforming education. Learn about adaptive teaching methods that cater to each student's unique learning style and pace.",
+            date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            category: "Future of Education"
         }
     ];
     
-    blogGrid.innerHTML = curatedPosts.map(post => `
+    // Shuffle the posts and select 3 random ones
+    const shuffledPosts = allPosts.sort(() => Math.random() - 0.5).slice(0, 3);
+    
+    // Add some random variation to dates
+    const postsWithVariation = shuffledPosts.map(post => ({
+        ...post,
+        date: new Date(post.date.getTime() + (Math.random() - 0.5) * 24 * 60 * 60 * 1000) // ±12 hours variation
+    }));
+    
+    blogGrid.innerHTML = postsWithVariation.map(post => `
         <div class="blog-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span style="background: #e0f2fe; color: #0284c7; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${post.category}</span>
+                <span style="background: ${getCategoryColor(post.category)}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${post.category}</span>
                 <span style="font-size: 0.8rem; color: #6b7280;">${formatDate(post.date)}</span>
             </div>
             <h3>${post.title}</h3>
@@ -535,6 +574,21 @@ function displayCuratedPosts() {
             </div>
         </div>
     `).join('');
+}
+
+// Get category color
+function getCategoryColor(category) {
+    const colors = {
+        "Community Impact": "#059669",
+        "Teaching Tips": "#2563eb", 
+        "Career Development": "#7c3aed",
+        "Digital Education": "#dc2626",
+        "Success Stories": "#ea580c",
+        "Parent Engagement": "#0891b2",
+        "Innovation": "#16a34a",
+        "Future of Education": "#9333ea"
+    };
+    return colors[category] || "#2563eb";
 }
 
 // Format date for display
