@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Testimonials - ShikshaSathi</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .testimonials-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+        
+        .testimonials-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonials-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-container {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .testimonial-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: #1f2937;
+        }
+        
+        .testimonial-info p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .testimonial-content {
+            color: #374151;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        .testimonial-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 1rem;
+        }
+        
+        .testimonial-rating i {
+            color: #fbbf24;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .testimonials-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <button class="back-button" onclick="window.location.href='testimonials.html'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="testimonials-hero">
+        <div class="container">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Teachers Testimonials</h1>
+            <p>Hear from our dedicated teachers about their experience with ShikshaSathi</p>
+        </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="testimonials-container">
+        <div class="breadcrumb">
+            <a href="index.html">Home</a> > 
+            <a href="testimonials.html">Testimonials</a> > 
+            Teachers
+        </div>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="testimonials-container">
+        <div class="testimonials-grid">
+            
+            <!-- Teacher Testimonial 1 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Priya Sharma</h3>
+                        <p>Mathematics Teacher, 5+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi has transformed my teaching career. The platform connects me with students who genuinely want to learn, and the support system is excellent. I've seen remarkable improvement in my students' performance."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 2 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Rajesh Kumar</h3>
+                        <p>Science Teacher, 8+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "The flexibility of working with ShikshaSathi is amazing. I can choose my schedule and subjects. The students are well-screened and motivated. It's a win-win for both teachers and students."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 3 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Meera Patel</h3>
+                        <p>English Teacher, 6+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "I love how ShikshaSathi focuses on quality education. The platform provides excellent resources and training. My students have shown tremendous progress, and I feel valued as an educator."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 4 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Anita Desai</h3>
+                        <p>Hindi Teacher, 7+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "Teaching Hindi through ShikshaSathi has been incredibly rewarding. The students are eager to learn our language and culture. The platform's support team is always helpful and responsive."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 5 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Vikram Singh</h3>
+                        <p>Computer Science Teacher, 4+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi has given me the opportunity to teach programming to students who are genuinely interested. The platform's tools and resources make teaching complex concepts much easier."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 6 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Sunita Verma</h3>
+                        <p>Social Studies Teacher, 9+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "The students I teach through ShikshaSathi are well-prepared and curious. The platform's assessment tools help me track their progress effectively. It's a professional and rewarding experience."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 7 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Ramesh Joshi</h3>
+                        <p>Physics Teacher, 10+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi's approach to connecting teachers with students is brilliant. The students are motivated and the platform provides excellent support. I've seen great improvement in my students' understanding."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 8 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Lakshmi Iyer</h3>
+                        <p>Chemistry Teacher, 6+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "Teaching chemistry through ShikshaSathi has been wonderful. The students are engaged and the platform's resources are excellent. I feel supported and valued as a teacher."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 9 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Arun Kumar</h3>
+                        <p>Biology Teacher, 5+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "The students I teach through ShikshaSathi are curious and eager to learn. The platform's tools help me create engaging lessons. It's a great way to make a difference in students' lives."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Teacher Testimonial 10 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Pooja Sharma</h3>
+                        <p>Marathi Teacher, 4+ years experience</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "Teaching Marathi through ShikshaSathi has been a wonderful experience. The students are enthusiastic about learning our state language. The platform makes teaching enjoyable and effective."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ShikshaSathi</h3>
+                    <p>Empowering Educators. Enabling Learning.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#program">Register</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 ShikshaSathi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <div class="whatsapp-button">
+        <a href="https://wa.me/919422835926" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="src/js/script.js"></script>
+</body>
+</html> 

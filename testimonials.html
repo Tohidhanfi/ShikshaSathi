@@ -34,120 +34,100 @@
             margin: 0 auto;
         }
         
-        .testimonials-section {
-            margin-bottom: 4rem;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #1f2937;
-        }
-        
-        .section-title h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #2563eb;
-        }
-        
-        .section-title p {
-            font-size: 1.1rem;
-            color: #6b7280;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
         .testimonials-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 3rem;
         }
         
-        .testimonial-card {
+        .testimonial-category-card {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
         
-        .testimonial-card:hover {
-            transform: translateY(-5px);
+        .testimonial-category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
         
-        .testimonial-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .category-icon {
+            font-size: 4rem;
             margin-bottom: 1.5rem;
-        }
-        
-        .testimonial-photo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .testimonial-info h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.25rem;
+        .category-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
             color: #1f2937;
         }
         
-        .testimonial-info p {
+        .category-description {
             color: #6b7280;
-            font-size: 0.9rem;
-        }
-        
-        .testimonial-content {
-            color: #374151;
             line-height: 1.6;
-            font-style: italic;
-        }
-        
-        .testimonial-rating {
-            display: flex;
-            gap: 0.25rem;
-            margin-top: 1rem;
-        }
-        
-        .testimonial-rating i {
-            color: #fbbf24;
-        }
-        
-        .coming-soon-section {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-radius: 20px;
-            padding: 4rem 2rem;
-            text-align: center;
-            margin: 2rem 0;
-        }
-        
-        .coming-soon-section h3 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 1rem;
-        }
-        
-        .coming-soon-section p {
-            font-size: 1.1rem;
-            color: #6b7280;
             margin-bottom: 2rem;
         }
         
-        .coming-soon-icon {
-            font-size: 4rem;
-            color: #9ca3af;
-            margin-bottom: 1rem;
+        .category-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .view-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .view-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .coming-soon-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px dashed #d1d5db;
+        }
+        
+        .coming-soon-card .category-icon {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .back-button {
@@ -179,12 +159,13 @@
                 font-size: 2rem;
             }
             
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
             .testimonials-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .category-stats {
+                flex-direction: column;
+                gap: 1rem;
             }
             
             .back-button {
@@ -210,181 +191,77 @@
         </div>
     </section>
 
-    <!-- Testimonials Container -->
+    <!-- Testimonials Categories -->
     <div class="testimonials-container">
-        
-        <!-- Teachers Section -->
-        <div class="testimonials-section">
-            <div class="section-title">
-                <h2><i class="fas fa-chalkboard-teacher"></i> Teachers</h2>
-                <p>Hear from our dedicated teachers about their experience with ShikshaSathi</p>
-            </div>
+        <div class="testimonials-grid">
             
-            <div class="testimonials-grid">
-                <!-- Teacher Testimonial 1 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Priya Sharma</h3>
-                            <p>Mathematics Teacher, 5+ years experience</p>
-                        </div>
+            <!-- Teachers Category -->
+            <a href="teachers-testimonials.html" class="testimonial-category-card">
+                <div class="category-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="category-title">Teachers</h3>
+                <p class="category-description">
+                    Hear from our dedicated teachers about their experience with ShikshaSathi. 
+                    Discover how our platform has transformed their teaching careers and helped them connect with motivated students.
+                </p>
+                <div class="category-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Teachers</div>
                     </div>
-                    <div class="testimonial-content">
-                        "ShikshaSathi has transformed my teaching career. The platform connects me with students who genuinely want to learn, and the support system is excellent. I've seen remarkable improvement in my students' performance."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                    <div class="stat-item">
+                        <div class="stat-number">4.8★</div>
+                        <div class="stat-label">Rating</div>
                     </div>
                 </div>
+                <div class="view-button">View Testimonials</div>
+            </a>
 
-                <!-- Teacher Testimonial 2 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Rajesh Kumar</h3>
-                            <p>Science Teacher, 8+ years experience</p>
-                        </div>
+            <!-- School Heads Category -->
+            <a href="school-heads-testimonials.html" class="testimonial-category-card">
+                <div class="category-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="category-title">School Heads</h3>
+                <p class="category-description">
+                    School principals and administrators share their experience partnering with ShikshaSathi. 
+                    Learn how we've helped schools find qualified teachers and improve their educational standards.
+                </p>
+                <div class="category-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Schools</div>
                     </div>
-                    <div class="testimonial-content">
-                        "The flexibility of working with ShikshaSathi is amazing. I can choose my schedule and subjects. The students are well-screened and motivated. It's a win-win for both teachers and students."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                    <div class="stat-item">
+                        <div class="stat-number">4.9★</div>
+                        <div class="stat-label">Rating</div>
                     </div>
                 </div>
+                <div class="view-button">View Testimonials</div>
+            </a>
 
-                <!-- Teacher Testimonial 3 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Meera Patel</h3>
-                            <p>English Teacher, 6+ years experience</p>
-                        </div>
+            <!-- Coming Soon Category -->
+            <div class="testimonial-category-card coming-soon-card">
+                <div class="category-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="category-title">Coming Soon</h3>
+                <p class="category-description">
+                    We're gathering more amazing stories from our community. 
+                    Stay tuned for testimonials from additional partners and stakeholders who are making a difference in education.
+                </p>
+                <div class="category-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">?</div>
+                        <div class="stat-label">Category</div>
                     </div>
-                    <div class="testimonial-content">
-                        "I love how ShikshaSathi focuses on quality education. The platform provides excellent resources and training. My students have shown tremendous progress, and I feel valued as an educator."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                    <div class="stat-item">
+                        <div class="stat-number">Soon</div>
+                        <div class="stat-label">Available</div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- School Heads Section -->
-        <div class="testimonials-section">
-            <div class="section-title">
-                <h2><i class="fas fa-user-tie"></i> School Heads</h2>
-                <p>School principals and administrators share their experience partnering with ShikshaSathi</p>
-            </div>
-            
-            <div class="testimonials-grid">
-                <!-- School Head Testimonial 1 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Dr. Sunita Verma</h3>
-                            <p>Principal, Delhi Public School</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "ShikshaSathi has been instrumental in helping us find qualified teachers quickly. Their screening process is thorough, and the teachers they provide are well-trained and professional."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- School Head Testimonial 2 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Mr. Amit Singh</h3>
-                            <p>Director, St. Mary's Convent School</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "The quality of teachers from ShikshaSathi is exceptional. They understand our school's requirements and provide teachers who fit our culture perfectly. Highly recommended!"
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- School Head Testimonial 3 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Mrs. Lakshmi Iyer</h3>
-                            <p>Principal, Kendriya Vidyalaya</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "ShikshaSathi's commitment to educational excellence is commendable. They provide teachers who are not just qualified but also passionate about teaching. Our students benefit greatly."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Coming Soon Section -->
-        <div class="testimonials-section">
-            <div class="section-title">
-                <h2><i class="fas fa-clock"></i> Coming Soon</h2>
-                <p>More testimonials from our valued partners are coming soon</p>
-            </div>
-            
-            <div class="coming-soon-section">
-                <div class="coming-soon-icon">
-                    <i class="fas fa-hourglass-half"></i>
-                </div>
-                <h3>More Testimonials Coming Soon</h3>
-                <p>We're gathering more amazing stories from our community. Stay tuned for testimonials from additional partners and stakeholders who are making a difference in education.</p>
-                <p><strong>Coming Soon: [Category to be announced]</strong></p>
+                <div class="view-button" style="background: #9ca3af; cursor: not-allowed;">Coming Soon</div>
             </div>
         </div>
     </div>
