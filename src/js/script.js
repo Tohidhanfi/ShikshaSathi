@@ -399,18 +399,34 @@ function loadBlogPosts() {
     
     // Simulate loading delay for better UX
     setTimeout(() => {
-        // Always show dynamic curated content for fresh content on each refresh
-        displayCuratedPosts();
-        
-        // Try to fetch live content in background (for future use)
-        fetchLiveContent().then(posts => {
-            if (posts.length > 0) {
-                console.log('Live content fetched successfully');
-                // Could be used for "Refresh News" button in future
-            }
-        }).catch(error => {
-            console.log('Live content fetch failed:', error);
+            // Always show dynamic curated content for fresh content on each refresh
+    displayCuratedPosts();
+    
+    // Add refresh button functionality
+    const refreshButton = document.querySelector('.blog-refresh');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', function() {
+            console.log('Refresh button clicked - loading fresh content');
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                displayCuratedPosts();
+                this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
+                this.disabled = false;
+            }, 500);
         });
+    }
+    
+    // Try to fetch live content in background (for future use)
+    fetchLiveContent().then(posts => {
+        if (posts.length > 0) {
+            console.log('Live content fetched successfully');
+            // Could be used for "Refresh News" button in future
+        }
+    }).catch(error => {
+        console.log('Live content fetch failed:', error);
+    });
     }, 1500);
 }
 
@@ -502,6 +518,8 @@ function displayCuratedPosts() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
+    console.log('displayCuratedPosts called - generating fresh content');
+    
     const allPosts = [
         {
             title: "How Local Tutors are Changing Education in Maharashtra",
@@ -553,8 +571,14 @@ function displayCuratedPosts() {
         }
     ];
     
-    // Shuffle the posts and select 3 random ones
-    const shuffledPosts = allPosts.sort(() => Math.random() - 0.5).slice(0, 3);
+    // Force fresh randomization with timestamp
+    const timestamp = Date.now();
+    const shuffledPosts = allPosts
+        .map((post, index) => ({ ...post, originalIndex: index }))
+        .sort(() => (Math.random() + timestamp % 1000) / 1000 - 0.5)
+        .slice(0, 3);
+    
+    console.log('Selected posts:', shuffledPosts.map(p => p.title));
     
     // Add some random variation to dates
     const postsWithVariation = shuffledPosts.map(post => ({
