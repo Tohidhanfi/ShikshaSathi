@@ -7,238 +7,568 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .admin-dashboard {
-            padding: 20px;
-            background: #f8fafc;
+        :root {
+            --grafana-bg: #0b0c0e;
+            --grafana-panel: #1e1e1e;
+            --grafana-border: #2d2d2d;
+            --grafana-text: #d8d9da;
+            --grafana-text-muted: #8e8e8e;
+            --grafana-accent: #f85a40;
+            --grafana-success: #73bf69;
+            --grafana-warning: #f2c96d;
+            --grafana-info: #5794f2;
+            --grafana-danger: #e02f44;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--grafana-bg);
+            color: var(--grafana-text);
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
             min-height: 100vh;
         }
-        
-        .admin-header {
-            background: white;
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--grafana-panel);
+            border-right: 1px solid var(--grafana-border);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
             margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--grafana-border);
         }
-        
-        .admin-header h1 {
-            color: #1e293b;
-            margin-bottom: 10px;
+
+        .sidebar-header h2 {
+            color: var(--grafana-accent);
+            font-size: 1.5rem;
+            margin-left: 10px;
         }
-        
-        .admin-header p {
-            color: #64748b;
+
+        .nav-menu {
+            list-style: none;
         }
-        
-        .stats-grid {
+
+        .nav-menu li {
+            margin-bottom: 5px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--grafana-text);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: var(--grafana-accent);
+            color: white;
+        }
+
+        .nav-menu i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--grafana-panel);
+            border-radius: 8px;
+            border: 1px solid var(--grafana-border);
+        }
+
+        .page-title h1 {
+            color: var(--grafana-text);
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .page-title p {
+            color: var(--grafana-text-muted);
+            margin-top: 5px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--grafana-accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e04a3a;
+        }
+
+        .btn-secondary {
+            background: var(--grafana-panel);
+            color: var(--grafana-text);
+            border: 1px solid var(--grafana-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--grafana-border);
+        }
+
+        .btn-danger {
+            background: var(--grafana-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c02a3a;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-        
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
+
+        .panel {
+            background: var(--grafana-panel);
+            border: 1px solid var(--grafana-border);
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
         }
-        
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--grafana-border);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--grafana-text);
+        }
+
+        .panel-icon {
+            color: var(--grafana-accent);
+            font-size: 1.2rem;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+
         .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #2563eb;
             margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--grafana-accent), var(--grafana-info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
+
         .stat-label {
-            color: #64748b;
+            color: var(--grafana-text-muted);
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
         }
-        
-        .stat-icon {
-            font-size: 2rem;
-            color: #2563eb;
-            margin-bottom: 15px;
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
         }
-        
-        .recent-activity {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        .trend-up {
+            color: var(--grafana-success);
         }
-        
+
+        .trend-down {
+            color: var(--grafana-danger);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
         .activity-item {
             display: flex;
             align-items: center;
             padding: 15px 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--grafana-border);
         }
-        
+
         .activity-item:last-child {
             border-bottom: none;
         }
-        
+
         .activity-icon {
             width: 40px;
             height: 40px;
-            background: #dbeafe;
+            background: var(--grafana-accent);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 15px;
-            color: #2563eb;
-        }
-        
-        .activity-details h4 {
-            margin: 0 0 5px 0;
-            color: #1e293b;
-        }
-        
-        .activity-details p {
-            margin: 0;
-            color: #64748b;
+            color: white;
             font-size: 0.9rem;
         }
-        
-        .back-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
+
+        .activity-details h4 {
+            margin: 0 0 5px 0;
+            color: var(--grafana-text);
+            font-size: 0.95rem;
+        }
+
+        .activity-details p {
+            margin: 0;
+            color: var(--grafana-text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 20px;
         }
-        
-        .back-btn:hover {
-            background: #1d4ed8;
+
+        .metric-item {
+            background: var(--grafana-panel);
+            border: 1px solid var(--grafana-border);
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
         }
-        
-        .export-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            margin-left: 10px;
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--grafana-text);
+            margin-bottom: 5px;
         }
-        
-        .export-btn:hover {
-            background: #059669;
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--grafana-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
-        .hidden {
-            display: none;
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
         }
-        
+
         @media (max-width: 768px) {
-            .stats-grid {
+            .dashboard-container {
                 grid-template-columns: 1fr;
             }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--grafana-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--grafana-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--grafana-accent);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--grafana-border);
+            border-radius: 50%;
+            border-top-color: var(--grafana-accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: var(--grafana-success);
+        }
+
+        .status-warning {
+            background: var(--grafana-warning);
+        }
+
+        .status-offline {
+            background: var(--grafana-danger);
         }
     </style>
 </head>
 <body>
-    <div class="admin-dashboard">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <button class="back-btn" onclick="window.location.href='/'">
-                <i class="fas fa-arrow-left"></i> Back to Website
-            </button>
-            <button class="export-btn" onclick="logout()" style="background: #dc2626;">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-chart-line" style="color: var(--grafana-accent); font-size: 1.5rem;"></i>
+                <h2>ShikshaSathi</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Visitors</a></li>
+                <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> Tutors</a></li>
+                <li><a href="#"><i class="fas fa-school"></i> Schools</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
         </div>
-        
-        <div class="admin-header">
-            <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
-            <p>Website Analytics & Visitor Statistics</p>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1>Dashboard Overview</h1>
+                    <p>Real-time analytics and insights for ShikshaSathi</p>
                 </div>
-                <div class="stat-number" id="totalVisitors">0</div>
-                <div class="stat-label">Total Visitors</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-eye"></i>
+                <div class="top-actions">
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="btn btn-danger" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
                 </div>
-                <div class="stat-number" id="pageViews">0</div>
-                <div class="stat-label">Page Views</div>
             </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-day"></i>
+
+            <!-- Key Metrics -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-chart-pie panel-icon"></i> Key Performance Indicators
+                    </div>
+                    <div class="status-indicator status-online"></div>
                 </div>
-                <div class="stat-number" id="todayVisitors">0</div>
-                <div class="stat-label">Today's Visitors</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value" id="totalVisitors">0</div>
+                        <div class="metric-label">Total Visitors</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="pageViews">0</div>
+                        <div class="metric-label">Page Views</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="todayVisitors">0</div>
+                        <div class="metric-label">Today's Visitors</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="avgTime">0m</div>
+                        <div class="metric-label">Avg. Time</div>
+                    </div>
                 </div>
-                <div class="stat-number" id="avgTime">0m</div>
-                <div class="stat-label">Avg. Time on Site</div>
             </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-chalkboard-teacher"></i>
+
+            <!-- Registration Stats -->
+            <div class="dashboard-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-chalkboard-teacher panel-icon"></i> Tutor Registrations
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="tutorRegistrations">0</div>
+                        <div class="stat-label">Total Registrations</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +12% this week
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-number" id="tutorRegistrations">0</div>
-                <div class="stat-label">Tutor Registrations</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-school"></i>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-school panel-icon"></i> School Partnerships
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="schoolRegistrations">0</div>
+                        <div class="stat-label">Partner Schools</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +8% this month
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-number" id="schoolRegistrations">0</div>
-                <div class="stat-label">School Partnerships</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-check"></i>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-calendar-check panel-icon"></i> Today's Activity
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayRegistrations">0</div>
+                        <div class="stat-label">New Registrations</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +5 today
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-number" id="todayRegistrations">0</div>
-                <div class="stat-label">Today's Registrations</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-quote-left"></i>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-quote-left panel-icon"></i> Testimonials Views
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="testimonialsViews">0</div>
+                        <div class="stat-label">Page Views</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +15% this week
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-number" id="testimonialsViews">0</div>
-                <div class="stat-label">Testimonials Views</div>
             </div>
-        </div>
-        
-        <div class="recent-activity">
-            <h3><i class="fas fa-history"></i> Recent Activity</h3>
-            <div id="activityList">
-                <!-- Activity items will be populated here -->
+
+            <!-- Charts Row -->
+            <div class="dashboard-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-chart-line panel-icon"></i> Visitor Trends
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="visitorChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-chart-pie panel-icon"></i> Registration Distribution
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="registrationChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div style="margin-top: 20px;">
-            <button class="export-btn" onclick="exportData()">
-                <i class="fas fa-download"></i> Export Data
-            </button>
+
+            <!-- Activity Feed -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-history panel-icon"></i> Recent Activity
+                    </div>
+                </div>
+                <div class="activity-feed" id="activityList">
+                    <!-- Activity items will be populated here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -247,6 +577,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
             loadAnalytics();
+            initializeCharts();
         });
         
         // Authentication check
@@ -276,6 +607,12 @@
         function logout() {
             localStorage.removeItem('shikshaSathiAdminLoginTime');
             window.location.href = 'admin';
+        }
+
+        // Refresh data
+        function refreshData() {
+            loadAnalytics();
+            updateCharts();
         }
         
         // Load analytics data
@@ -316,6 +653,126 @@
             
             // Show recent activity
             displayRecentActivity(analytics.visitHistory, analytics.registrationHistory);
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            createVisitorChart();
+            createRegistrationChart();
+        }
+
+        // Create visitor trend chart
+        function createVisitorChart() {
+            const ctx = document.getElementById('visitorChart').getContext('2d');
+            const analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+            
+            // Generate sample data for the last 7 days
+            const labels = [];
+            const data = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                data.push(Math.floor(Math.random() * 50) + 10); // Sample data
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Visitors',
+                        data: data,
+                        borderColor: '#f85a40',
+                        backgroundColor: 'rgba(248, 90, 64, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8e8e8e'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8e8e8e'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create registration distribution chart
+        function createRegistrationChart() {
+            const ctx = document.getElementById('registrationChart').getContext('2d');
+            const analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tutors', 'Schools', 'Collaborations', 'Contacts'],
+                    datasets: [{
+                        data: [
+                            analytics.tutorRegistrations || 0,
+                            analytics.schoolRegistrations || 0,
+                            analytics.collaborationRequests || 0,
+                            analytics.contactSubmissions || 0
+                        ],
+                        backgroundColor: [
+                            '#f85a40',
+                            '#5794f2',
+                            '#73bf69',
+                            '#f2c96d'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#8e8e8e',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts with new data
+        function updateCharts() {
+            // Destroy existing charts and recreate
+            if (window.visitorChart) {
+                window.visitorChart.destroy();
+            }
+            if (window.registrationChart) {
+                window.registrationChart.destroy();
+            }
+            createVisitorChart();
+            createRegistrationChart();
         }
         
         // Display recent activity
@@ -373,9 +830,9 @@
                 });
             }
             
-            // Sort by timestamp (newest first) and take last 15
+            // Sort by timestamp (newest first) and take last 10
             allActivities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            const recentActivities = allActivities.slice(0, 15);
+            const recentActivities = allActivities.slice(0, 10);
             
             recentActivities.forEach(activity => {
                 const activityItem = document.createElement('div');
@@ -408,7 +865,7 @@
             });
             
             if (recentActivities.length === 0) {
-                activityList.innerHTML = '<p style="color: #64748b; text-align: center;">No recent activity</p>';
+                activityList.innerHTML = '<p style="color: var(--grafana-text-muted); text-align: center; padding: 20px;">No recent activity</p>';
             }
         }
         
@@ -423,12 +880,6 @@
             link.download = 'shikshaSathi-analytics.json';
             link.click();
         }
-        
-        // Check authentication and load data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            loadAnalytics();
-        });
     </script>
 </body>
 </html> 
