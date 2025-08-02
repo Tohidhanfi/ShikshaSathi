@@ -399,40 +399,104 @@ function loadBlogPosts() {
     
     // Simulate loading delay for better UX
     setTimeout(() => {
-            // Always show dynamic curated content for fresh content on each refresh
-    displayCuratedPosts();
-    
-    // Add refresh button functionality
-    const refreshButton = document.querySelector('.blog-refresh');
-    if (refreshButton) {
-        // Remove any existing event listeners to prevent duplicates
-        const newRefreshButton = refreshButton.cloneNode(true);
-        refreshButton.parentNode.replaceChild(newRefreshButton, refreshButton);
+        // Try to load live content first, fallback to curated
+        loadLiveBlogContent();
         
-        newRefreshButton.addEventListener('click', function() {
-            console.log('Refresh button clicked - loading fresh content');
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-            this.disabled = true;
+        // Add refresh button functionality
+        const refreshButton = document.querySelector('.blog-refresh');
+        if (refreshButton) {
+            // Remove any existing event listeners to prevent duplicates
+            const newRefreshButton = refreshButton.cloneNode(true);
+            refreshButton.parentNode.replaceChild(newRefreshButton, refreshButton);
             
-            // Force immediate refresh with new randomization
-            setTimeout(() => {
-                displayCuratedPosts();
-                this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
-                this.disabled = false;
-            }, 300);
-        });
-    }
+            newRefreshButton.addEventListener('click', function() {
+                console.log('Refresh button clicked - loading fresh content');
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+                this.disabled = true;
+                
+                // Force immediate refresh with new content
+                setTimeout(() => {
+                    loadLiveBlogContent();
+                    this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
+                    this.disabled = false;
+                }, 300);
+            });
+        }
+    }, 1500);
+}
+
+// Load live blog content with better API
+function loadLiveBlogContent() {
+    const blogGrid = document.getElementById('blogGrid');
+    if (!blogGrid) return;
     
-    // Try to fetch live content in background (for future use)
-    fetchLiveContent().then(posts => {
-        if (posts.length > 0) {
-            console.log('Live content fetched successfully');
-            // Could be used for "Refresh News" button in future
+    // Try to fetch from reliable education RSS feeds
+    const educationFeeds = [
+        'https://api.allorigins.win/raw?url=https://feeds.feedburner.com/edutopia',
+        'https://api.allorigins.win/raw?url=https://www.tes.com/rss',
+        'https://api.allorigins.win/raw?url=https://www.edweek.org/rss',
+        'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss'
+    ];
+    
+    // Try to fetch live content
+    Promise.any(educationFeeds.map(url => 
+        fetch(url).then(response => response.text())
+    )).then(xmlText => {
+        try {
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(xmlText, 'text/xml');
+            const items = xml.querySelectorAll('item');
+            
+            if (items.length > 0) {
+                const livePosts = Array.from(items).slice(0, 3).map(item => {
+                    const title = item.querySelector('title')?.textContent || 'Education News';
+                    const description = item.querySelector('description')?.textContent || 'Latest education updates.';
+                    const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString();
+                    const link = item.querySelector('link')?.textContent || '';
+                    
+                    // Map to our categories
+                    const category = mapToCategory(title, description);
+                    
+                    return {
+                        title: title,
+                        description: description,
+                        date: new Date(pubDate),
+                        category: category,
+                        link: link
+                    };
+                });
+                
+                displayBlogPosts(livePosts);
+                console.log('Live content loaded successfully');
+            } else {
+                displayCuratedPosts();
+            }
+        } catch (error) {
+            console.log('XML parsing error:', error);
+            displayCuratedPosts();
         }
     }).catch(error => {
         console.log('Live content fetch failed:', error);
+        displayCuratedPosts();
     });
-    }, 1500);
+}
+
+// Map live content to our categories
+function mapToCategory(title, description) {
+    const text = (title + ' ' + description).toLowerCase();
+    
+    if (text.includes('community') || text.includes('impact') || text.includes('local')) return 'Community Impact';
+    if (text.includes('teaching') || text.includes('classroom') || text.includes('lesson')) return 'Teaching Tips';
+    if (text.includes('career') || text.includes('job') || text.includes('profession')) return 'Career Development';
+    if (text.includes('digital') || text.includes('technology') || text.includes('online')) return 'Digital Education';
+    if (text.includes('success') || text.includes('story') || text.includes('graduate')) return 'Success Stories';
+    if (text.includes('parent') || text.includes('family') || text.includes('collaboration')) return 'Parent Engagement';
+    if (text.includes('innovation') || text.includes('modern') || text.includes('new')) return 'Innovation';
+    if (text.includes('future') || text.includes('trend') || text.includes('next')) return 'Future of Education';
+    
+    // Default categories based on content
+    const categories = ['Community Impact', 'Teaching Tips', 'Career Development', 'Digital Education', 'Success Stories', 'Parent Engagement', 'Innovation', 'Future of Education'];
+    return categories[Math.floor(Math.random() * categories.length)];
 }
 
 // Fetch live content with better error handling
@@ -502,17 +566,21 @@ function displayBlogPosts(posts) {
     if (!blogGrid) return;
     
     if (posts.length === 0) {
-        displayFallbackPosts();
+        displayCuratedPosts();
         return;
     }
     
     blogGrid.innerHTML = posts.map(post => `
         <div class="blog-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="background: ${getCategoryColor(post.category)}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${post.category || 'Education News'}</span>
+                <span style="font-size: 0.8rem; color: #6b7280;">${formatDate(post.date || post.pubDate)}</span>
+            </div>
             <h3>${post.title || 'Education News'}</h3>
             <p>${post.description || post.content || 'Latest updates from the education sector.'}</p>
-            <div style="margin-top: 15px; font-size: 0.9rem; color: #6b7280;">
-                <i class="fas fa-calendar"></i> ${formatDate(post.pubDate)}
-                ${post.link ? `<a href="${post.link}" target="_blank" style="color: #2563eb; text-decoration: none; margin-left: 10px;">Read More</a>` : ''}
+            <div style="margin-top: 15px; font-size: 0.9rem; color: #2563eb;">
+                <i class="fas fa-external-link-alt"></i> 
+                ${post.link ? `<a href="${post.link}" target="_blank" style="color: #2563eb; text-decoration: none;">Read Full Article</a>` : 'Featured Article'}
             </div>
         </div>
     `).join('');
