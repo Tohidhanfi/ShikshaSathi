@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Testimonials - ShikshaSathi</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <title>Testimonials - ShikshaSathi</title>
+    <link rel="stylesheet" href="src/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -28,11 +28,41 @@
             margin: 0 auto;
         }
         
+        .testimonials-container {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #1f2937;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2563eb;
+        }
+        
+        .section-title p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
         .testimonials-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            padding: 4rem 0;
+            margin-top: 2rem;
         }
         
         .testimonial-card {
@@ -93,28 +123,55 @@
             color: #fbbf24;
         }
         
+        .coming-soon-section {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .coming-soon-section h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+        
+        .coming-soon-section p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        
+        .coming-soon-icon {
+            font-size: 4rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+        
         .back-button {
             position: fixed;
             top: 2rem;
             left: 2rem;
             background: rgba(255, 255, 255, 0.9);
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #2563eb;
-            text-decoration: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #374151;
+            cursor: pointer;
             transition: all 0.3s ease;
             z-index: 1000;
         }
         
         .back-button:hover {
             background: white;
-            transform: translateY(-2px);
+            transform: scale(1.1);
         }
         
         @media (max-width: 768px) {
@@ -122,52 +179,61 @@
                 font-size: 2rem;
             }
             
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
             .testimonials-grid {
                 grid-template-columns: 1fr;
-                padding: 2rem 0;
             }
             
             .back-button {
                 top: 1rem;
                 left: 1rem;
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
+                width: 40px;
+                height: 40px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Back Button -->
-            <a href="/" class="back-button">
+    <button class="back-button" onclick="window.location.href='index.html'">
         <i class="fas fa-arrow-left"></i>
-        Back to Home
-    </a>
+    </button>
 
-    <!-- Testimonials Hero -->
+    <!-- Hero Section -->
     <section class="testimonials-hero">
         <div class="container">
-            <h1>Student Testimonials</h1>
-            <p>Hear from our students about their transformative learning journey with ShikshaSathi tutors</p>
+            <h1>What People Say About Us</h1>
+            <p>Discover the impact ShikshaSathi has made on educators, school leaders, and the education community</p>
         </div>
     </section>
 
-    <!-- Testimonials Grid -->
-    <section class="testimonials-section">
-        <div class="container">
+    <!-- Testimonials Container -->
+    <div class="testimonials-container">
+        
+        <!-- Teachers Section -->
+        <div class="testimonials-section">
+            <div class="section-title">
+                <h2><i class="fas fa-chalkboard-teacher"></i> Teachers</h2>
+                <p>Hear from our dedicated teachers about their experience with ShikshaSathi</p>
+            </div>
+            
             <div class="testimonials-grid">
-                <!-- Testimonial 1 -->
+                <!-- Teacher Testimonial 1 -->
                 <div class="testimonial-card">
                     <div class="testimonial-header">
                         <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
+                            <i class="fas fa-chalkboard-teacher"></i>
                         </div>
                         <div class="testimonial-info">
                             <h3>Priya Sharma</h3>
-                            <p>Class 10th Student, CBSE</p>
+                            <p>Mathematics Teacher, 5+ years experience</p>
                         </div>
                     </div>
                     <div class="testimonial-content">
-                        "My ShikshaSathi tutor helped me improve my Maths from 65% to 92% in just 3 months! The personalized attention and regular practice tests made all the difference. I'm now confident about my board exams."
+                        "ShikshaSathi has transformed my teaching career. The platform connects me with students who genuinely want to learn, and the support system is excellent. I've seen remarkable improvement in my students' performance."
                     </div>
                     <div class="testimonial-rating">
                         <i class="fas fa-star"></i>
@@ -178,19 +244,19 @@
                     </div>
                 </div>
 
-                <!-- Testimonial 2 -->
+                <!-- Teacher Testimonial 2 -->
                 <div class="testimonial-card">
                     <div class="testimonial-header">
                         <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
+                            <i class="fas fa-chalkboard-teacher"></i>
                         </div>
                         <div class="testimonial-info">
-                            <h3>Rahul Patel</h3>
-                            <p>Class 8th Student, State Board</p>
+                            <h3>Rajesh Kumar</h3>
+                            <p>Science Teacher, 8+ years experience</p>
                         </div>
                     </div>
                     <div class="testimonial-content">
-                        "I was struggling with Science concepts, but my tutor made everything so simple and interesting. Now I love Science and my grades have improved significantly. The home-based learning is so convenient!"
+                        "The flexibility of working with ShikshaSathi is amazing. I can choose my schedule and subjects. The students are well-screened and motivated. It's a win-win for both teachers and students."
                     </div>
                     <div class="testimonial-rating">
                         <i class="fas fa-star"></i>
@@ -201,134 +267,19 @@
                     </div>
                 </div>
 
-                <!-- Testimonial 3 -->
+                <!-- Teacher Testimonial 3 -->
                 <div class="testimonial-card">
                     <div class="testimonial-header">
                         <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
+                            <i class="fas fa-chalkboard-teacher"></i>
                         </div>
                         <div class="testimonial-info">
-                            <h3>Anjali Deshmukh</h3>
-                            <p>Class 12th Student, CBSE</p>
+                            <h3>Meera Patel</h3>
+                            <p>English Teacher, 6+ years experience</p>
                         </div>
                     </div>
                     <div class="testimonial-content">
-                        "My Physics tutor from ShikshaSathi is amazing! She explains complex concepts in such a simple way. My confidence has grown tremendously, and I'm now aiming for engineering. Thank you for the excellent guidance!"
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- Testimonial 4 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Vikram Singh</h3>
-                            <p>Class 6th Student, ICSE</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "I was very weak in English, but my tutor helped me build strong foundations. Now I can read and write English confidently. The regular assessments and feedback have been very helpful."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- Testimonial 5 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Meera Joshi</h3>
-                            <p>Class 9th Student, CBSE</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "The Chemistry tutor assigned to me is so knowledgeable and patient. She makes learning fun with practical examples. My understanding of the subject has improved dramatically, and I'm scoring much better now."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- Testimonial 6 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Aditya Kumar</h3>
-                            <p>Class 7th Student, State Board</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "My Hindi tutor is excellent! She not only teaches the language but also helps me understand our culture better. My Hindi has improved a lot, and I'm now participating in school competitions."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- Testimonial 7 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Zara Khan</h3>
-                            <p>Class 11th Student, CBSE</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "My Computer Science tutor is fantastic! He explains programming concepts so clearly. I'm now confident about pursuing Computer Science in college. The practical approach to learning is exactly what I needed."
-                    </div>
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-
-                <!-- Testimonial 8 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-photo">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="testimonial-info">
-                            <h3>Riya Verma</h3>
-                            <p>Class 5th Student, ICSE</p>
-                        </div>
-                    </div>
-                    <div class="testimonial-content">
-                        "I love my Marathi tutor! She makes learning our state language so much fun with stories and games. My Marathi has improved a lot, and I'm proud to speak it fluently now."
+                        "I love how ShikshaSathi focuses on quality education. The platform provides excellent resources and training. My students have shown tremendous progress, and I feel valued as an educator."
                     </div>
                     <div class="testimonial-rating">
                         <i class="fas fa-star"></i>
@@ -340,7 +291,103 @@
                 </div>
             </div>
         </div>
-    </section>
+
+        <!-- School Heads Section -->
+        <div class="testimonials-section">
+            <div class="section-title">
+                <h2><i class="fas fa-user-tie"></i> School Heads</h2>
+                <p>School principals and administrators share their experience partnering with ShikshaSathi</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <!-- School Head Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Dr. Sunita Verma</h3>
+                            <p>Principal, Delhi Public School</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "ShikshaSathi has been instrumental in helping us find qualified teachers quickly. Their screening process is thorough, and the teachers they provide are well-trained and professional."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- School Head Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Mr. Amit Singh</h3>
+                            <p>Director, St. Mary's Convent School</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "The quality of teachers from ShikshaSathi is exceptional. They understand our school's requirements and provide teachers who fit our culture perfectly. Highly recommended!"
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- School Head Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-photo">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h3>Mrs. Lakshmi Iyer</h3>
+                            <p>Principal, Kendriya Vidyalaya</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        "ShikshaSathi's commitment to educational excellence is commendable. They provide teachers who are not just qualified but also passionate about teaching. Our students benefit greatly."
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coming Soon Section -->
+        <div class="testimonials-section">
+            <div class="section-title">
+                <h2><i class="fas fa-clock"></i> Coming Soon</h2>
+                <p>More testimonials from our valued partners are coming soon</p>
+            </div>
+            
+            <div class="coming-soon-section">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <h3>More Testimonials Coming Soon</h3>
+                <p>We're gathering more amazing stories from our community. Stay tuned for testimonials from additional partners and stakeholders who are making a difference in education.</p>
+                <p><strong>Coming Soon: [Category to be announced]</strong></p>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -386,6 +433,6 @@
         </a>
     </div>
 
-    <script src="../js/script.js"></script>
+    <script src="src/js/script.js"></script>
 </body>
 </html> 
