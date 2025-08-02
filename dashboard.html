@@ -583,21 +583,8 @@
         // Authentication check
         function checkAuth() {
             const adminSession = localStorage.getItem('shikshaSathiAdminSession');
-            const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
             
-            if (!adminSession || !loginTime) {
-                window.location.href = 'admin';
-                return;
-            }
-            
-            // Check if session is expired (24 hours)
-            const now = Date.now();
-            const sessionAge = now - parseInt(loginTime);
-            const sessionValid = sessionAge < 24 * 60 * 60 * 1000; // 24 hours
-            
-            if (!sessionValid) {
-                localStorage.removeItem('shikshaSathiAdminSession');
-                localStorage.removeItem('shikshaSathiAdminLoginTime');
+            if (!adminSession) {
                 window.location.href = 'admin';
                 return;
             }
@@ -605,7 +592,7 @@
         
         // Logout function
         function logout() {
-            localStorage.removeItem('shikshaSathiAdminLoginTime');
+            localStorage.removeItem('shikshaSathiAdminSession');
             window.location.href = 'admin';
         }
 
