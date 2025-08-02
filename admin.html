@@ -190,7 +190,7 @@
             </button>
         </form>
         
-        <a href="../../index.html" class="back-link">
+        <a href="index.html" class="back-link">
             <i class="fas fa-arrow-left"></i> Back to Website
         </a>
     </div>
@@ -240,7 +240,7 @@
                     localStorage.setItem('shikshaSathiAdminLoginTime', Date.now().toString());
                     
                     // Redirect to dashboard
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.href = 'dashboard.html';
                 } else {
                     // Show error message
                     errorMessage.style.display = 'block';
@@ -265,7 +265,7 @@
                 const sessionValid = sessionAge < 24 * 60 * 60 * 1000; // 24 hours
                 
                 if (sessionValid) {
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.href = 'dashboard.html';
                 } else {
                     // Clear expired session
                     localStorage.removeItem('shikshaSathiAdminSession');

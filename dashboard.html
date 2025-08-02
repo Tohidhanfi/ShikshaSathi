@@ -149,7 +149,7 @@
 <body>
     <div class="admin-dashboard">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <button class="back-btn" onclick="window.location.href='../../index.html'">
+            <button class="back-btn" onclick="window.location.href='index.html'">
                 <i class="fas fa-arrow-left"></i> Back to Website
             </button>
             <button class="export-btn" onclick="logout()" style="background: #dc2626;">
@@ -223,7 +223,7 @@
             const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
             
             if (!adminSession || !loginTime) {
-                window.location.href = 'admin-login.html';
+                window.location.href = 'admin.html';
                 return;
             }
             
@@ -235,7 +235,7 @@
             if (!sessionValid) {
                 localStorage.removeItem('shikshaSathiAdminSession');
                 localStorage.removeItem('shikshaSathiAdminLoginTime');
-                window.location.href = 'admin-login.html';
+                window.location.href = 'admin.html';
                 return;
             }
         }
@@ -243,7 +243,7 @@
         // Logout function
         function logout() {
             localStorage.removeItem('shikshaSathiAdminLoginTime');
-            window.location.href = 'admin-login.html';
+            window.location.href = 'admin.html';
         }
         
         // Load analytics data
