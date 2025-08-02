@@ -405,16 +405,21 @@ function loadBlogPosts() {
     // Add refresh button functionality
     const refreshButton = document.querySelector('.blog-refresh');
     if (refreshButton) {
-        refreshButton.addEventListener('click', function() {
+        // Remove any existing event listeners to prevent duplicates
+        const newRefreshButton = refreshButton.cloneNode(true);
+        refreshButton.parentNode.replaceChild(newRefreshButton, refreshButton);
+        
+        newRefreshButton.addEventListener('click', function() {
             console.log('Refresh button clicked - loading fresh content');
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
             this.disabled = true;
             
+            // Force immediate refresh with new randomization
             setTimeout(() => {
                 displayCuratedPosts();
                 this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh News';
                 this.disabled = false;
-            }, 500);
+            }, 300);
         });
     }
     
@@ -513,6 +518,12 @@ function displayBlogPosts(posts) {
     `).join('');
 }
 
+// Manual refresh function for testing
+function forceRefreshBlog() {
+    console.log('Force refreshing blog content...');
+    displayCuratedPosts();
+}
+
 // Display curated posts with dynamic content
 function displayCuratedPosts() {
     const blogGrid = document.getElementById('blogGrid');
@@ -571,11 +582,17 @@ function displayCuratedPosts() {
         }
     ];
     
-    // Force fresh randomization with timestamp
+    // Force fresh randomization with multiple random factors
     const timestamp = Date.now();
+    const randomSeed = Math.random() * timestamp;
+    
     const shuffledPosts = allPosts
-        .map((post, index) => ({ ...post, originalIndex: index }))
-        .sort(() => (Math.random() + timestamp % 1000) / 1000 - 0.5)
+        .map((post, index) => ({ 
+            ...post, 
+            originalIndex: index,
+            randomValue: Math.random() * randomSeed + index
+        }))
+        .sort((a, b) => a.randomValue - b.randomValue)
         .slice(0, 3);
     
     console.log('Selected posts:', shuffledPosts.map(p => p.title));
