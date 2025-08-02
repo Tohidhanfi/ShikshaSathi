@@ -399,16 +399,17 @@ function loadBlogPosts() {
     
     // Simulate loading delay for better UX
     setTimeout(() => {
-        // Try to fetch live content, fallback to curated content
+        // Always show dynamic curated content for fresh content on each refresh
+        displayCuratedPosts();
+        
+        // Try to fetch live content in background (for future use)
         fetchLiveContent().then(posts => {
             if (posts.length > 0) {
-                displayBlogPosts(posts);
-            } else {
-                displayCuratedPosts();
+                console.log('Live content fetched successfully');
+                // Could be used for "Refresh News" button in future
             }
         }).catch(error => {
-            console.error('Error loading blog posts:', error);
-            displayCuratedPosts();
+            console.log('Live content fetch failed:', error);
         });
     }, 1500);
 }
