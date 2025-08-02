@@ -4,17 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Not Found - ShikshaSathi</title>
+    <script src="src/js/script.js"></script>
     <script>
-        // Redirect to clean URLs
+        // 404 page specific redirects
         const path = window.location.pathname;
         
-        // Remove .html extension if present
-        if (path.endsWith('.html')) {
-            const cleanPath = path.replace('.html', '');
-            window.location.href = cleanPath;
-        }
-        
-        // Handle specific redirects
+        // Handle specific redirects for old URLs
         const redirects = {
             '/index.html': '/',
             '/admin-login.html': '/admin.html',
@@ -24,10 +19,12 @@
         
         if (redirects[path]) {
             window.location.href = redirects[path];
-        }
-        
-        // If no redirect found, go to homepage
-        if (path !== '/' && !path.includes('.')) {
+        } else if (path.endsWith('.html')) {
+            // Remove .html extension for any other .html files
+            const cleanPath = path.replace('.html', '');
+            window.location.href = cleanPath;
+        } else if (path !== '/' && !path.includes('.')) {
+            // If no redirect found, go to homepage
             window.location.href = '/';
         }
     </script>

@@ -347,6 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.add('active');
             }
         });
+        
+        // Remove .html from URL if present for clean URLs
+        if (window.location.pathname.endsWith('.html')) {
+            const cleanPath = window.location.pathname.replace('.html', '');
+            window.history.replaceState({}, document.title, cleanPath);
+        }
     });
 });
 
