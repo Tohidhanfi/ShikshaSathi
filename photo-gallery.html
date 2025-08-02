@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery - ShikshaSathi</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gallery-page {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .gallery-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .gallery-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .gallery-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gallery-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-image img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+        }
+        
+        .gallery-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .gallery-placeholder p {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        .gallery-info {
+            padding: 20px;
+        }
+        
+        .gallery-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .gallery-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .gallery-date {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .upload-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .upload-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .upload-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .gallery-header h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery-filters {
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </button>
+
+    <!-- Gallery Page -->
+    <section class="gallery-page">
+        <div class="gallery-container">
+            <div class="gallery-header">
+                <h1>Photo Gallery</h1>
+                <p>Capturing moments from our training programs, community events, and success stories</p>
+            </div>
+            
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h3>Share Your Photos</h3>
+                <p>Have photos from our training sessions or events? Share them with us!</p>
+                <button class="upload-btn" onclick="openUploadModal()">
+                    <i class="fas fa-upload"></i> Upload Photos
+                </button>
+            </div>
+            
+            <!-- Gallery Filters -->
+            <div class="gallery-filters">
+                <button class="filter-btn active" onclick="filterGallery('all')">All Photos</button>
+                <button class="filter-btn" onclick="filterGallery('training')">Training Programs</button>
+                <button class="filter-btn" onclick="filterGallery('events')">Events</button>
+                <button class="filter-btn" onclick="filterGallery('community')">Community Outreach</button>
+                <button class="filter-btn" onclick="filterGallery('success')">Success Stories</button>
+            </div>
+            
+            <!-- Gallery Grid -->
+            <div class="gallery-grid">
+                <!-- Training Programs -->
+                <div class="gallery-item" data-category="training">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <p>Training Session</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Pedagogy Training</h3>
+                        <p>Our comprehensive training program covering teaching methodologies and child psychology.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="training">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-users"></i>
+                            <p>Group Training</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Communication Skills Workshop</h3>
+                        <p>Interactive sessions to enhance communication and presentation skills.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <!-- Events -->
+                <div class="gallery-item" data-category="events">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-award"></i>
+                            <p>Certification Ceremony</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Graduation Ceremony</h3>
+                        <p>Celebrating the successful completion of our training programs.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="events">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-handshake"></i>
+                            <p>Partnership Events</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>School Partnership Meet</h3>
+                        <p>Building connections with educational institutions across Maharashtra.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <!-- Community Outreach -->
+                <div class="gallery-item" data-category="community">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-hands-helping"></i>
+                            <p>Community Service</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Rural Education Initiative</h3>
+                        <p>Bringing quality education to remote areas of Maharashtra.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="community">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-graduation-cap"></i>
+                            <p>Student Support</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Student Mentorship Program</h3>
+                        <p>One-on-one guidance and support for students in need.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <!-- Success Stories -->
+                <div class="gallery-item" data-category="success">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-star"></i>
+                            <p>Success Stories</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Placement Success</h3>
+                        <p>Our trained tutors securing positions in reputed schools.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="success">
+                    <div class="gallery-image">
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-trophy"></i>
+                            <p>Achievements</p>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Student Achievements</h3>
+                        <p>Students achieving academic excellence with our support.</p>
+                        <div class="gallery-date">Coming Soon</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Upload Photos</h2>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="photoTitle">Photo Title *</label>
+                    <input type="text" id="photoTitle" name="photoTitle" placeholder="Enter photo title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photoCategory">Category *</label>
+                    <select id="photoCategory" name="photoCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="training">Training Programs</option>
+                        <option value="events">Events</option>
+                        <option value="community">Community Outreach</option>
+                        <option value="success">Success Stories</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photoDescription">Description</label>
+                    <textarea id="photoDescription" name="photoDescription" placeholder="Describe the photo and event" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photoFile">Upload Photo *</label>
+                    <input type="file" id="photoFile" name="photoFile" accept="image/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photographerName">Photographer Name</label>
+                    <input type="text" id="photographerName" name="photographerName" placeholder="Enter photographer name">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Upload Photo</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="src/js/script.js"></script>
+    <script>
+        // Gallery filtering functionality
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter items
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Upload modal functionality
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'block';
+        }
+        
+        // Close modal when clicking on X
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeButtons = document.querySelectorAll('.close');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Handle form submission
+            document.getElementById('uploadForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for sharing your photos! We will review and add them to our gallery soon.');
+                document.getElementById('uploadModal').style.display = 'none';
+                this.reset();
+            });
+        });
+    </script>
+</body>
+</html> 
