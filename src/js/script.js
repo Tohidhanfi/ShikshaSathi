@@ -1,3 +1,6 @@
+// Global variables to prevent flickering
+let blogLoaded = false;
+
 // Mobile Navigation Toggle
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
@@ -370,7 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Load live blog posts from RSS feeds and news APIs
 function loadBlogPosts() {
     const blogGrid = document.getElementById('blogGrid');
-    if (!blogGrid) return;
+    if (!blogGrid || blogLoaded) return; // Only load once
+    
+    blogLoaded = true; // Mark as loaded
     
     // Show loading state
     blogGrid.innerHTML = `
@@ -425,12 +430,12 @@ function loadBlogPosts() {
     }, 1500);
 }
 
-// Load live blog content with better API
+// Load live blog content with better API - only education topics
 function loadLiveBlogContent() {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    // Multiple reliable education RSS feeds with source tracking
+    // Education-specific RSS feeds
     const educationFeeds = [
         {
             url: 'https://api.allorigins.win/raw?url=https://www.edutopia.org/rss.xml',
@@ -441,16 +446,6 @@ function loadLiveBlogContent() {
             url: 'https://api.allorigins.win/raw?url=https://www.tes.com/rss',
             source: 'TES',
             sourceUrl: 'https://www.tes.com'
-        },
-        {
-            url: 'https://api.allorigins.win/raw?url=https://www.edweek.org/rss',
-            source: 'Education Week',
-            sourceUrl: 'https://www.edweek.org'
-        },
-        {
-            url: 'https://api.allorigins.win/raw?url=https://www.chronicle.com/rss',
-            source: 'Chronicle',
-            sourceUrl: 'https://www.chronicle.com'
         },
         {
             url: 'https://api.allorigins.win/raw?url=https://feeds.feedburner.com/education-news',
@@ -474,29 +469,50 @@ function loadLiveBlogContent() {
                 const items = xml.querySelectorAll('item');
                 
                 if (items.length > 0) {
-                    const livePosts = Array.from(items).slice(0, 3).map(item => {
-                        const title = item.querySelector('title')?.textContent || 'Education News';
-                        const description = item.querySelector('description')?.textContent || 'Latest education updates.';
-                        const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString();
-                        const link = item.querySelector('link')?.textContent || '';
-                        
-                        // Map to our categories
-                        const category = mapToCategory(title, description);
-                        
-                        return {
-                            title: title,
-                            description: description,
-                            date: new Date(pubDate),
-                            category: category,
-                            link: link,
-                            source: feed.source,
-                            sourceUrl: feed.sourceUrl
-                        };
-                    });
+                    // Filter for education-related content only
+                    const educationPosts = Array.from(items)
+                        .filter(item => {
+                            const title = item.querySelector('title')?.textContent || '';
+                            const description = item.querySelector('description')?.textContent || '';
+                            const content = (title + ' ' + description).toLowerCase();
+                            
+                            // Only include education-related content
+                            return content.includes('education') || 
+                                   content.includes('teaching') || 
+                                   content.includes('learning') || 
+                                   content.includes('student') || 
+                                   content.includes('teacher') || 
+                                   content.includes('school') || 
+                                   content.includes('classroom') ||
+                                   content.includes('tutor') ||
+                                   content.includes('training');
+                        })
+                        .slice(0, 3)
+                        .map(item => {
+                            const title = item.querySelector('title')?.textContent || 'Education News';
+                            const description = item.querySelector('description')?.textContent || 'Latest education updates.';
+                            const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString();
+                            const link = item.querySelector('link')?.textContent || '';
+                            
+                            // Map to our specific categories
+                            const category = mapToCategory(title, description);
+                            
+                            return {
+                                title: title,
+                                description: description,
+                                date: new Date(pubDate),
+                                category: category,
+                                link: link,
+                                source: feed.source,
+                                sourceUrl: feed.sourceUrl
+                            };
+                        });
                     
-                    displayBlogPosts(livePosts);
-                    console.log(`Live content loaded from: ${feed.source}`);
-                    return; // Success, exit
+                    if (educationPosts.length > 0) {
+                        displayBlogPosts(educationPosts);
+                        console.log(`Education content loaded from: ${feed.source}`);
+                        return; // Success, exit
+                    }
                 }
             } catch (error) {
                 console.log(`Feed ${educationFeeds[i].source} failed:`, error);
@@ -504,8 +520,8 @@ function loadLiveBlogContent() {
             }
         }
         
-        // If all feeds fail, use curated content
-        console.log('All feeds failed, using curated content');
+        // If no education content found, use curated content
+        console.log('No education content found, using curated content');
         displayCuratedPosts();
     };
     
@@ -614,8 +630,8 @@ function displayBlogPosts(posts) {
                     <i class="fas fa-globe"></i> Source: ${post.source || 'Education News'}
                 </div>
                 ${post.link ? `
-                    <a href="${post.link}" target="_blank" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-arrow-right"></i> Read Article
+                    <a href="${post.link}" target="_blank" rel="noopener noreferrer" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
+                        <i class="fas fa-external-link-alt"></i> Read Full Article
                     </a>
                 ` : `
                     <span style="background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
