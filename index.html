@@ -495,7 +495,7 @@
                 
                 <div class="form-group" id="qualificationOtherGroup" style="display: none;">
                     <label for="qualificationOther">Please specify your qualification *</label>
-                    <input type="text" id="qualificationOther" name="qualificationOther" placeholder="Enter your qualification">
+                    <input type="text" id="qualificationOther" name="qualificationOther" placeholder="Enter your qualification" required>
                 </div>
                 
                 <div class="form-group">
@@ -547,7 +547,7 @@
                 
                 <div class="form-group" id="subjectsOtherGroup" style="display: none;">
                     <label for="subjectsOtherText">Please specify other subjects you can teach *</label>
-                    <input type="text" id="subjectsOtherText" name="subjectsOtherText" placeholder="Enter other subjects (e.g., Physics, Chemistry, Biology, etc.)">
+                    <input type="text" id="subjectsOtherText" name="subjectsOtherText" placeholder="Enter other subjects (e.g., Physics, Chemistry, Biology, etc.)" required>
                 </div>
                 
                 <div class="form-group">
@@ -599,7 +599,7 @@
                 
                 <div class="form-group">
                     <label for="contactNumber">10. Contact Number *</label>
-                    <input type="tel" id="contactNumber" name="contactNumber" placeholder="Enter your contact number" required>
+                    <input type="tel" id="contactNumber" name="contactNumber" placeholder="Enter your contact number" required maxlength="10" pattern="[0-9]{10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                 </div>
                 
                 <div class="form-group">
@@ -655,7 +655,7 @@
                 
                 <div class="form-group">
                     <label for="partnerContact">7. Contact Number *</label>
-                    <input type="tel" id="partnerContact" name="partnerContact" placeholder="Enter contact number" required>
+                    <input type="tel" id="partnerContact" name="partnerContact" placeholder="Enter contact number" required maxlength="10" pattern="[0-9]{10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                 </div>
                 
                 <div class="form-group">
@@ -752,7 +752,7 @@
                 
                 <div class="form-group" id="partnerSubjectsOtherGroup" style="display: none;">
                     <label for="partnerSubjectsOtherText">Please specify other subjects *</label>
-                    <input type="text" id="partnerSubjectsOtherText" name="partnerSubjectsOtherText" placeholder="Enter other subjects (e.g., Physics, Chemistry, Biology, etc.)">
+                    <input type="text" id="partnerSubjectsOtherText" name="partnerSubjectsOtherText" placeholder="Enter other subjects (e.g., Physics, Chemistry, Biology, etc.)" required>
                 </div>
                 
                 <div class="form-group">

@@ -427,4 +427,50 @@ function togglePartnerSubjectsOther() {
         partnerSubjectsOtherTextInput.required = false;
         partnerSubjectsOtherTextInput.value = '';
     }
-} 
+}
+
+// Phone number validation
+function validatePhoneNumber(input) {
+    // Remove any non-numeric characters
+    input.value = input.value.replace(/[^0-9]/g, '');
+    
+    // Limit to 10 digits
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+}
+
+// Add form validation when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add phone validation to all phone inputs
+    const phoneInputs = document.querySelectorAll('input[type="tel"]');
+    phoneInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validatePhoneNumber(this);
+        });
+    });
+    
+    // Add validation for checkbox groups to ensure at least one is selected
+    const checkboxGroups = document.querySelectorAll('.checkbox-group');
+    checkboxGroups.forEach(group => {
+        const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+        const form = group.closest('form');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let hasChecked = false;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        hasChecked = true;
+                    }
+                });
+                
+                if (!hasChecked) {
+                    e.preventDefault();
+                    alert('Please select at least one option.');
+                    return false;
+                }
+            });
+        }
+    });
+}); 
