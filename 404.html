@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - ShikshaSathi</title>
+    <script>
+        // Redirect to clean URLs
+        const path = window.location.pathname;
+        
+        // Remove .html extension if present
+        if (path.endsWith('.html')) {
+            const cleanPath = path.replace('.html', '');
+            window.location.href = cleanPath;
+        }
+        
+        // Handle specific redirects
+        const redirects = {
+            '/index.html': '/',
+            '/admin-login.html': '/admin.html',
+            '/admin-dashboard.html': '/dashboard.html',
+            '/photo-gallery.html': '/gallery.html'
+        };
+        
+        if (redirects[path]) {
+            window.location.href = redirects[path];
+        }
+        
+        // If no redirect found, go to homepage
+        if (path !== '/' && !path.includes('.')) {
+            window.location.href = '/';
+        }
+    </script>
+</head>
+<body>
+    <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h1>Page Not Found</h1>
+        <p>The page you're looking for doesn't exist.</p>
+        <a href="/" style="color: #2563eb; text-decoration: none;">Go to Homepage</a>
+    </div>
+</body>
+</html> 
