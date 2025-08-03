@@ -349,44 +349,47 @@ body {
     background: #f9fafb;
 }
 
-.phases-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+.services-flow {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.phase-card {
+.service-item {
     background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    position: relative;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     transition: transform 0.3s ease;
 }
 
-.phase-card:hover {
-    transform: translateY(-5px);
+.service-item:hover {
+    transform: translateY(-2px);
 }
 
-.phase-number {
-    width: 50px;
-    height: 50px;
+.service-icon {
+    width: 40px;
+    height: 40px;
     background: #2563eb;
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 auto 1rem;
+    font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
-.phase-card h3 {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+.service-item h3 {
+    font-size: 1.1rem;
     color: #1f2937;
+    margin: 0;
+    line-height: 1.4;
 }
 
 /* Impact Section */
