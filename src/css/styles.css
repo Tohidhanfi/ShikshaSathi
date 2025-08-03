@@ -350,30 +350,34 @@ body {
 }
 
 .services-flow {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: 2rem 0;
+    padding: 3rem 0;
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.02) 0%, rgba(59, 130, 246, 0.05) 100%);
+    border-radius: 30px;
 }
 
 .service-item {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    padding: 2.5rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 3rem;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    gap: 2rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 2.5rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
     position: relative;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(37, 99, 235, 0.1);
+    margin-bottom: 2rem;
+    border: 2px solid transparent;
     overflow: hidden;
+    transform: perspective(1000px) rotateX(0deg);
 }
 
 .service-item::before {
@@ -382,40 +386,124 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #2563eb, #1d4ed8, #3b82f6);
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.service-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #1d4ed8, #3b82f6, #60a5fa);
     transform: scaleX(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
 }
 
 .service-item:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
-    border-color: rgba(37, 99, 235, 0.2);
+    transform: perspective(1000px) rotateX(2deg) translateY(-12px) scale(1.03);
+    box-shadow: 0 25px 50px rgba(37, 99, 235, 0.2);
+    border-color: rgba(37, 99, 235, 0.3);
 }
 
 .service-item:hover::before {
+    opacity: 1;
+}
+
+.service-item:hover::after {
     transform: scaleX(1);
 }
 
 .service-icon {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #3b82f6 100%);
     color: white;
-    border-radius: 50%;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 2rem;
     flex-shrink: 0;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    transform: rotate(0deg);
+}
+
+.service-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+}
+
+.service-item:hover .service-icon {
+    transform: scale(1.15) rotate(8deg);
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.5);
+    border-radius: 25px;
+}
+
+.service-item:hover .service-icon::before {
+    left: 100%;
+}
+
+.service-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.service-item h3 {
+    font-size: 1.4rem;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.7;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #4b5563 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.center-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    color: #2563eb;
+    font-size: 2rem;
+    opacity: 1;
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+}
+
+.center-arrow i {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #3b82f6 100%);
+    color: white;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
 }
 
-.service-icon::before {
+.center-arrow i::before {
     content: '';
     position: absolute;
     top: 0;
@@ -426,69 +514,21 @@ body {
     transition: left 0.5s ease;
 }
 
-.service-item:hover .service-icon {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.4);
+.center-arrow:hover i {
+    transform: scale(1.3) rotate(180deg);
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6);
 }
 
-.service-item:hover .service-icon::before {
+.center-arrow:hover i::before {
     left: 100%;
 }
 
-.service-content {
-    flex: 1;
-}
-
-.service-item h3 {
-    font-size: 1.3rem;
-    color: #1f2937;
-    margin: 0;
-    line-height: 1.6;
-    font-weight: 700;
-    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.center-arrow {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0.5rem 0;
-    color: #2563eb;
-    font-size: 1.8rem;
-    opacity: 0.9;
-    animation: pulse 2s infinite;
-    position: relative;
-}
-
-.center-arrow i {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-    transition: all 0.3s ease;
-}
-
-.center-arrow:hover i {
-    transform: scale(1.2);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-}
-
-@keyframes pulse {
+@keyframes float {
     0%, 100% {
-        transform: scale(1);
-        opacity: 0.9;
+        transform: translateY(0px);
     }
     50% {
-        transform: scale(1.1);
-        opacity: 1;
+        transform: translateY(-8px);
     }
 }
 
