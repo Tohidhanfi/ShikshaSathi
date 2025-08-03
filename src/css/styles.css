@@ -38,10 +38,11 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     height: 100%;
     flex-wrap: wrap;
+    gap: 2rem;
 }
 
 .nav-logo {
@@ -51,6 +52,7 @@ body {
     max-width: 200px;
     height: 100%;
     padding: 10px 0;
+    margin-right: auto;
 }
 
 .nav-logo img {
