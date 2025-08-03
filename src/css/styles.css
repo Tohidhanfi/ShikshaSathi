@@ -37,6 +37,21 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 70px;
+    flex-wrap: wrap;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    max-width: 200px;
+}
+
+.nav-logo img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 
@@ -51,6 +66,10 @@ body {
     display: flex;
     list-style: none;
     gap: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-menu a {
