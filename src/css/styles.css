@@ -611,36 +611,207 @@ body {
 /* Challenges Section */
 .challenges {
     padding: 5rem 0;
-    background: #f9fafb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
 }
 
-.challenges-table {
-    max-width: 800px;
+.challenges::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.modern-challenges {
+    max-width: 1200px;
     margin: 0 auto;
-}
-
-.challenge-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
-    margin-bottom: 2rem;
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
 }
 
-.challenge h4, .solution h4 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+.challenge-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.challenge h4 {
+.challenge-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #dc2626, #ef4444, #10b981, #059669);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.challenge-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.challenge-card:hover::before {
+    transform: scaleX(1);
+}
+
+.challenge-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.challenge-card:hover .challenge-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 25px rgba(220, 38, 38, 0.4);
+}
+
+.challenge-card:hover .challenge-icon::before {
+    left: 100%;
+}
+
+.challenge-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.challenge-content h3 {
+    font-size: 1.3rem;
     color: #dc2626;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
 }
 
-.solution h4 {
+.challenge-content p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.solution-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    font-size: 1.5rem;
+    animation: slide 2s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.solution-arrow i {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+}
+
+.solution-arrow:hover i {
+    transform: scale(1.2);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.solution-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.solution-content h3 {
+    font-size: 1.3rem;
     color: #10b981;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.solution-content p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+@keyframes slide {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+/* Responsive design for modern challenges */
+@media (max-width: 768px) {
+    .challenge-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+    
+    .challenge-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .solution-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .challenge-content h3,
+    .solution-content h3 {
+        font-size: 1.2rem;
+    }
 }
 
 /* Gallery Section */
