@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutions Testimonials - ShikshaSathi</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .testimonials-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+        
+        .testimonials-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonials-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-container {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .testimonial-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: #1f2937;
+        }
+        
+        .testimonial-info p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .testimonial-content {
+            color: #374151;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        .testimonial-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 1rem;
+        }
+        
+        .testimonial-rating i {
+            color: #fbbf24;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .testimonials-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <button class="back-button" onclick="window.location.href='testimonials.html'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="testimonials-hero">
+        <div class="container">
+            <h1><i class="fas fa-university"></i> Institutions Testimonials</h1>
+            <p>Educational institutions share their experience partnering with ShikshaSathi</p>
+        </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="testimonials-container">
+        <div class="breadcrumb">
+            <a href="index.html">Home</a> > 
+            <a href="testimonials.html">Testimonials</a> > 
+            Institutions
+        </div>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="testimonials-container">
+        <div class="testimonials-grid">
+            
+            <!-- Institution Testimonial 1 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Delhi Public School</h3>
+                        <p>Chain of Schools, 50+ Branches</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi has been instrumental in helping us maintain high educational standards across all our branches. Their teacher screening process is thorough and the quality of educators they provide is exceptional."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 2 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Kendriya Vidyalaya Sangathan</h3>
+                        <p>Government Institution Network</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "As a government institution, we need reliable partners who understand our requirements. ShikshaSathi has consistently provided qualified teachers who adapt well to our educational framework and standards."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 3 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>St. Mary's Convent Schools</h3>
+                        <p>Private Institution Network</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi understands our values and educational philosophy. The teachers they provide are not just qualified but also align with our institution's culture and mission. Highly recommended!"
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 4 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Modern School Society</h3>
+                        <p>Educational Trust</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "Our partnership with ShikshaSathi has strengthened our academic programs. The teachers are well-trained and our students have shown significant improvement in their performance across all subjects."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 5 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>International Schools Association</h3>
+                        <p>Premium Education Network</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi has helped us maintain international standards in our schools. Their teachers are professional and our students benefit from their expertise and dedication to quality education."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 6 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Government School Network</h3>
+                        <p>State Education Department</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi has been a reliable partner in our mission to provide quality education in government schools. Their teachers are well-qualified and committed to improving student outcomes."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 7 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Public School Federation</h3>
+                        <p>Educational Consortium</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi's approach to teacher placement is excellent. They understand our diverse requirements and provide teachers who are not just qualified but also culturally aligned with our institutions."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 8 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Private School Association</h3>
+                        <p>Independent Schools Network</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "We've found excellent teachers through ShikshaSathi. Their screening process is thorough and the teachers they provide are well-trained and professional. Our academic standards have improved significantly."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 9 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Model School Trust</h3>
+                        <p>Educational Foundation</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "ShikshaSathi has been a reliable partner in our educational journey. Their teachers are committed and our students have benefited greatly from their expertise and dedication to quality education."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Institution Testimonial 10 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-photo">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h3>Central School Organization</h3>
+                        <p>National Education Network</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    "The quality of education has improved significantly since we started working with ShikshaSathi. Their teachers are well-trained and our students are performing better academically across all subjects."
+                </div>
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ShikshaSathi</h3>
+                    <p>Empowering Educators. Enabling Learning.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#program">Register</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 ShikshaSathi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <div class="whatsapp-button">
+        <a href="https://wa.me/919422835926" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="src/js/script.js"></script>
+    <script>
+        // Track testimonials page view
+        document.addEventListener('DOMContentLoaded', function() {
+            trackPageView('testimonials');
+        });
+    </script>
+</body>
+</html> 
