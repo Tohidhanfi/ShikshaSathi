@@ -453,6 +453,35 @@ body {
     font-size: 0.95rem;
 }
 
+/* Responsive design for modern services */
+@media (max-width: 768px) {
+    .modern-services {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+    
+    .service-card {
+        padding: 2rem;
+    }
+    
+    .service-number {
+        font-size: 2.5rem;
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    .service-icon-modern {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .service-content-modern h3 {
+        font-size: 1.2rem;
+    }
+}
+
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
         transform: translateY(0);
