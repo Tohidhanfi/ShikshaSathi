@@ -34,9 +34,9 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 10px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -49,15 +49,17 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    max-width: 250px;
+    max-width: 350px;
     height: 100%;
     padding: 10px 0;
     margin-right: auto;
+    margin-left: 0;
 }
 
 .nav-logo img {
     max-height: 80px;
     width: auto;
+    height: 80px;
     object-fit: contain;
 }
 
