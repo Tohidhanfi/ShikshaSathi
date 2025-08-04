@@ -1170,20 +1170,23 @@ scrollToTopBtn.addEventListener('click', () => {
 // Navbar hover functionality
 const navbar = document.querySelector('.navbar');
 let navbarTimeout;
+let isNavbarVisible = false;
 
 // Show navbar when mouse is near the top
 document.addEventListener('mousemove', (e) => {
     const mouseY = e.clientY;
-    const threshold = 50; // Show navbar when mouse is within 50px of top
+    const threshold = 80; // Increased threshold for better detection
     
-    if (mouseY <= threshold) {
+    if (mouseY <= threshold && !isNavbarVisible) {
         navbar.classList.add('show');
+        isNavbarVisible = true;
         clearTimeout(navbarTimeout);
-    } else {
+    } else if (mouseY > threshold && isNavbarVisible) {
         // Hide navbar after a delay when mouse moves away
         navbarTimeout = setTimeout(() => {
             navbar.classList.remove('show');
-        }, 1000); // 1 second delay
+            isNavbarVisible = false;
+        }, 1500); // Increased delay to 1.5 seconds
     }
 });
 
@@ -1191,10 +1194,21 @@ document.addEventListener('mousemove', (e) => {
 navbar.addEventListener('mouseenter', () => {
     clearTimeout(navbarTimeout);
     navbar.classList.add('show');
+    isNavbarVisible = true;
 });
 
 navbar.addEventListener('mouseleave', () => {
     navbarTimeout = setTimeout(() => {
         navbar.classList.remove('show');
-    }, 1000);
+        isNavbarVisible = false;
+    }, 1500);
+});
+
+// Also show navbar on scroll to top
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset < 100) {
+        navbar.classList.add('show');
+        isNavbarVisible = true;
+        clearTimeout(navbarTimeout);
+    }
 }); 
