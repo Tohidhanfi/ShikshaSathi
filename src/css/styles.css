@@ -63,6 +63,10 @@ body {
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px;
+    border-radius: 8px;
 }
 
 .nav-logo {
@@ -100,6 +104,8 @@ body {
     margin: 0;
     padding: 0;
     /* Navigation menu specific styles can be added here */
+    visibility: visible;
+    opacity: 1;
 }
 
 .nav-menu a {
@@ -1340,6 +1346,8 @@ body {
         transform: translateY(-50%);
         gap: 1rem;
         font-size: 0.9rem;
+        visibility: visible;
+        opacity: 1;
     }
     
     .nav-toggle {
