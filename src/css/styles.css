@@ -42,6 +42,19 @@ body {
     align-items: center;
     height: 100%;
     flex-wrap: wrap;
+    position: relative;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .nav-logo {
@@ -52,6 +65,7 @@ body {
     height: 100%;
     padding: 10px 0;
     margin: 0;
+    /* Logo specific styles can be added here */
 }
 
 .nav-logo img {
@@ -77,6 +91,7 @@ body {
     align-items: center;
     margin: 0;
     padding: 0;
+    /* Navigation menu specific styles can be added here */
 }
 
 .nav-menu a {
