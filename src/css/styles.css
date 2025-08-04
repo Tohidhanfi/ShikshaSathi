@@ -28,15 +28,15 @@ body {
     z-index: 1000;
     padding: 0;
     transition: all 0.3s ease;
-    height: 130px;
+    height: 90px;
     display: flex;
     align-items: center;
 }
 
 .nav-container {
-    max-width: 100%;
-    margin: 0;
-    padding: 0 0 0 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -49,14 +49,10 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    max-width: 650px;
+    max-width: 200px;
     height: 100%;
     padding: 10px 0;
     margin-right: auto;
-    margin-left: 0;
-    position: absolute;
-    left: 0;
-    z-index: 1001;
 }
 
 .nav-logo img {
