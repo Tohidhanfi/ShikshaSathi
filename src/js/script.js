@@ -1165,4 +1165,36 @@ scrollToTopBtn.addEventListener('click', () => {
         top: 0,
         behavior: 'smooth'
     });
+});
+
+// Navbar hover functionality
+const navbar = document.querySelector('.navbar');
+let navbarTimeout;
+
+// Show navbar when mouse is near the top
+document.addEventListener('mousemove', (e) => {
+    const mouseY = e.clientY;
+    const threshold = 50; // Show navbar when mouse is within 50px of top
+    
+    if (mouseY <= threshold) {
+        navbar.classList.add('show');
+        clearTimeout(navbarTimeout);
+    } else {
+        // Hide navbar after a delay when mouse moves away
+        navbarTimeout = setTimeout(() => {
+            navbar.classList.remove('show');
+        }, 1000); // 1 second delay
+    }
+});
+
+// Keep navbar visible when hovering over it
+navbar.addEventListener('mouseenter', () => {
+    clearTimeout(navbarTimeout);
+    navbar.classList.add('show');
+});
+
+navbar.addEventListener('mouseleave', () => {
+    navbarTimeout = setTimeout(() => {
+        navbar.classList.remove('show');
+    }, 1000);
 }); 

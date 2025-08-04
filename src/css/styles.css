@@ -20,7 +20,8 @@ body {
 
 /* Navigation */
 .navbar {
-    position: relative;
+    position: fixed;
+    top: -90px;
     width: 100%;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -30,6 +31,10 @@ body {
     height: 90px;
     display: flex;
     align-items: center;
+}
+
+.navbar.show {
+    top: 0;
 }
 
 .nav-container {
