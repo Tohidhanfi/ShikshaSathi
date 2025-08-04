@@ -37,7 +37,7 @@ body {
     margin: 0;
     padding: 0 20px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     height: 100%;
     flex-wrap: wrap;
@@ -53,7 +53,6 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    margin-left: auto;
 }
 
 .nav-logo {
