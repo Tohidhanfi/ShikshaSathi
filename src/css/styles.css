@@ -42,6 +42,7 @@ body {
     align-items: center;
     height: 100%;
     flex-wrap: wrap;
+    position: relative;
 }
 
 .nav-logo {
@@ -77,6 +78,10 @@ body {
     align-items: center;
     margin: 0;
     padding: 0;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .nav-menu a {
