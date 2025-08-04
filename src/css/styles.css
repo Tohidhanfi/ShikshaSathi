@@ -49,13 +49,20 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .nav-right {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    margin-left: auto;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .nav-logo {
