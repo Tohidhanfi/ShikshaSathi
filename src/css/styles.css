@@ -38,7 +38,7 @@ body {
     margin: 0;
     padding: 0 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     height: 100%;
     flex-wrap: wrap;
@@ -53,6 +53,7 @@ body {
     height: 100%;
     padding: 10px 0;
     margin: 0;
+    margin-right: auto;
 }
 
 .nav-logo img {
@@ -78,10 +79,7 @@ body {
     align-items: center;
     margin: 0;
     padding: 0;
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+    margin-left: auto;
 }
 
 .nav-menu a {
