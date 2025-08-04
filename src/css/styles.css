@@ -49,6 +49,11 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
 }
 
 .nav-right {
@@ -59,6 +64,11 @@ body {
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-logo {
