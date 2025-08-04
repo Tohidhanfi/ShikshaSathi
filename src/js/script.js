@@ -1167,48 +1167,4 @@ scrollToTopBtn.addEventListener('click', () => {
     });
 });
 
-// Navbar hover functionality
-const navbar = document.querySelector('.navbar');
-let navbarTimeout;
-let isNavbarVisible = false;
-
-// Show navbar when mouse is near the top
-document.addEventListener('mousemove', (e) => {
-    const mouseY = e.clientY;
-    const threshold = 80; // Increased threshold for better detection
-    
-    if (mouseY <= threshold && !isNavbarVisible) {
-        navbar.classList.add('show');
-        isNavbarVisible = true;
-        clearTimeout(navbarTimeout);
-    } else if (mouseY > threshold && isNavbarVisible) {
-        // Hide navbar after a delay when mouse moves away
-        navbarTimeout = setTimeout(() => {
-            navbar.classList.remove('show');
-            isNavbarVisible = false;
-        }, 1500); // Increased delay to 1.5 seconds
-    }
-});
-
-// Keep navbar visible when hovering over it
-navbar.addEventListener('mouseenter', () => {
-    clearTimeout(navbarTimeout);
-    navbar.classList.add('show');
-    isNavbarVisible = true;
-});
-
-navbar.addEventListener('mouseleave', () => {
-    navbarTimeout = setTimeout(() => {
-        navbar.classList.remove('show');
-        isNavbarVisible = false;
-    }, 1500);
-});
-
-// Also show navbar on scroll to top
-window.addEventListener('scroll', () => {
-    if (window.pageYOffset < 100) {
-        navbar.classList.add('show');
-        isNavbarVisible = true;
-        clearTimeout(navbarTimeout);
-    }
-}); 
+// Navbar is now always visible at the top 
