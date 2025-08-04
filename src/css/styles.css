@@ -46,6 +46,7 @@ body {
     align-items: center;
     height: 100%;
     flex-wrap: wrap;
+    gap: 2rem;
 }
 
 .nav-left {
@@ -72,7 +73,7 @@ body {
 }
 
 .nav-logo img {
-    max-height: 80px;
+    max-height: 60px;
     width: auto;
     object-fit: contain;
     vertical-align: middle;
@@ -96,7 +97,7 @@ body {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    gap: 2rem;
     flex-wrap: wrap;
     align-items: center;
     margin: 0;
@@ -111,9 +112,9 @@ body {
     text-decoration: none;
     color: #333;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 6px;
     position: relative;
 }
