@@ -28,7 +28,7 @@ body {
     z-index: 1000;
     padding: 0;
     transition: all 0.3s ease;
-    height: 90px;
+    height: 110px;
     display: flex;
     align-items: center;
 }
@@ -49,19 +49,20 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    max-width: 450px;
+    max-width: 550px;
     height: 100%;
     padding: 10px 0;
     margin-right: auto;
     margin-left: 0;
-    position: relative;
+    position: absolute;
     left: 0;
+    z-index: 1001;
 }
 
 .nav-logo img {
-    max-height: 90px;
+    max-height: 100px;
     width: auto;
-    height: 90px;
+    height: 100px;
     object-fit: contain;
 }
 
