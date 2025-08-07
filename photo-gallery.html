@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery - ShikshaSathi</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .photo-gallery-hero {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+        
+        .photo-gallery-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .photo-gallery-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .photo-gallery-container {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #059669;
+            background: white;
+            color: #059669;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #059669;
+            color: white;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .photo-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .photo-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .photo-placeholder {
+            height: 250px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 1.2rem;
+            position: relative;
+        }
+        
+        .photo-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .photo-info {
+            padding: 1.5rem;
+        }
+        
+        .photo-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .photo-category {
+            color: #059669;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .breadcrumb a {
+            color: #059669;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .upload-btn {
+            background: #059669;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background: #047857;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .photo-gallery-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .photo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-filters {
+                gap: 0.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <button class="back-button" onclick="window.location.href='gallery.html'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="photo-gallery-hero">
+        <div class="container">
+            <h1><i class="fas fa-images"></i> Photo Gallery</h1>
+            <p>Explore moments from our educational journey, training sessions, and community impact</p>
+        </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="photo-gallery-container">
+        <div class="breadcrumb">
+            <a href="index.html">Home</a> > 
+            <a href="gallery.html">Gallery</a> > 
+            Photo Gallery
+        </div>
+    </div>
+
+    <!-- Upload Section (Admin Only) -->
+    <div class="photo-gallery-container">
+        <div class="upload-section">
+            <h3>Add New Photos</h3>
+            <p>Upload photos to showcase our activities and achievements</p>
+            <button class="upload-btn" onclick="openUploadModal()">
+                <i class="fas fa-upload"></i> Upload Photos
+            </button>
+        </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="photo-gallery-container">
+        <div class="category-filters">
+            <button class="filter-btn active" onclick="filterPhotos('all')">All Photos</button>
+            <button class="filter-btn" onclick="filterPhotos('training')">Training Photos</button>
+            <button class="filter-btn" onclick="filterPhotos('founder')">Founder's Felicitations</button>
+            <button class="filter-btn" onclick="filterPhotos('events')">Events & Ceremonies</button>
+            <button class="filter-btn" onclick="filterPhotos('partnerships')">Partnerships</button>
+            <button class="filter-btn" onclick="filterPhotos('community')">Community Service</button>
+        </div>
+    </div>
+
+    <!-- Photo Grid -->
+    <div class="photo-gallery-container">
+        <div class="photo-grid" id="photoGrid">
+            
+            <!-- Training Photos -->
+            <div class="photo-item" data-category="training">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <p>Teacher Training Session</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Teacher Training Session</div>
+                    <div class="photo-category">Training Photos</div>
+                </div>
+            </div>
+
+            <div class="photo-item" data-category="training">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-laptop"></i>
+                        <p>Online Training Workshop</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Online Training Workshop</div>
+                    <div class="photo-category">Training Photos</div>
+                </div>
+            </div>
+
+            <!-- Founder's Felicitations -->
+            <div class="photo-item" data-category="founder">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-award"></i>
+                        <p>Founder's Award Ceremony</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Founder's Award Ceremony</div>
+                    <div class="photo-category">Founder's Felicitations</div>
+                </div>
+            </div>
+
+            <div class="photo-item" data-category="founder">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-handshake"></i>
+                        <p>Founder's Recognition</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Founder's Recognition</div>
+                    <div class="photo-category">Founder's Felicitations</div>
+                </div>
+            </div>
+
+            <!-- Events & Ceremonies -->
+            <div class="photo-item" data-category="events">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-graduation-cap"></i>
+                        <p>Graduation Ceremony</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Graduation Ceremony</div>
+                    <div class="photo-category">Events & Ceremonies</div>
+                </div>
+            </div>
+
+            <div class="photo-item" data-category="events">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-star"></i>
+                        <p>Award Ceremony</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Award Ceremony</div>
+                    <div class="photo-category">Events & Ceremonies</div>
+                </div>
+            </div>
+
+            <!-- Partnerships -->
+            <div class="photo-item" data-category="partnerships">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-handshake"></i>
+                        <p>School Partnership Meeting</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">School Partnership Meeting</div>
+                    <div class="photo-category">Partnerships</div>
+                </div>
+            </div>
+
+            <div class="photo-item" data-category="partnerships">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-building"></i>
+                        <p>Institution Collaboration</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Institution Collaboration</div>
+                    <div class="photo-category">Partnerships</div>
+                </div>
+            </div>
+
+            <!-- Community Service -->
+            <div class="photo-item" data-category="community">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-heart"></i>
+                        <p>Community Workshop</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Community Workshop</div>
+                    <div class="photo-category">Community Service</div>
+                </div>
+            </div>
+
+            <div class="photo-item" data-category="community">
+                <div class="photo-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-users"></i>
+                        <p>Social Impact Program</p>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">Social Impact Program</div>
+                    <div class="photo-category">Community Service</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ShikshaSathi</h3>
+                    <p>Empowering Educators. Enabling Learning.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#program">Register</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 ShikshaSathi -By Tohid. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <div class="whatsapp-button">
+        <a href="https://wa.me/919422835926" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-to-top" id="scrollToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script src="src/js/script.js"></script>
+    <script>
+        // Photo filtering functionality
+        function filterPhotos(category) {
+            const photos = document.querySelectorAll('.photo-item');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            // Remove active class from all buttons
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Show/hide photos based on category
+            photos.forEach(photo => {
+                if (category === 'all' || photo.dataset.category === category) {
+                    photo.style.display = 'block';
+                } else {
+                    photo.style.display = 'none';
+                }
+            });
+        }
+        
+        // Upload modal functionality
+        function openUploadModal() {
+            // Check if user is admin (you can implement proper authentication)
+            const isAdmin = confirm('Are you an admin? This will redirect to admin panel.');
+            if (isAdmin) {
+                window.open('admin.html', '_blank');
+            }
+        }
+        
+        // Track photo gallery page view
+        document.addEventListener('DOMContentLoaded', function() {
+            trackPageView('photo-gallery');
+        });
+    </script>
+</body>
+</html> 
