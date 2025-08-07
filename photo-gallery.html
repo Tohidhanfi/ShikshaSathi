@@ -153,30 +153,7 @@
             text-decoration: underline;
         }
         
-        .upload-section {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-        
-        .upload-btn {
-            background: #059669;
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .upload-btn:hover {
-            background: #047857;
-            transform: translateY(-2px);
-        }
+
         
         @media (max-width: 768px) {
             .photo-gallery-hero h1 {
@@ -228,16 +205,7 @@
         </div>
     </div>
 
-    <!-- Upload Section (Admin Only) -->
-    <div class="photo-gallery-container">
-        <div class="upload-section">
-            <h3>Add New Photos</h3>
-            <p>Upload photos to showcase our activities and achievements</p>
-            <button class="upload-btn" onclick="openUploadModal()">
-                <i class="fas fa-upload"></i> Upload Photos
-            </button>
-        </div>
-    </div>
+
 
     <!-- Category Filters -->
     <div class="photo-gallery-container">
@@ -272,12 +240,12 @@
             <div class="photo-item" data-category="training">
                 <div class="photo-placeholder">
                     <div style="text-align: center;">
-                        <i class="fas fa-laptop"></i>
-                        <p>Online Training Workshop</p>
+                        <i class="fas fa-chalkboard"></i>
+                        <p>Training Workshop</p>
                     </div>
                 </div>
                 <div class="photo-info">
-                    <div class="photo-title">Online Training Workshop</div>
+                    <div class="photo-title">Training Workshop</div>
                     <div class="photo-category">Training Photos</div>
                 </div>
             </div>
@@ -465,14 +433,7 @@
             });
         }
         
-        // Upload modal functionality
-        function openUploadModal() {
-            // Check if user is admin (you can implement proper authentication)
-            const isAdmin = confirm('Are you an admin? This will redirect to admin panel.');
-            if (isAdmin) {
-                window.open('admin.html', '_blank');
-            }
-        }
+
         
         // Track photo gallery page view
         document.addEventListener('DOMContentLoaded', function() {
