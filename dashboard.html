@@ -414,6 +414,43 @@
                         <div class="stat-change">+15 new this week</div>
                     </div>
                 </div>
+                <!-- Chart.js CDN -->
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <div style="max-width: 600px; margin: 2rem auto;">
+                    <canvas id="overviewChart"></canvas>
+                </div>
+                <script>
+                    const ctx = document.getElementById('overviewChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Registrations', 'Tutors', 'Schools', 'Photos'],
+                            datasets: [{
+                                label: 'Overview',
+                                data: [1247, 856, 45, 234],
+                                backgroundColor: [
+                                    'rgba(59, 130, 246, 0.7)',
+                                    'rgba(16, 185, 129, 0.7)',
+                                    'rgba(251, 191, 36, 0.7)',
+                                    'rgba(239, 68, 68, 0.7)'
+                                ],
+                                borderRadius: 8,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 200 }
+                                }
+                            }
+                        }
+                    });
+                </script>
             </div>
 
             <!-- Photo Gallery Section -->
@@ -543,13 +580,17 @@
     </div>
 
     <script>
-        // Check admin session
-        document.addEventListener('DOMContentLoaded', function() {
-            const adminSession = localStorage.getItem('shikshaSathiAdminSession');
-            if (adminSession !== 'true') {
-                window.location.href = 'admin';
-            }
-        });
+        // Check admin session on dashboard load
+        const adminSession = localStorage.getItem('shikshaSathiAdminSession');
+        const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
+        const now = Date.now();
+        const sessionValid = loginTime && (now - parseInt(loginTime) < 24 * 60 * 60 * 1000); // 24 hours
+        if (adminSession !== 'true' || !sessionValid) {
+            // Clear expired session if any
+            localStorage.removeItem('shikshaSathiAdminSession');
+            localStorage.removeItem('shikshaSathiAdminLoginTime');
+            window.location.href = 'admin.html';
+        }
 
         // Navigation
         function showSection(sectionId) {
