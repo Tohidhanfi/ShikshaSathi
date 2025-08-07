@@ -7,35 +7,6 @@
     <link rel="stylesheet" href="src/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAcSXxFwoWcORdaXKewluHAjn-hJ3mvswE",
-            authDomain: "shikshasathi-3175e.firebaseapp.com",
-            projectId: "shikshasathi-3175e",
-            storageBucket: "shikshasathi-3175e.firebasestorage.app",
-            messagingSenderId: "516255143475",
-            appId: "1:516255143475:web:48cc08015211205ab7b546",
-            measurementId: "G-019M21W2E5"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const analytics = getAnalytics(app);
-
-        // Make Firebase available globally
-        window.db = db;
-        window.addDoc = addDoc;
-        window.collection = collection;
-        window.getDocs = getDocs;
-    </script>
     <style>
         body {
             margin: 0;
@@ -450,13 +421,13 @@
                 </div>
                 <script>
                     const ctx = document.getElementById('overviewChart').getContext('2d');
-                    window.dashboardChart = new Chart(ctx, {
+                    new Chart(ctx, {
                         type: 'bar',
                         data: {
                             labels: ['Registrations', 'Tutors', 'Schools', 'Photos'],
                             datasets: [{
                                 label: 'Overview',
-                                data: [0, 0, 0, 0], // Start with zeros, will be updated with real data
+                                data: [1247, 856, 45, 234],
                                 backgroundColor: [
                                     'rgba(59, 130, 246, 0.7)',
                                     'rgba(16, 185, 129, 0.7)',
@@ -545,17 +516,8 @@
                 <div class="content-section">
                     <div class="section-header">
                         <h2>Registration Management</h2>
-                        <button class="add-btn" onclick="exportToExcel()">
-                            <i class="fas fa-download"></i> Export All Data
-                        </button>
-                        <button class="add-btn" onclick="exportToExcel('tutor')">
-                            <i class="fas fa-download"></i> Export Tutors
-                        </button>
-                        <button class="add-btn" onclick="exportToExcel('parentStudent')">
-                            <i class="fas fa-download"></i> Export Parent/Student
-                        </button>
-                        <button class="add-btn" onclick="exportToExcel('partner')">
-                            <i class="fas fa-download"></i> Export Partner Schools
+                        <button class="add-btn">
+                            <i class="fas fa-download"></i> Export Data
                         </button>
                     </div>
                     
@@ -618,144 +580,10 @@
     </div>
 
     <script>
-        // Load real-time data
-        function loadDashboardData() {
-            // Check if Firebase is available
-            if (typeof window.getDocs === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
-                console.error('Firebase not loaded yet');
-                setTimeout(loadDashboardData, 1000); // Retry after 1 second
-                return;
-            }
-            
-            // Load registrations count
-            window.getDocs(window.collection(window.db, 'registrations')).then((snapshot) => {
-                const totalRegistrations = snapshot.size;
-                document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = totalRegistrations.toLocaleString();
-                
-                // Count by type
-                let tutorCount = 0;
-                let partnerCount = 0;
-                let parentStudentCount = 0;
-                
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.type === 'tutor') tutorCount++;
-                    else if (data.type === 'partner') partnerCount++;
-                    else if (data.type === 'parentStudent') parentStudentCount++;
-                });
-                
-                document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = tutorCount.toLocaleString();
-                document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = partnerCount.toLocaleString();
-                
-                // Update chart data
-                updateChart([totalRegistrations, tutorCount, partnerCount, 234]); // 234 for photos (placeholder)
-            }).catch((error) => {
-                console.error('Error loading dashboard data:', error);
-                showNotification('Error loading data. Please refresh the page.', 'error');
-            });
-        }
-
-        // Update chart with real data
-        function updateChart(data) {
-            if (window.dashboardChart) {
-                window.dashboardChart.data.datasets[0].data = data;
-                window.dashboardChart.update();
-            }
-        }
-
-        // Export to Excel function
-        function exportToExcel(type = null) {
-            let query = window.collection(window.db, 'registrations');
-            if (type) {
-                query = query.where('type', '==', type);
-            }
-
-            window.getDocs(query).then((snapshot) => {
-                const data = [];
-                snapshot.forEach((doc) => {
-                    data.push(doc.data());
-                });
-                
-                // Convert to CSV format
-                const headers = Object.keys(data[0] || {});
-                const csvContent = [
-                    headers.join(','),
-                    ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
-                ].join('\n');
-                
-                // Create filename based on type
-                const typeName = type || 'all';
-                const fileName = `shiksha-sathi-${typeName}-registrations.csv`;
-                
-                // Download CSV file
-                const blob = new Blob([csvContent], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                a.click();
-                window.URL.revokeObjectURL(url);
-                
-                // Show success message
-                showNotification(`Exported ${data.length} ${typeName} registrations to ${fileName}`, 'success');
-            }).catch((error) => {
-                console.error('Error exporting to Excel:', error);
-                showNotification('Error exporting data. Please try again.', 'error');
-            });
-        }
-
         // Check admin session on dashboard load
         const adminSession = localStorage.getItem('shikshaSathiAdminSession');
         if (adminSession !== 'true') {
             window.location.href = 'admin.html';
-        }
-
-        // Load data when dashboard loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDashboardData();
-            loadAnalyticsData();
-        });
-
-        // Load analytics data
-        function loadAnalyticsData() {
-            const analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
-            
-            if (analytics.pageViews) {
-                const today = new Date().toDateString();
-                const todayViews = analytics.pageViews.filter(view => 
-                    new Date(view.timestamp).toDateString() === today
-                ).length;
-                
-                const uniqueVisitors = new Set(
-                    analytics.pageViews.map(view => view.userAgent)
-                ).size;
-                
-                // Add analytics to dashboard
-                const analyticsSection = document.createElement('div');
-                analyticsSection.className = 'content-section';
-                analyticsSection.innerHTML = `
-                    <div class="section-header">
-                        <h2>Website Analytics</h2>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Today's Page Views</h3>
-                            <div class="stat-value">${todayViews}</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Unique Visitors</h3>
-                            <div class="stat-value">${uniqueVisitors}</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Total Page Views</h3>
-                            <div class="stat-value">${analytics.pageViews.length}</div>
-                        </div>
-                    </div>
-                `;
-                
-                // Insert after overview section
-                document.getElementById('overview').appendChild(analyticsSection);
-            }
         }
 
         // Navigation
@@ -781,7 +609,7 @@
         function logout() {
             localStorage.removeItem('shikshaSathiAdminSession');
             localStorage.removeItem('shikshaSathiAdminLoginTime');
-            window.location.href = 'admin';
+            window.location.href = 'admin.html';
         }
 
         // Photo upload functionality
@@ -870,54 +698,6 @@
             if (event.target === modal) {
                 closePhotoUploadModal();
             }
-        }
-
-        // Show notification function
-        function showNotification(message, type = 'info') {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 8px;
-                color: white;
-                font-weight: 500;
-                z-index: 10000;
-                max-width: 300px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-            
-            // Set background color based on type
-            switch(type) {
-                case 'success':
-                    notification.style.backgroundColor = '#10b981';
-                    break;
-                case 'error':
-                    notification.style.backgroundColor = '#ef4444';
-                    break;
-                default:
-                    notification.style.backgroundColor = '#3b82f6';
-            }
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
         }
     </script>
 </body>

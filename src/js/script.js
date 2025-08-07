@@ -155,51 +155,19 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 document.getElementById('tutorRegistrationForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    console.log('🎯 Tutor form submitted!');
-    
     // Get form data
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
-    console.log('📝 Form data:', data);
+    // Track form submission
+    trackFormSubmission('tutor', data);
     
-    // Add timestamp
-    data.timestamp = new Date().toISOString();
-    data.type = 'tutor';
+    // Show success message
+    showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
     
-    console.log('🔍 Checking Firebase availability...');
-    console.log('window.db:', typeof window.db);
-    console.log('window.addDoc:', typeof window.addDoc);
-    console.log('window.collection:', typeof window.collection);
-    
-    // Check if Firebase is available
-    if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
-        console.error('❌ Firebase not loaded yet');
-        showNotification('System is loading, please try again in a moment.', 'error');
-        return;
-    }
-    
-    console.log('✅ Firebase is available, saving data...');
-    
-    // Save to Firebase
-    window.addDoc(window.collection(window.db, 'registrations'), data)
-        .then((docRef) => {
-            console.log('🎉 Registration saved with ID: ', docRef.id);
-            
-            // Track form submission
-            trackFormSubmission('tutor', data);
-            
-            // Show success message
-            showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
-            
-            // Close modal and reset form
-            closeModal(modals.registration);
-            this.reset();
-        })
-        .catch((error) => {
-            console.error('❌ Error saving registration: ', error);
-            showNotification('There was an error saving your registration. Please try again.', 'error');
-        });
+    // Close modal and reset form
+    closeModal(modals.registration);
+    this.reset();
 });
 
 document.getElementById('partnerForm').addEventListener('submit', function(e) {
@@ -209,36 +177,15 @@ document.getElementById('partnerForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
-    // Add timestamp
-    data.timestamp = new Date().toISOString();
-    data.type = 'partner';
+    // Track form submission
+    trackFormSubmission('school', data);
     
-    // Check if Firebase is available
-    if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
-        console.error('Firebase not loaded yet');
-        showNotification('System is loading, please try again in a moment.', 'error');
-        return;
-    }
+    // Show success message
+    showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
     
-    // Save to Firebase
-    window.addDoc(window.collection(window.db, 'registrations'), data)
-        .then((docRef) => {
-            console.log('Partner registration saved with ID: ', docRef.id);
-            
-            // Track form submission
-            trackFormSubmission('school', data);
-            
-            // Show success message
-            showNotification('Thank you for your partnership interest! We will contact you soon.', 'success');
-            
-            // Close modal and reset form
-            closeModal(modals.partner);
-            this.reset();
-        })
-        .catch((error) => {
-            console.error('Error saving partner registration: ', error);
-            showNotification('There was an error saving your registration. Please try again.', 'error');
-        });
+    // Close modal and reset form
+    closeModal(modals.partner);
+    this.reset();
 });
 
 document.getElementById('collaborationForm').addEventListener('submit', function(e) {
@@ -266,36 +213,15 @@ document.getElementById('parentStudentForm').addEventListener('submit', function
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
-    // Add timestamp
-    data.timestamp = new Date().toISOString();
-    data.type = 'parentStudent';
+    // Track form submission
+    trackFormSubmission('parentStudent', data);
     
-    // Check if Firebase is available
-    if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
-        console.error('Firebase not loaded yet');
-        showNotification('System is loading, please try again in a moment.', 'error');
-        return;
-    }
+    // Show success message
+    showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
     
-    // Save to Firebase
-    window.addDoc(window.collection(window.db, 'registrations'), data)
-        .then((docRef) => {
-            console.log('Parent/Student registration saved with ID: ', docRef.id);
-            
-            // Track form submission
-            trackFormSubmission('parentStudent', data);
-            
-            // Show success message
-            showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
-            
-            // Close modal and reset form
-            closeModal(modals.parentStudent);
-            this.reset();
-        })
-        .catch((error) => {
-            console.error('Error saving parent/student registration: ', error);
-            showNotification('There was an error saving your registration. Please try again.', 'error');
-        });
+    // Close modal and reset form
+    closeModal(modals.parentStudent);
+    this.reset();
 });
 
 // Notification system
@@ -1290,22 +1216,12 @@ function trackFormSubmission(formType, formData) {
 
 // Track page views for specific pages
 function trackPageView(pageName) {
-    const visitData = {
-        page: pageName,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        referrer: document.referrer || 'direct'
-    };
-
     let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
-    if (!Array.isArray(analytics.pageViews)) analytics.pageViews = [];
-    analytics.pageViews.push(visitData);
-
-    // Keep only last 1000 page views
-    if (analytics.pageViews.length > 1000) {
-        analytics.pageViews = analytics.pageViews.slice(-1000);
+    
+    if (pageName === 'testimonials') {
+        analytics.testimonialsViews = (analytics.testimonialsViews || 0) + 1;
     }
-
+    
     localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
 }
 
