@@ -36,7 +36,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const modals = {
     registration: document.getElementById('registrationModal'),
     partner: document.getElementById('partnerModal'),
-    collaboration: document.getElementById('collaborationModal')
+    collaboration: document.getElementById('collaborationModal'),
+    parentStudent: document.getElementById('parentStudentModal')
 };
 
 const closeButtons = document.querySelectorAll('.close');
@@ -54,6 +55,11 @@ function openPartnerModal() {
 
 function openCollaborationModal() {
     modals.collaboration.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function openParentStudentModal() {
+    modals.parentStudent.style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
 
@@ -169,6 +175,24 @@ document.getElementById('collaborationForm').addEventListener('submit', function
     
     // Close modal and reset form
     closeModal(modals.collaboration);
+    this.reset();
+});
+
+document.getElementById('parentStudentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    // Track form submission
+    trackFormSubmission('parentStudent', data);
+    
+    // Show success message
+    showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
+    
+    // Close modal and reset form
+    closeModal(modals.parentStudent);
     this.reset();
 });
 
@@ -972,6 +996,21 @@ function togglePartnerSubjectsOther() {
     }
 }
 
+function toggleTuitionSubjectsOther() {
+    const tuitionSubjectsOtherCheckbox = document.getElementById('tuitionSubjectsOther');
+    const tuitionSubjectsOtherGroup = document.getElementById('tuitionSubjectsOtherGroup');
+    const tuitionSubjectsOtherTextInput = document.getElementById('tuitionSubjectsOtherText');
+    
+    if (tuitionSubjectsOtherCheckbox.checked) {
+        tuitionSubjectsOtherGroup.style.display = 'block';
+        tuitionSubjectsOtherTextInput.required = true;
+    } else {
+        tuitionSubjectsOtherGroup.style.display = 'none';
+        tuitionSubjectsOtherTextInput.required = false;
+        tuitionSubjectsOtherTextInput.value = '';
+    }
+}
+
 // Phone number validation
 function validatePhoneNumber(input) {
     // Remove any non-numeric characters
@@ -1032,14 +1071,15 @@ function trackWebsiteAnalytics() {
         visitHistory: [],
         today: new Date().toDateString(),
         sessionStartTime: Date.now(),
-        // New tracking fields
-        tutorRegistrations: 0,
-        schoolRegistrations: 0,
-        collaborationRequests: 0,
-        contactSubmissions: 0,
-        testimonialsViews: 0,
-        registrationHistory: [],
-        todayRegistrations: 0
+            // New tracking fields
+    tutorRegistrations: 0,
+    schoolRegistrations: 0,
+    parentStudentRegistrations: 0,
+    collaborationRequests: 0,
+    contactSubmissions: 0,
+    testimonialsViews: 0,
+    registrationHistory: [],
+    todayRegistrations: 0
     };
     
     // Check if this is a new day
@@ -1107,6 +1147,10 @@ function trackFormSubmission(formType, formData) {
             break;
         case 'school':
             analytics.schoolRegistrations = (analytics.schoolRegistrations || 0) + 1;
+            analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
+            break;
+        case 'parentStudent':
+            analytics.parentStudentRegistrations = (analytics.parentStudentRegistrations || 0) + 1;
             analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
             break;
         case 'collaboration':

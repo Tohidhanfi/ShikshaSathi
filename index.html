@@ -45,6 +45,7 @@
                 <div class="hero-buttons">
                     <button class="btn btn-primary" onclick="openRegistrationModal()">Register as a Tutor</button>
                     <button class="btn btn-secondary" onclick="openPartnerModal()">Join as a Partner School</button>
+                    <button class="btn btn-outline" onclick="openParentStudentModal()">Join as a Parent/Student</button>
                     <button class="btn btn-outline" onclick="scrollToContact()">Contact Us</button>
                 </div>
             </div>
@@ -907,6 +908,125 @@
                     <textarea placeholder="Describe your collaboration proposal" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-outline">Submit Collaboration Request</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="parentStudentModal" class="modal">
+        <div class="modal-content scrollable-modal">
+            <span class="close">&times;</span>
+            <h2>Parents/Students Registration</h2>
+            <form id="parentStudentForm">
+                <div class="form-group">
+                    <label for="parentName">1. Name of Parent *</label>
+                    <input type="text" id="parentName" name="parentName" placeholder="Enter parent's full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentName">2. Name of Student *</label>
+                    <input type="text" id="studentName" name="studentName" placeholder="Enter student's full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="schoolName">3. School *</label>
+                    <input type="text" id="schoolName" name="schoolName" placeholder="Enter school name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pattern">4. Pattern *</label>
+                    <select id="pattern" name="pattern" required>
+                        <option value="">Select Pattern</option>
+                        <option value="cbse">CBSE</option>
+                        <option value="state">STATE</option>
+                        <option value="icse">ICSE</option>
+                        <option value="ib">IB</option>
+                        <option value="other">OTHER</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tuitionSubjects">5. Tuition Required for the Subject *</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionMaths" name="tuitionSubjects" value="maths">
+                            <label for="tuitionMaths">Maths</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionEnglish" name="tuitionSubjects" value="english">
+                            <label for="tuitionEnglish">English</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionScience" name="tuitionSubjects" value="science">
+                            <label for="tuitionScience">Science</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionHindi" name="tuitionSubjects" value="hindi">
+                            <label for="tuitionHindi">Hindi</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionMarathi" name="tuitionSubjects" value="marathi">
+                            <label for="tuitionMarathi">Marathi</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionSST" name="tuitionSubjects" value="sst">
+                            <label for="tuitionSST">SST</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionComputer" name="tuitionSubjects" value="computer">
+                            <label for="tuitionComputer">Computer</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tuitionSubjectsOther" name="tuitionSubjects" value="other" onchange="toggleTuitionSubjectsOther()">
+                            <label for="tuitionSubjectsOther">Others</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="tuitionSubjectsOtherGroup" style="display: none;">
+                    <label for="tuitionSubjectsOtherText">Please specify other subjects *</label>
+                    <input type="text" id="tuitionSubjectsOtherText" name="tuitionSubjectsOtherText" placeholder="Enter other subjects (e.g., Physics, Chemistry, Biology, etc.)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tuitionLocation">6. Tuition Required At *</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="atHome" name="tuitionLocation" value="at_home">
+                            <label for="atHome">AT HOME</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="atCoaching" name="tuitionLocation" value="at_coaching">
+                            <label for="atCoaching">AT NEAREST COACHING</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="residentialAddress">7. Residential Address *</label>
+                    <textarea id="residentialAddress" name="residentialAddress" placeholder="Enter your complete residential address" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactNumber">8. Contact No *</label>
+                    <input type="tel" id="contactNumber" name="contactNumber" placeholder="Enter your contact number" required maxlength="10" pattern="[0-9]{10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="alternateNumber">9. Alternate No</label>
+                    <input type="tel" id="alternateNumber" name="alternateNumber" placeholder="Enter alternate contact number (optional)" maxlength="10" pattern="[0-9]{10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="emailId">10. Email ID *</label>
+                    <input type="email" id="emailId" name="emailId" placeholder="Enter your email address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="specificRemarks">11. Any Specific Remark</label>
+                    <textarea id="specificRemarks" name="specificRemarks" placeholder="Enter any specific requirements or remarks (optional)" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit Registration</button>
             </form>
         </div>
     </div>
