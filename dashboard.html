@@ -7,6 +7,35 @@
     <link rel="stylesheet" href="src/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAcSXxFwoWcORdaXKewluHAjn-hJ3mvswE",
+            authDomain: "shikshasathi-3175e.firebaseapp.com",
+            projectId: "shikshasathi-3175e",
+            storageBucket: "shikshasathi-3175e.firebasestorage.app",
+            messagingSenderId: "516255143475",
+            appId: "1:516255143475:web:48cc08015211205ab7b546",
+            measurementId: "G-019M21W2E5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Make Firebase available globally
+        window.db = db;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        window.getDocs = getDocs;
+    </script>
     <style>
         body {
             margin: 0;
@@ -421,13 +450,13 @@
                 </div>
                 <script>
                     const ctx = document.getElementById('overviewChart').getContext('2d');
-                    new Chart(ctx, {
+                    window.dashboardChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
                             labels: ['Registrations', 'Tutors', 'Schools', 'Photos'],
                             datasets: [{
                                 label: 'Overview',
-                                data: [1247, 856, 45, 234],
+                                data: [0, 0, 0, 0], // Start with zeros, will be updated with real data
                                 backgroundColor: [
                                     'rgba(59, 130, 246, 0.7)',
                                     'rgba(16, 185, 129, 0.7)',
@@ -516,7 +545,7 @@
                 <div class="content-section">
                     <div class="section-header">
                         <h2>Registration Management</h2>
-                        <button class="add-btn">
+                        <button class="add-btn" onclick="exportToExcel()">
                             <i class="fas fa-download"></i> Export Data
                         </button>
                     </div>
@@ -580,10 +609,119 @@
     </div>
 
     <script>
+        // Load real-time data
+        function loadDashboardData() {
+            // Load registrations count
+            getDocs(collection(db, 'registrations')).then((snapshot) => {
+                const totalRegistrations = snapshot.size;
+                document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = totalRegistrations.toLocaleString();
+                
+                // Count by type
+                let tutorCount = 0;
+                let partnerCount = 0;
+                let parentStudentCount = 0;
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.type === 'tutor') tutorCount++;
+                    else if (data.type === 'partner') partnerCount++;
+                    else if (data.type === 'parentStudent') parentStudentCount++;
+                });
+                
+                document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = tutorCount.toLocaleString();
+                document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = partnerCount.toLocaleString();
+                
+                // Update chart data
+                updateChart([totalRegistrations, tutorCount, partnerCount, 234]); // 234 for photos (placeholder)
+            });
+        }
+
+        // Update chart with real data
+        function updateChart(data) {
+            if (window.dashboardChart) {
+                window.dashboardChart.data.datasets[0].data = data;
+                window.dashboardChart.update();
+            }
+        }
+
+        // Export to Excel function
+        function exportToExcel() {
+            getDocs(collection(db, 'registrations')).then((snapshot) => {
+                const data = [];
+                snapshot.forEach((doc) => {
+                    data.push(doc.data());
+                });
+                
+                // Convert to CSV format
+                const headers = Object.keys(data[0] || {});
+                const csvContent = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+                ].join('\n');
+                
+                // Download CSV file
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `shiksha-sathi-registrations-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+        }
+
         // Check admin session on dashboard load
         const adminSession = localStorage.getItem('shikshaSathiAdminSession');
         if (adminSession !== 'true') {
             window.location.href = 'admin.html';
+        }
+
+        // Load data when dashboard loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            loadAnalyticsData();
+        });
+
+        // Load analytics data
+        function loadAnalyticsData() {
+            const analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+            
+            if (analytics.pageViews) {
+                const today = new Date().toDateString();
+                const todayViews = analytics.pageViews.filter(view => 
+                    new Date(view.timestamp).toDateString() === today
+                ).length;
+                
+                const uniqueVisitors = new Set(
+                    analytics.pageViews.map(view => view.userAgent)
+                ).size;
+                
+                // Add analytics to dashboard
+                const analyticsSection = document.createElement('div');
+                analyticsSection.className = 'content-section';
+                analyticsSection.innerHTML = `
+                    <div class="section-header">
+                        <h2>Website Analytics</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Today's Page Views</h3>
+                            <div class="stat-value">${todayViews}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Unique Visitors</h3>
+                            <div class="stat-value">${uniqueVisitors}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Page Views</h3>
+                            <div class="stat-value">${analytics.pageViews.length}</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Insert after overview section
+                document.getElementById('overview').appendChild(analyticsSection);
+            }
         }
 
         // Navigation

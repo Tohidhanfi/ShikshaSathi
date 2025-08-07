@@ -159,15 +159,29 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
-    // Track form submission
-    trackFormSubmission('tutor', data);
+    // Add timestamp
+    data.timestamp = new Date().toISOString();
+    data.type = 'tutor';
     
-    // Show success message
-    showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.registration);
-    this.reset();
+    // Save to Firebase
+    addDoc(collection(db, 'registrations'), data)
+        .then((docRef) => {
+            console.log('Registration saved with ID: ', docRef.id);
+            
+            // Track form submission
+            trackFormSubmission('tutor', data);
+            
+            // Show success message
+            showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.registration);
+            this.reset();
+        })
+        .catch((error) => {
+            console.error('Error saving registration: ', error);
+            showNotification('There was an error saving your registration. Please try again.', 'error');
+        });
 });
 
 document.getElementById('partnerForm').addEventListener('submit', function(e) {
@@ -177,15 +191,29 @@ document.getElementById('partnerForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
-    // Track form submission
-    trackFormSubmission('school', data);
+    // Add timestamp
+    data.timestamp = new Date().toISOString();
+    data.type = 'partner';
     
-    // Show success message
-    showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.partner);
-    this.reset();
+    // Save to Firebase
+    addDoc(collection(db, 'registrations'), data)
+        .then((docRef) => {
+            console.log('Partner registration saved with ID: ', docRef.id);
+            
+            // Track form submission
+            trackFormSubmission('school', data);
+            
+            // Show success message
+            showNotification('Thank you for your partnership interest! We will contact you soon.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.partner);
+            this.reset();
+        })
+        .catch((error) => {
+            console.error('Error saving partner registration: ', error);
+            showNotification('There was an error saving your registration. Please try again.', 'error');
+        });
 });
 
 document.getElementById('collaborationForm').addEventListener('submit', function(e) {
@@ -213,15 +241,29 @@ document.getElementById('parentStudentForm').addEventListener('submit', function
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
     
-    // Track form submission
-    trackFormSubmission('parentStudent', data);
+    // Add timestamp
+    data.timestamp = new Date().toISOString();
+    data.type = 'parentStudent';
     
-    // Show success message
-    showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.parentStudent);
-    this.reset();
+    // Save to Firebase
+    addDoc(collection(db, 'registrations'), data)
+        .then((docRef) => {
+            console.log('Parent/Student registration saved with ID: ', docRef.id);
+            
+            // Track form submission
+            trackFormSubmission('parentStudent', data);
+            
+            // Show success message
+            showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.parentStudent);
+            this.reset();
+        })
+        .catch((error) => {
+            console.error('Error saving parent/student registration: ', error);
+            showNotification('There was an error saving your registration. Please try again.', 'error');
+        });
 });
 
 // Notification system
