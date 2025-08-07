@@ -1290,12 +1290,22 @@ function trackFormSubmission(formType, formData) {
 
 // Track page views for specific pages
 function trackPageView(pageName) {
+    const visitData = {
+        page: pageName,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer || 'direct'
+    };
+
     let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
-    
-    if (pageName === 'testimonials') {
-        analytics.testimonialsViews = (analytics.testimonialsViews || 0) + 1;
+    if (!Array.isArray(analytics.pageViews)) analytics.pageViews = [];
+    analytics.pageViews.push(visitData);
+
+    // Keep only last 1000 page views
+    if (analytics.pageViews.length > 1000) {
+        analytics.pageViews = analytics.pageViews.slice(-1000);
     }
-    
+
     localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
 }
 
