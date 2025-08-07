@@ -155,25 +155,36 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 document.getElementById('tutorRegistrationForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    console.log('🎯 Tutor form submitted!');
+    
     // Get form data
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
+    
+    console.log('📝 Form data:', data);
     
     // Add timestamp
     data.timestamp = new Date().toISOString();
     data.type = 'tutor';
     
+    console.log('🔍 Checking Firebase availability...');
+    console.log('window.db:', typeof window.db);
+    console.log('window.addDoc:', typeof window.addDoc);
+    console.log('window.collection:', typeof window.collection);
+    
     // Check if Firebase is available
     if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
-        console.error('Firebase not loaded yet');
+        console.error('❌ Firebase not loaded yet');
         showNotification('System is loading, please try again in a moment.', 'error');
         return;
     }
     
+    console.log('✅ Firebase is available, saving data...');
+    
     // Save to Firebase
     window.addDoc(window.collection(window.db, 'registrations'), data)
         .then((docRef) => {
-            console.log('Registration saved with ID: ', docRef.id);
+            console.log('🎉 Registration saved with ID: ', docRef.id);
             
             // Track form submission
             trackFormSubmission('tutor', data);
@@ -186,7 +197,7 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
             this.reset();
         })
         .catch((error) => {
-            console.error('Error saving registration: ', error);
+            console.error('❌ Error saving registration: ', error);
             showNotification('There was an error saving your registration. Please try again.', 'error');
         });
 });

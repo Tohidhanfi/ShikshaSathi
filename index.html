@@ -1109,6 +1109,20 @@
 
         // Track current page view
         trackPageView(window.location.pathname || 'homepage');
+        
+        // Check if Firebase is loaded
+        function checkFirebase() {
+            if (typeof window.db !== 'undefined' && typeof window.addDoc !== 'undefined') {
+                console.log('✅ Firebase is loaded and ready!');
+                return true;
+            } else {
+                console.log('⏳ Firebase not ready yet...');
+                return false;
+            }
+        }
+        
+        // Check Firebase status every second
+        setInterval(checkFirebase, 1000);
     </script>
 
     <!-- Scroll to Top Button -->
