@@ -620,8 +620,15 @@
     <script>
         // Load real-time data
         function loadDashboardData() {
+            // Check if Firebase is available
+            if (typeof window.getDocs === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
+                console.error('Firebase not loaded yet');
+                setTimeout(loadDashboardData, 1000); // Retry after 1 second
+                return;
+            }
+            
             // Load registrations count
-            getDocs(collection(db, 'registrations')).then((snapshot) => {
+            window.getDocs(window.collection(window.db, 'registrations')).then((snapshot) => {
                 const totalRegistrations = snapshot.size;
                 document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = totalRegistrations.toLocaleString();
                 
@@ -642,6 +649,9 @@
                 
                 // Update chart data
                 updateChart([totalRegistrations, tutorCount, partnerCount, 234]); // 234 for photos (placeholder)
+            }).catch((error) => {
+                console.error('Error loading dashboard data:', error);
+                showNotification('Error loading data. Please refresh the page.', 'error');
             });
         }
 
@@ -655,12 +665,12 @@
 
         // Export to Excel function
         function exportToExcel(type = null) {
-            let query = collection(db, 'registrations');
+            let query = window.collection(window.db, 'registrations');
             if (type) {
                 query = query.where('type', '==', type);
             }
 
-            getDocs(query).then((snapshot) => {
+            window.getDocs(query).then((snapshot) => {
                 const data = [];
                 snapshot.forEach((doc) => {
                     data.push(doc.data());
@@ -688,6 +698,9 @@
                 
                 // Show success message
                 showNotification(`Exported ${data.length} ${typeName} registrations to ${fileName}`, 'success');
+            }).catch((error) => {
+                console.error('Error exporting to Excel:', error);
+                showNotification('Error exporting data. Please try again.', 'error');
             });
         }
 

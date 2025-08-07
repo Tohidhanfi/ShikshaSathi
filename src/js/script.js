@@ -163,8 +163,15 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
     data.timestamp = new Date().toISOString();
     data.type = 'tutor';
     
+    // Check if Firebase is available
+    if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
+        console.error('Firebase not loaded yet');
+        showNotification('System is loading, please try again in a moment.', 'error');
+        return;
+    }
+    
     // Save to Firebase
-    addDoc(collection(db, 'registrations'), data)
+    window.addDoc(window.collection(window.db, 'registrations'), data)
         .then((docRef) => {
             console.log('Registration saved with ID: ', docRef.id);
             
@@ -195,8 +202,15 @@ document.getElementById('partnerForm').addEventListener('submit', function(e) {
     data.timestamp = new Date().toISOString();
     data.type = 'partner';
     
+    // Check if Firebase is available
+    if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
+        console.error('Firebase not loaded yet');
+        showNotification('System is loading, please try again in a moment.', 'error');
+        return;
+    }
+    
     // Save to Firebase
-    addDoc(collection(db, 'registrations'), data)
+    window.addDoc(window.collection(window.db, 'registrations'), data)
         .then((docRef) => {
             console.log('Partner registration saved with ID: ', docRef.id);
             
@@ -245,8 +259,15 @@ document.getElementById('parentStudentForm').addEventListener('submit', function
     data.timestamp = new Date().toISOString();
     data.type = 'parentStudent';
     
+    // Check if Firebase is available
+    if (typeof window.addDoc === 'undefined' || typeof window.collection === 'undefined' || typeof window.db === 'undefined') {
+        console.error('Firebase not loaded yet');
+        showNotification('System is loading, please try again in a moment.', 'error');
+        return;
+    }
+    
     // Save to Firebase
-    addDoc(collection(db, 'registrations'), data)
+    window.addDoc(window.collection(window.db, 'registrations'), data)
         .then((docRef) => {
             console.log('Parent/Student registration saved with ID: ', docRef.id);
             
