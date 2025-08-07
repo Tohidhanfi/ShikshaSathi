@@ -40,6 +40,14 @@ const modals = {
     parentStudent: document.getElementById('parentStudentModal')
 };
 
+// Debug modal initialization
+console.log('Modal elements found:', {
+    registration: !!modals.registration,
+    partner: !!modals.partner,
+    collaboration: !!modals.collaboration,
+    parentStudent: !!modals.parentStudent
+});
+
 const closeButtons = document.querySelectorAll('.close');
 
 // Open modal functions
@@ -59,8 +67,28 @@ function openCollaborationModal() {
 }
 
 function openParentStudentModal() {
-    modals.parentStudent.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    console.log('Opening parent/student modal...');
+    try {
+        if (modals.parentStudent) {
+            modals.parentStudent.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            console.log('Modal opened successfully');
+        } else {
+            console.error('Parent/Student modal not found!');
+            // Fallback: try to find the modal directly
+            const modal = document.getElementById('parentStudentModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal found and opened via fallback');
+            } else {
+                alert('Registration form is loading. Please try again.');
+            }
+        }
+    } catch (error) {
+        console.error('Error opening modal:', error);
+        alert('There was an error opening the registration form. Please try again.');
+    }
 }
 
 // Close modal functions
@@ -363,6 +391,12 @@ function preloadImages() {
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     preloadImages();
+    
+    // Ensure modals are properly initialized
+    if (!modals.parentStudent) {
+        modals.parentStudent = document.getElementById('parentStudentModal');
+        console.log('Re-initializing parent/student modal:', !!modals.parentStudent);
+    }
     
     // Add active class to current navigation item
     const sections = document.querySelectorAll('section[id]');
