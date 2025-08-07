@@ -546,7 +546,16 @@
                     <div class="section-header">
                         <h2>Registration Management</h2>
                         <button class="add-btn" onclick="exportToExcel()">
-                            <i class="fas fa-download"></i> Export Data
+                            <i class="fas fa-download"></i> Export All Data
+                        </button>
+                        <button class="add-btn" onclick="exportToExcel('tutor')">
+                            <i class="fas fa-download"></i> Export Tutors
+                        </button>
+                        <button class="add-btn" onclick="exportToExcel('parentStudent')">
+                            <i class="fas fa-download"></i> Export Parent/Student
+                        </button>
+                        <button class="add-btn" onclick="exportToExcel('partner')">
+                            <i class="fas fa-download"></i> Export Partner Schools
                         </button>
                     </div>
                     
@@ -645,8 +654,13 @@
         }
 
         // Export to Excel function
-        function exportToExcel() {
-            getDocs(collection(db, 'registrations')).then((snapshot) => {
+        function exportToExcel(type = null) {
+            let query = collection(db, 'registrations');
+            if (type) {
+                query = query.where('type', '==', type);
+            }
+
+            getDocs(query).then((snapshot) => {
                 const data = [];
                 snapshot.forEach((doc) => {
                     data.push(doc.data());
@@ -659,14 +673,21 @@
                     ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
                 ].join('\n');
                 
+                // Create filename based on type
+                const typeName = type || 'all';
+                const fileName = `shiksha-sathi-${typeName}-registrations.csv`;
+                
                 // Download CSV file
                 const blob = new Blob([csvContent], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `shiksha-sathi-registrations-${new Date().toISOString().split('T')[0]}.csv`;
+                a.download = fileName;
                 a.click();
                 window.URL.revokeObjectURL(url);
+                
+                // Show success message
+                showNotification(`Exported ${data.length} ${typeName} registrations to ${fileName}`, 'success');
             });
         }
 
@@ -836,6 +857,54 @@
             if (event.target === modal) {
                 closePhotoUploadModal();
             }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            // Set background color based on type
+            switch(type) {
+                case 'success':
+                    notification.style.backgroundColor = '#10b981';
+                    break;
+                case 'error':
+                    notification.style.backgroundColor = '#ef4444';
+                    break;
+                default:
+                    notification.style.backgroundColor = '#3b82f6';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
         }
     </script>
 </body>
