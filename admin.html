@@ -235,7 +235,6 @@
                 if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
                     // Store admin session
                     localStorage.setItem('shikshaSathiAdminSession', 'true');
-                    localStorage.setItem('shikshaSathiAdminLoginTime', Date.now().toString());
                     
                     // Redirect to dashboard
                     window.location.href = 'dashboard.html';
@@ -254,21 +253,8 @@
         // Check if already logged in
         document.addEventListener('DOMContentLoaded', function() {
             const adminSession = localStorage.getItem('shikshaSathiAdminSession');
-            const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
-            
-            // Check if session is valid (24 hours)
-            if (adminSession === 'true' && loginTime) {
-                const now = Date.now();
-                const sessionAge = now - parseInt(loginTime);
-                const sessionValid = sessionAge < 24 * 60 * 60 * 1000; // 24 hours
-                
-                if (sessionValid) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Clear expired session
-                    localStorage.removeItem('shikshaSathiAdminSession');
-                    localStorage.removeItem('shikshaSathiAdminLoginTime');
-                }
+            if (adminSession === 'true') {
+                window.location.href = 'dashboard.html';
             }
         });
     </script>
