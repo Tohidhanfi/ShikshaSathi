@@ -98,9 +98,7 @@ ShikshaSathi/
 - **Local Storage Only** - Data never leaves the user's device
 - **No Server Communication** - Complete offline functionality
 - **User Control** - Users can clear their own data
-- **Password Protection** - Admin dashboard requires password authentication
-- **Session Management** - Logout functionality to secure access
-- **Default Password** - Change the default password in `admin-dashboard.html`
+- **Password Protection** - Admin dashboard requires password (default: `ShikshaSathi2024`)
 
 ## Troubleshooting
 

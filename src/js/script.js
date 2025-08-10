@@ -163,8 +163,8 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
     trackFormSubmission('tutor', data);
     
     // Save to Excel export system
-    if (window.excelExporter) {
-        window.excelExporter.addTutorData(data);
+    if (window.excelHandler) {
+        window.excelHandler.addTutorData(data);
     }
     
     // Show success message
@@ -186,8 +186,8 @@ document.getElementById('partnerForm').addEventListener('submit', function(e) {
     trackFormSubmission('school', data);
     
     // Save to Excel export system
-    if (window.excelExporter) {
-        window.excelExporter.addSchoolData(data);
+    if (window.excelHandler) {
+        window.excelHandler.addSchoolData(data);
     }
     
     // Show success message
@@ -227,8 +227,8 @@ document.getElementById('parentStudentForm').addEventListener('submit', function
     trackFormSubmission('parentStudent', data);
     
     // Save to Excel export system
-    if (window.excelExporter) {
-        window.excelExporter.addParentStudentData(data);
+    if (window.excelHandler) {
+        window.excelHandler.addParentStudentData(data);
     }
     
     // Show success message
