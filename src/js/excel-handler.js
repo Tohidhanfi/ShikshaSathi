@@ -129,6 +129,9 @@ class ExcelDataHandler {
         const excelUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
         console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
         
+        // Auto-generate the main Excel file with all data
+        this.autoGenerateMainExcelFile();
+        
         // Enable real-time sync for new data
         this.enableRealTimeSync();
         
@@ -160,6 +163,9 @@ class ExcelDataHandler {
         // Update Excel file in localStorage (don't download automatically)
         const excelUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
         console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
+        
+        // Auto-generate the main Excel file with all data
+        this.autoGenerateMainExcelFile();
         
         // Enable real-time sync for new data
         this.enableRealTimeSync();
@@ -193,6 +199,9 @@ class ExcelDataHandler {
         // Update Excel file in localStorage (don't download automatically)
         const excelUpdated = this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
         console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
+        
+        // Auto-generate the main Excel file with all data
+        this.autoGenerateMainExcelFile();
         
         return true;
     }
@@ -297,6 +306,118 @@ class ExcelDataHandler {
             console.error('Error downloading Excel file:', error);
             // Fallback: show data in console
             this.showDataInConsole(dataKey);
+        }
+    }
+
+    // Download ALL data in ONE Excel file with multiple sheets
+    async downloadAllDataInOneFile(filename = 'ShikshaSathi_All_Registrations.xlsx') {
+        try {
+            // Check if SheetJS is available
+            if (typeof XLSX === 'undefined') {
+                console.log('SheetJS not loaded, cannot generate Excel file');
+                console.log('Please refresh the page and try again.');
+                return;
+            }
+
+            // First, try to use the pre-generated file from localStorage
+            const storedExcelData = localStorage.getItem('mainExcelFile');
+            if (storedExcelData) {
+                console.log('📥 Using pre-generated Excel file from localStorage...');
+                
+                // Convert binary string back to workbook
+                const workbook = XLSX.read(storedExcelData, { type: 'binary' });
+                
+                // Download the stored Excel file
+                XLSX.writeFile(workbook, filename);
+                
+                console.log(`✅ Excel file ${filename} downloaded from stored data`);
+                console.log(`💡 This file contains the latest updates!`);
+                
+                return;
+            }
+
+            // Fallback: generate fresh file
+            console.log('⚠️ No pre-generated file found, creating fresh Excel file...');
+            
+            // Force refresh data from localStorage to ensure we have the latest
+            this.refreshDataFromStorage();
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Add Tutor sheet
+            if (this.tutorData.length > 0) {
+                const tutorWs = XLSX.utils.aoa_to_sheet(this.tutorData);
+                XLSX.utils.book_append_sheet(wb, tutorWs, 'Tutor_Registrations');
+                console.log(`📊 Added Tutor sheet with ${this.tutorData.length} entries`);
+            }
+            
+            // Add School sheet
+            if (this.schoolData.length > 0) {
+                const schoolWs = XLSX.utils.aoa_to_sheet(this.schoolData);
+                XLSX.utils.book_append_sheet(wb, schoolWs, 'Partner_Schools');
+                console.log(`📊 Added School sheet with ${this.schoolData.length} entries`);
+            }
+            
+            // Add Parent/Student sheet
+            if (this.parentStudentData.length > 0) {
+                const parentWs = XLSX.utils.aoa_to_sheet(this.parentStudentData);
+                XLSX.utils.book_append_sheet(wb, parentWs, 'Parent_Student_Registrations');
+                console.log(`📊 Added Parent/Student sheet with ${this.parentStudentData.length} entries`);
+            }
+            
+            // Generate and download the single Excel file
+            XLSX.writeFile(wb, filename);
+            
+            console.log(`✅ Fresh Excel file ${filename} generated and downloaded`);
+            console.log(`📊 Total entries: ${this.tutorData.length + this.schoolData.length + this.parentStudentData.length}`);
+            
+        } catch (error) {
+            console.error('Error downloading all data:', error);
+        }
+    }
+
+    // Auto-generate the main Excel file whenever data changes
+    autoGenerateMainExcelFile() {
+        try {
+            // Check if SheetJS is available
+            if (typeof XLSX === 'undefined') {
+                console.log('SheetJS not loaded, skipping auto-generation');
+                return;
+            }
+
+            console.log('🔄 Auto-generating main Excel file...');
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Add Tutor sheet
+            if (this.tutorData.length > 0) {
+                const tutorWs = XLSX.utils.aoa_to_sheet(this.tutorData);
+                XLSX.utils.book_append_sheet(wb, tutorWs, 'Tutor_Registrations');
+            }
+            
+            // Add School sheet
+            if (this.schoolData.length > 0) {
+                const schoolWs = XLSX.utils.aoa_to_sheet(this.schoolData);
+                XLSX.utils.book_append_sheet(wb, schoolWs, 'Partner_Schools');
+            }
+            
+            // Add Parent/Student sheet
+            if (this.parentStudentData.length > 0) {
+                const parentWs = XLSX.utils.aoa_to_sheet(this.parentStudentData);
+                XLSX.utils.book_append_sheet(wb, parentWs, 'Parent_Student_Registrations');
+            }
+            
+            // Store the Excel file in localStorage for instant access
+            const excelBinary = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            localStorage.setItem('mainExcelFile', excelBinary);
+            
+            console.log('✅ Main Excel file auto-generated and stored in localStorage');
+            console.log(`📊 Total entries: ${this.tutorData.length + this.schoolData.length + this.parentStudentData.length}`);
+            
+        } catch (error) {
+            console.error('Error auto-generating main Excel file:', error);
         }
     }
 
