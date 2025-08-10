@@ -46,6 +46,31 @@
             font-size: 1.1rem;
             opacity: 0.9;
         }
+
+        .data-management-tips {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .data-management-tips h4 {
+            margin: 0 0 15px 0;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .data-management-tips ul {
+            margin: 0;
+            padding-left: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .data-management-tips li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
         
         .stats-grid {
             display: grid;
@@ -142,6 +167,98 @@
         
         .data-table tr:hover {
             background: #f9fafb;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table-header h3 {
+            margin: 0;
+            color: #374151;
+            font-size: 1.25rem;
+        }
+
+        .pagination-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px 0;
+        }
+
+        .pagination-controls button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .pagination-controls button:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .large-dataset-warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .large-dataset-warning i {
+            color: #f59e0b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .large-dataset-warning h4 {
+            color: #92400e;
+            margin: 0 0 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .large-dataset-warning p {
+            color: #92400e;
+            margin: 0 0 15px 0;
+        }
+
+        .large-dataset-warning ul {
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto 20px auto;
+            color: #92400e;
+        }
+
+        .large-dataset-warning li {
+            margin-bottom: 8px;
         }
         
         .action-buttons {
@@ -366,6 +483,15 @@
         <div class="admin-header">
             <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
             <p>Manage and view all form submissions from ShikshaSathi</p>
+            <div class="data-management-tips">
+                <h4><i class="fas fa-lightbulb"></i> Data Management Tips</h4>
+                <ul>
+                    <li><strong>Large Datasets:</strong> Use search and pagination for better performance</li>
+                    <li><strong>Data Export:</strong> Download CSV/Excel files for offline analysis</li>
+                    <li><strong>Storage:</strong> Data is stored locally in your browser</li>
+                    <li><strong>Backup:</strong> Export data regularly to prevent loss</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Statistics Cards -->
@@ -503,8 +629,8 @@
             }
         }
 
-        // Display tutors table
-        function displayTutorsTable() {
+        // Display tutors table with pagination
+        function displayTutorsTable(page = 1, pageSize = 50) {
             const container = document.getElementById('tutorsTable');
             const data = excelHandler.tutorData;
             
@@ -522,7 +648,21 @@
             const headers = data[0];
             const rows = data.slice(1);
             
+            // Calculate pagination
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const currentRows = rows.slice(startIndex, endIndex);
+            
             let tableHTML = `
+                ${optimizeForLargeDataset('tutors', totalRows)}
+                <div class="table-header">
+                    <h3>Tutor Registrations (${totalRows} total)</h3>
+                    <div class="pagination-info">
+                        Showing ${startIndex + 1}-${Math.min(endIndex, totalRows)} of ${totalRows} entries
+                    </div>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -532,7 +672,7 @@
                     <tbody>
             `;
             
-            rows.forEach(row => {
+            currentRows.forEach(row => {
                 tableHTML += '<tr>';
                 row.forEach(cell => {
                     tableHTML += `<td>${cell || '-'}</td>`;
@@ -541,11 +681,27 @@
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add pagination controls
+            if (totalPages > 1) {
+                tableHTML += `
+                    <div class="pagination-controls">
+                        <button onclick="changePage('tutors', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="page-info">Page ${page} of ${totalPages}</span>
+                        <button onclick="changePage('tutors', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+            
             container.innerHTML = tableHTML;
         }
 
-        // Display schools table
-        function displaySchoolsTable() {
+        // Display schools table with pagination
+        function displaySchoolsTable(page = 1, pageSize = 50) {
             const container = document.getElementById('schoolsTable');
             const data = excelHandler.schoolData;
             
@@ -563,7 +719,21 @@
             const headers = data[0];
             const rows = data.slice(1);
             
+            // Calculate pagination
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const currentRows = rows.slice(startIndex, endIndex);
+            
             let tableHTML = `
+                ${optimizeForLargeDataset('schools', totalRows)}
+                <div class="table-header">
+                    <h3>Partner School Registrations (${totalRows} total)</h3>
+                    <div class="pagination-info">
+                        Showing ${startIndex + 1}-${Math.min(endIndex, totalRows)} of ${totalRows} entries
+                    </div>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -573,7 +743,7 @@
                     <tbody>
             `;
             
-            rows.forEach(row => {
+            currentRows.forEach(row => {
                 tableHTML += '<tr>';
                 row.forEach(cell => {
                     tableHTML += `<td>${cell || '-'}</td>`;
@@ -582,11 +752,27 @@
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add pagination controls
+            if (totalPages > 1) {
+                tableHTML += `
+                    <div class="pagination-controls">
+                        <button onclick="changePage('schools', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="page-info">Page ${page} of ${totalPages}</span>
+                        <button onclick="changePage('schools', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+            
             container.innerHTML = tableHTML;
         }
 
-        // Display parents table
-        function displayParentsTable() {
+        // Display parents table with pagination
+        function displayParentsTable(page = 1, pageSize = 50) {
             const container = document.getElementById('parentsTable');
             const data = excelHandler.parentStudentData;
             
@@ -604,7 +790,21 @@
             const headers = data[0];
             const rows = data.slice(1);
             
+            // Calculate pagination
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const currentRows = rows.slice(startIndex, endIndex);
+            
             let tableHTML = `
+                ${optimizeForLargeDataset('parents', totalRows)}
+                <div class="table-header">
+                    <h3>Parent/Student Registrations (${totalRows} total)</h3>
+                    <div class="pagination-info">
+                        Showing ${startIndex + 1}-${Math.min(endIndex, totalRows)} of ${totalRows} entries
+                    </div>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -614,7 +814,7 @@
                     <tbody>
             `;
             
-            rows.forEach(row => {
+            currentRows.forEach(row => {
                 tableHTML += '<tr>';
                 row.forEach(cell => {
                     tableHTML += `<td>${cell || '-'}</td>`;
@@ -623,11 +823,83 @@
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add pagination controls
+            if (totalPages > 1) {
+                tableHTML += `
+                    <div class="pagination-controls">
+                        <button onclick="changePage('parents', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="page-info">Page ${page} of ${totalPages}</span>
+                        <button onclick="changePage('parents', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+            
             container.innerHTML = tableHTML;
         }
 
-        // Filter table data
+        // Change page function
+        function changePage(tabType, newPage) {
+            if (newPage < 1) return;
+            
+            switch(tabType) {
+                case 'tutors':
+                    displayTutorsTable(newPage, 50);
+                    break;
+                case 'schools':
+                    displaySchoolsTable(newPage, 50);
+                    break;
+                case 'parents':
+                    displayParentsTable(newPage, 50);
+                    break;
+            }
+        }
+
+        // Performance optimization for large datasets
+        function optimizeForLargeDataset(tabType, totalRows) {
+            if (totalRows > 1000) {
+                // For very large datasets, show warning and suggest CSV export
+                return `
+                    <div class="large-dataset-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Large Dataset Detected</h4>
+                        <p>This dataset contains ${totalRows} entries. For better performance:</p>
+                        <ul>
+                            <li>Use the search function to find specific entries</li>
+                            <li>Export to CSV/Excel for full data analysis</li>
+                            <li>Consider clearing old data if no longer needed</li>
+                        </ul>
+                        <button onclick="exportAsCSV('${tabType}')" class="btn btn-primary">
+                            <i class="fas fa-download"></i> Export All Data
+                        </button>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        // Filter table data with pagination
         function filterTable(tabName, searchTerm) {
+            if (!searchTerm.trim()) {
+                // If search is empty, show all data with pagination
+                switch(tabName) {
+                    case 'tutors':
+                        displayTutorsTable(1, 50);
+                        break;
+                    case 'schools':
+                        displaySchoolsTable(1, 50);
+                        break;
+                    case 'parents':
+                        displayParentsTable(1, 50);
+                        break;
+                }
+                return;
+            }
+            
             const container = document.getElementById(tabName + 'Table');
             let data;
             
@@ -655,7 +927,42 @@
                 )
             );
             
+            if (filteredRows.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-search"></i>
+                        <h3>No Results Found</h3>
+                        <p>No registrations match your search term: "${searchTerm}"</p>
+                        <button onclick="clearSearch('${tabName}')" class="btn btn-outline">
+                            <i class="fas fa-times"></i> Clear Search
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show first page of filtered results
+            displayFilteredResults(tabName, filteredRows, headers, searchTerm, 1, 50);
+        }
+
+        // Display filtered results with pagination
+        function displayFilteredResults(tabName, filteredData, headers, searchTerm, page = 1, pageSize = 50) {
+            const container = document.getElementById(tabName + 'Table');
+            
+            // Calculate pagination for filtered results
+            const totalRows = filteredData.length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const currentRows = filteredData.slice(startIndex, endIndex);
+            
             let tableHTML = `
+                <div class="table-header">
+                    <h3>Search Results (${totalRows} found)</h3>
+                    <div class="search-info">
+                        Searching for: "${searchTerm}" | Showing ${startIndex + 1}-${Math.min(endIndex, totalRows)} of ${totalRows} entries
+                    </div>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -665,7 +972,7 @@
                     <tbody>
             `;
             
-            filteredRows.forEach(row => {
+            currentRows.forEach(row => {
                 tableHTML += '<tr>';
                 row.forEach(cell => {
                     tableHTML += `<td>${cell || '-'}</td>`;
@@ -674,7 +981,83 @@
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add pagination controls for filtered results
+            if (totalPages > 1) {
+                tableHTML += `
+                    <div class="pagination-controls">
+                        <button onclick="changeFilteredPage('${tabName}', ${page - 1}, '${searchTerm}')" ${page <= 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="page-info">Page ${page} of ${totalPages}</span>
+                        <button onclick="changeFilteredPage('${tabName}', ${page + 1}, '${searchTerm}')" ${page >= totalPages ? 'disabled' : ''}>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Add clear search button
+            tableHTML += `
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="clearSearch('${tabName}')" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Clear Search
+                    </button>
+                </div>
+            `;
+            
             container.innerHTML = tableHTML;
+        }
+
+        // Change page for filtered results
+        function changeFilteredPage(tabName, newPage, searchTerm) {
+            if (newPage < 1) return;
+            
+            let filteredData = [];
+            let headers = [];
+            
+            switch(tabName) {
+                case 'tutors':
+                    headers = excelHandler.tutorData[0];
+                    filteredData = excelHandler.tutorData.slice(1).filter(row => 
+                        row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+                    break;
+                case 'schools':
+                    headers = excelHandler.schoolData[0];
+                    filteredData = excelHandler.schoolData.slice(1).filter(row => 
+                        row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+                    break;
+                case 'parents':
+                    headers = excelHandler.parentStudentData[0];
+                    filteredData = excelHandler.parentStudentData.slice(1).filter(row => 
+                        row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+                    break;
+            }
+            
+            displayFilteredResults(tabName, filteredData, headers, searchTerm, newPage, 50);
+        }
+
+        // Clear search and show all data
+        function clearSearch(tabName) {
+            const searchInput = document.querySelector(`#${tabName} .search-box`);
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            switch(tabName) {
+                case 'tutors':
+                    displayTutorsTable(1, 50);
+                    break;
+                case 'schools':
+                    displaySchoolsTable(1, 50);
+                    break;
+                case 'parents':
+                    displayParentsTable(1, 50);
+                    break;
+            }
         }
 
         // Download Excel file
