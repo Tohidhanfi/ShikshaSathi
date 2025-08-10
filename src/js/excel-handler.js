@@ -281,8 +281,6 @@ class ExcelDataHandler {
                 console.log(`✅ Excel file ${filename} downloaded from stored data`);
                 console.log(`💡 This file contains the latest updates!`);
                 
-                // Show user-friendly message
-                this.showDownloadSuccessMessage(filename);
                 return;
             }
 
@@ -320,8 +318,7 @@ class ExcelDataHandler {
             
             console.log(`✅ Excel file ${filename} created and downloaded from current data`);
             
-            // Show user-friendly message
-            this.showDownloadSuccessMessage(filename);
+
             
         } catch (error) {
             console.error('Error downloading Excel file:', error);
@@ -349,72 +346,7 @@ class ExcelDataHandler {
         console.log('Copy this data and paste into Excel manually if needed.');
     }
 
-    // Show download success message with helpful tips
-    showDownloadSuccessMessage(filename) {
-        // Create a notification element
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            z-index: 10000;
-            max-width: 400px;
-            font-family: 'Inter', sans-serif;
-            animation: slideIn 0.3s ease-out;
-        `;
-        
-        notification.innerHTML = `
-            <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                <i class="fas fa-check-circle" style="font-size: 24px; margin-right: 10px;"></i>
-                <strong style="font-size: 18px;">Excel File Updated!</strong>
-            </div>
-            <p style="margin: 0 0 15px 0; line-height: 1.5;">
-                <strong>${filename}</strong> has been downloaded with the latest data.
-            </p>
-            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <strong>💡 How to Keep Your Excel Updated:</strong>
-                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                    <li>Save this file to your preferred folder</li>
-                    <li>Replace the old file with this new one</li>
-                    <li>Use the same filename to keep it organized</li>
-                </ul>
-            </div>
-            <button onclick="this.parentElement.remove()" style="
-                background: rgba(255,255,255,0.2);
-                border: none;
-                color: white;
-                padding: 8px 16px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-            ">Got it!</button>
-        `;
-        
-        // Add CSS animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Add to page
-        document.body.appendChild(notification);
-        
-        // Auto-remove after 10 seconds
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
-        }, 10000);
-    }
+
 
     // Real-time data sync system
     enableRealTimeSync() {
@@ -426,10 +358,10 @@ class ExcelDataHandler {
 
         console.log('🔄 Enabling real-time data sync...');
         
-        // Create a sync interval that updates every 30 seconds
+        // Create a sync interval that updates every 10 seconds for more responsive updates
         this.syncInterval = setInterval(() => {
             this.syncDataToCloud();
-        }, 30000); // Sync every 30 seconds
+        }, 10000); // Sync every 10 seconds for faster updates
 
         // Also sync immediately
         this.syncDataToCloud();
@@ -466,9 +398,15 @@ class ExcelDataHandler {
             localStorage.setItem('shikshaSathiRealTimeData', JSON.stringify(syncData));
             
             // Also store individual Excel files for quick access
-            this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
-            this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
-            this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+            const tutorUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+            const schoolUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+            const parentUpdated = this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+            
+            console.log('📊 Excel files updated:', {
+                tutors: tutorUpdated ? '✅' : '❌',
+                schools: schoolUpdated ? '✅' : '❌',
+                parents: parentUpdated ? '✅' : '❌'
+            });
 
             // Update last sync time
             localStorage.setItem('lastSyncTime', new Date().toISOString());
@@ -511,6 +449,26 @@ class ExcelDataHandler {
             schoolRegistrations: this.schoolData,
             parentStudentRegistrations: this.parentStudentData
         };
+    }
+
+    // Force update all Excel files immediately
+    forceUpdateAllExcelFiles() {
+        console.log('🔄 Force updating all Excel files...');
+        
+        const tutorUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+        const schoolUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+        const parentUpdated = this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+        
+        const allUpdated = tutorUpdated && schoolUpdated && parentUpdated;
+        
+        console.log('📊 Force update result:', {
+            tutors: tutorUpdated ? '✅' : '❌',
+            schools: schoolUpdated ? '✅' : '❌',
+            parents: parentUpdated ? '✅' : '❌',
+            overall: allUpdated ? '✅ ALL UPDATED' : '❌ SOME FAILED'
+        });
+        
+        return allUpdated;
     }
 
     // Export all data as CSV (fallback method)

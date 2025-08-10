@@ -807,6 +807,9 @@
             <button class="btn btn-secondary" onclick="exportAllAsCSV()">
                 <i class="fas fa-file-csv"></i> Export All as CSV
             </button>
+            <button class="btn btn-success" onclick="forceUpdateExcelFiles()">
+                <i class="fas fa-sync-alt"></i> Force Update Excel Files
+            </button>
             <button class="btn btn-outline" onclick="refreshData()">
                 <i class="fas fa-sync-alt"></i> Refresh Data
             </button>
@@ -1430,13 +1433,29 @@
             updateStatistics();
             
             // Reload current tab
-            const activeTab = document.querySelector('.tab-content.active');
+            const activeTab = document.querySelector('.tabContent.active');
             if (activeTab) {
                 const tabName = activeTab.id;
                 loadTabData(tabName);
             }
             
             alert('Data refreshed successfully!');
+        }
+
+        // Force update all Excel files
+        function forceUpdateExcelFiles() {
+            if (window.excelHandler) {
+                const updated = window.excelHandler.forceUpdateAllExcelFiles();
+                if (updated) {
+                    console.log('✅ All Excel files updated successfully!');
+                    alert('✅ All Excel files updated successfully!\n\nNow when you download Excel files, they will contain the latest data.');
+                } else {
+                    console.log('❌ Some Excel files failed to update');
+                    alert('❌ Some Excel files failed to update. Check console for details.');
+                }
+            } else {
+                alert('❌ Excel handler not available');
+            }
         }
 
         // Real-time sync functions (silent operation)
