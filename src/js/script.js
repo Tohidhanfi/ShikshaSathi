@@ -393,11 +393,19 @@ let modals = {};
 
 // Initialize modals after DOM loads
 function initializeModals() {
+    console.log('Initializing modals...');
+    
+    // Get modal elements
+    const registrationModal = document.getElementById('registrationModal');
+    const partnerModal = document.getElementById('partnerModal');
+    const collaborationModal = document.getElementById('collaborationModal');
+    const parentStudentModal = document.getElementById('parentStudentModal');
+    
     modals = {
-        registration: document.getElementById('registrationModal'),
-        partner: document.getElementById('partnerModal'),
-        collaboration: document.getElementById('collaborationModal'),
-        parentStudent: document.getElementById('parentStudentModal')
+        registration: registrationModal,
+        partner: partnerModal,
+        collaboration: collaborationModal,
+        parentStudent: parentStudentModal
     };
     
     // Debug modal initialization
@@ -407,22 +415,90 @@ function initializeModals() {
         collaboration: !!modals.collaboration,
         parentStudent: !!modals.parentStudent
     });
+    
+    // Log individual modal elements
+    console.log('Individual modal elements:', {
+        registrationModal: registrationModal,
+        partnerModal: partnerModal,
+        collaborationModal: collaborationModal,
+        parentStudentModal: parentStudentModal
+    });
 }
 
 // Open modal functions
 function openRegistrationModal() {
-    modals.registration.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    console.log('Opening registration modal...');
+    try {
+        if (modals.registration) {
+            modals.registration.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            console.log('Registration modal opened successfully');
+        } else {
+            console.error('Registration modal not found!');
+            // Fallback: try to find the modal directly
+            const modal = document.getElementById('registrationModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal found and opened via fallback');
+            } else {
+                alert('Registration form is loading. Please try again.');
+            }
+        }
+    } catch (error) {
+        console.error('Error opening registration modal:', error);
+        alert('There was an error opening the registration form. Please try again.');
+    }
 }
 
 function openPartnerModal() {
-    modals.partner.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    console.log('Opening partner modal...');
+    try {
+        if (modals.partner) {
+            modals.partner.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            console.log('Partner modal opened successfully');
+        } else {
+            console.error('Partner modal not found!');
+            // Fallback: try to find the modal directly
+            const modal = document.getElementById('partnerModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal found and opened via fallback');
+            } else {
+                alert('Partner form is loading. Please try again.');
+            }
+        }
+    } catch (error) {
+        console.error('Error opening partner modal:', error);
+        alert('There was an error opening the partner form. Please try again.');
+    }
 }
 
 function openCollaborationModal() {
-    modals.collaboration.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    console.log('Opening collaboration modal...');
+    try {
+        if (modals.collaboration) {
+            modals.collaboration.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            console.log('Collaboration modal opened successfully');
+        } else {
+            console.error('Collaboration modal not found!');
+            // Fallback: try to find the modal directly
+            const modal = document.getElementById('collaborationModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal found and opened via fallback');
+            } else {
+                alert('Collaboration form is loading. Please try again.');
+            }
+        }
+    } catch (error) {
+        console.error('Error opening collaboration modal:', error);
+        alert('There was an error opening the collaboration form. Please try again.');
+    }
 }
 
 function openParentStudentModal() {
