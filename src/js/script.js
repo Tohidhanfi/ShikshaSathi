@@ -33,20 +33,25 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Modal functionality
-const modals = {
-    registration: document.getElementById('registrationModal'),
-    partner: document.getElementById('partnerModal'),
-    collaboration: document.getElementById('collaborationModal'),
-    parentStudent: document.getElementById('parentStudentModal')
-};
+let modals = {};
 
-// Debug modal initialization
-console.log('Modal elements found:', {
-    registration: !!modals.registration,
-    partner: !!modals.partner,
-    collaboration: !!modals.collaboration,
-    parentStudent: !!modals.parentStudent
-});
+// Initialize modals after DOM loads
+function initializeModals() {
+    modals = {
+        registration: document.getElementById('registrationModal'),
+        partner: document.getElementById('partnerModal'),
+        collaboration: document.getElementById('collaborationModal'),
+        parentStudent: document.getElementById('parentStudentModal')
+    };
+    
+    // Debug modal initialization
+    console.log('Modal elements found:', {
+        registration: !!modals.registration,
+        partner: !!modals.partner,
+        collaboration: !!modals.collaboration,
+        parentStudent: !!modals.parentStudent
+    });
+}
 
 const closeButtons = document.querySelectorAll('.close');
 
@@ -105,6 +110,11 @@ closeButtons.forEach(button => {
     });
 });
 
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+});
+
 // Close modal when clicking outside
 window.addEventListener('click', (e) => {
     Object.values(modals).forEach(modal => {
@@ -155,16 +165,44 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 document.getElementById('tutorRegistrationForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    console.log('Tutor form submitted!');
+    
+    // Custom validation for checkbox groups
+    const subjects = document.querySelectorAll('input[name="subjects"]:checked');
+    const teachingStandard = document.querySelectorAll('input[name="teachingStandard"]:checked');
+    const eligibilityCoaching = document.querySelectorAll('input[name="eligibilityCoaching"]:checked');
+    
+    if (subjects.length === 0) {
+        alert('Please select at least one subject you can teach.');
+        return;
+    }
+    
+    if (teachingStandard.length === 0) {
+        alert('Please select at least one teaching standard.');
+        return;
+    }
+    
+    if (eligibilityCoaching.length === 0) {
+        alert('Please select at least one eligibility coaching option.');
+        return;
+    }
+    
     // Get form data
-    const FormData = new FormData(this);
-    const data = Object.fromEntries(FormData);
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Form data:', data);
     
     // Track form submission
     trackFormSubmission('tutor', data);
     
     // Save to Excel export system
     if (window.excelHandler) {
+        console.log('Excel handler found, saving data...');
         window.excelHandler.addTutorData(data);
+        console.log('Data saved to Excel handler');
+    } else {
+        console.error('Excel handler not found!');
     }
     
     // Show success message
@@ -178,16 +216,38 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
 document.getElementById('partnerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    console.log('Partner form submitted!');
+    
+    // Custom validation for checkbox groups
+    const teachersRequired = document.querySelectorAll('input[name="teachersRequired"]:checked');
+    const partnerSubjects = document.querySelectorAll('input[name="partnerSubjects"]:checked');
+    
+    if (teachersRequired.length === 0) {
+        alert('Please select at least one standard for teachers required.');
+        return;
+    }
+    
+    if (partnerSubjects.length === 0) {
+        alert('Please select at least one subject.');
+        return;
+    }
+    
     // Get form data
-    const FormData = new FormData(this);
-    const data = Object.fromEntries(FormData);
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Form data:', data);
     
     // Track form submission
     trackFormSubmission('school', data);
     
     // Save to Excel export system
     if (window.excelHandler) {
+        console.log('Excel handler found, saving data...');
         window.excelHandler.addSchoolData(data);
+        console.log('Data saved to Excel handler');
+    } else {
+        console.error('Excel handler not found!');
     }
     
     // Show success message
@@ -219,16 +279,38 @@ document.getElementById('collaborationForm').addEventListener('submit', function
 document.getElementById('parentStudentForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    console.log('Parent/Student form submitted!');
+    
+    // Custom validation for checkbox groups
+    const tuitionSubjects = document.querySelectorAll('input[name="tuitionSubjects"]:checked');
+    const tuitionLocation = document.querySelectorAll('input[name="tuitionLocation"]:checked');
+    
+    if (tuitionSubjects.length === 0) {
+        alert('Please select at least one subject for tuition.');
+        return;
+    }
+    
+    if (tuitionLocation.length === 0) {
+        alert('Please select at least one tuition location preference.');
+        return;
+    }
+    
     // Get form data
-    const FormData = new FormData(this);
-    const data = Object.fromEntries(FormData);
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Form data:', data);
     
     // Track form submission
     trackFormSubmission('parentStudent', data);
     
     // Save to Excel export system
     if (window.excelHandler) {
+        console.log('Excel handler found, saving data...');
         window.excelHandler.addParentStudentData(data);
+        console.log('Data saved to Excel handler');
+    } else {
+        console.error('Excel handler not found!');
     }
     
     // Show success message
