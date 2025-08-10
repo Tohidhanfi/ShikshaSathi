@@ -126,7 +126,8 @@ class ExcelDataHandler {
         this.saveData('tutorRegistrations', this.tutorData);
         
         // Update Excel file in localStorage (don't download automatically)
-        this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+        const excelUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+        console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
         
         // Enable real-time sync for new data
         this.enableRealTimeSync();
@@ -157,7 +158,8 @@ class ExcelDataHandler {
         this.saveData('schoolRegistrations', this.schoolData);
         
         // Update Excel file in localStorage (don't download automatically)
-        this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+        const excelUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+        console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
         
         // Enable real-time sync for new data
         this.enableRealTimeSync();
@@ -189,10 +191,8 @@ class ExcelDataHandler {
         this.saveData('parentStudentRegistrations', this.parentStudentData);
         
         // Update Excel file in localStorage (don't download automatically)
-        this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
-        
-        // Enable real-time sync for new data
-        this.enableRealTimeSync();
+        const excelUpdated = this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+        console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
         
         return true;
     }
@@ -264,6 +264,31 @@ class ExcelDataHandler {
                 return;
             }
 
+            // First, try to get the stored Excel data from localStorage
+            const storageKey = `excel_${dataKey}`;
+            const storedExcelData = localStorage.getItem(storageKey);
+            
+            if (storedExcelData) {
+                // Use the stored Excel data (which contains the latest updates)
+                console.log(`📥 Using stored Excel data for ${dataKey}`);
+                
+                // Convert binary string back to workbook
+                const workbook = XLSX.read(storedExcelData, { type: 'binary' });
+                
+                // Download the stored Excel file
+                XLSX.writeFile(workbook, filename);
+                
+                console.log(`✅ Excel file ${filename} downloaded from stored data`);
+                console.log(`💡 This file contains the latest updates!`);
+                
+                // Show user-friendly message
+                this.showDownloadSuccessMessage(filename);
+                return;
+            }
+
+            // Fallback: create new Excel file from current data
+            console.log(`⚠️ No stored Excel data found, creating new file from current data`);
+            
             let data, headers;
             switch (dataKey) {
                 case 'tutorRegistrations':
@@ -290,12 +315,10 @@ class ExcelDataHandler {
             // Add worksheet to workbook
             XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
 
-            // Generate Excel file and download with consistent naming
-            // This ensures you can replace the old file with the new one
+            // Generate Excel file and download
             XLSX.writeFile(wb, filename);
             
-            console.log(`✅ Excel file ${filename} downloaded successfully`);
-            console.log(`💡 Tip: Replace your old ${filename} file with this new one to keep it updated!`);
+            console.log(`✅ Excel file ${filename} created and downloaded from current data`);
             
             // Show user-friendly message
             this.showDownloadSuccessMessage(filename);
@@ -457,93 +480,14 @@ class ExcelDataHandler {
                 total: syncData.totalCount
             });
 
-            // Show sync notification if this is a new entry
-            this.showSyncNotification(syncData.totalCount);
+            // No more popup notifications - just silent sync
 
         } catch (error) {
             console.error('Error syncing data:', error);
         }
     }
 
-    // Show sync notification for new entries
-    showSyncNotification(totalCount) {
-        const lastCount = parseInt(localStorage.getItem('lastTotalCount') || '0');
-        
-        if (totalCount > lastCount) {
-            const newEntries = totalCount - lastCount;
-            
-            // Create notification
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-                color: white;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                z-index: 10000;
-                max-width: 400px;
-                font-family: 'Inter', sans-serif;
-                animation: slideInLeft 0.3s ease-out;
-            `;
-            
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <i class="fas fa-sync-alt" style="font-size: 24px; margin-right: 10px; animation: spin 2s linear infinite;"></i>
-                    <strong style="font-size: 18px;">New Data Synced!</strong>
-                </div>
-                <p style="margin: 0 0 15px 0; line-height: 1.5;">
-                    <strong>${newEntries} new registration(s)</strong> have been added to your system.
-                </p>
-                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <strong>💡 Your Excel is now updated!</strong>
-                    <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                        <li>Download the latest Excel file to see new entries</li>
-                        <li>Or refresh your existing Excel file</li>
-                        <li>Data syncs automatically every 30 seconds</li>
-                    </ul>
-                </div>
-                <button onclick="this.parentElement.remove()" style="
-                    background: rgba(255,255,255,0.2);
-                    border: none;
-                    color: white;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    font-size: 14px;
-                ">Got it!</button>
-            `;
-            
-            // Add CSS animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInLeft {
-                    from { transform: translateX(-100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Add to page
-            document.body.appendChild(notification);
-            
-            // Auto-remove after 15 seconds
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 15000);
-
-            // Update last count
-            localStorage.setItem('lastTotalCount', totalCount.toString());
-        }
-    }
+    // Silent sync - no popup notifications
 
     // Get real-time data status
     getRealTimeStatus() {

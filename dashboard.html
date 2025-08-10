@@ -1421,7 +1421,7 @@
             if (window.excelHandler) {
                 window.excelHandler.enableRealTimeSync();
                 refreshSyncStatus();
-                showNotification('Real-time sync enabled! Data will update every 30 seconds.', 'success');
+                // Silent operation - no notifications
             }
         }
 
@@ -1429,57 +1429,11 @@
             if (window.excelHandler) {
                 window.excelHandler.disableRealTimeSync();
                 refreshSyncStatus();
-                showNotification('Real-time sync disabled.', 'info');
+                // Silent operation - no notifications
             }
         }
 
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-                color: white;
-                padding: 15px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                z-index: 10000;
-                max-width: 300px;
-                font-family: 'Inter', sans-serif;
-                animation: slideIn 0.3s ease-out;
-            `;
-            
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center;">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" style="margin-right: 10px;"></i>
-                    ${message}
-                </div>
-            `;
-            
-            // Add CSS animation
-            if (!document.querySelector('#notificationStyle')) {
-                const style = document.createElement('style');
-                style.id = 'notificationStyle';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            // Add to page
-            document.body.appendChild(notification);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
+        // Silent operations - no notifications
 
         // Clear all data
         function clearAllData() {
