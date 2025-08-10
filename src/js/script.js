@@ -1,36 +1,262 @@
 // Global variables to prevent flickering
 let blogLoaded = false;
 
-// Mobile Navigation Toggle
-const navToggle = document.querySelector('.nav-toggle');
-const navMenu = document.querySelector('.nav-menu');
-
-navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    navToggle.classList.toggle('active');
-});
-
-// Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-menu a').forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        navToggle.classList.remove('active');
-    });
-});
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+// Initialize everything when DOM is ready
+function initializeWebsite() {
+    console.log('Initializing website...');
+    
+    // Mobile Navigation Toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                navToggle.classList.remove('active');
             });
-        }
+        });
+    }
+    
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     });
-});
+    
+    // Initialize modals
+    initializeModals();
+    
+    // Initialize close buttons
+    const closeButtons = document.querySelectorAll('.close');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const modal = button.closest('.modal');
+            closeModal(modal);
+        });
+    });
+    
+    // Initialize form event listeners
+    initializeFormListeners();
+    
+    console.log('Website initialization complete');
+}
+
+// Initialize all form event listeners
+function initializeFormListeners() {
+    console.log('Initializing form listeners...');
+    
+    // Contact form
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Contact form submitted');
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Track form submission
+            trackFormSubmission('contact', data);
+            
+            // Show success message
+            showNotification('Thank you for your message! We will get back to you soon.', 'success');
+            
+            // Reset form
+            this.reset();
+        });
+    }
+    
+    // Tutor registration form
+    const tutorForm = document.getElementById('tutorRegistrationForm');
+    if (tutorForm) {
+        tutorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Tutor form submitted!');
+            
+            // Custom validation for checkbox groups
+            const subjects = document.querySelectorAll('input[name="subjects"]:checked');
+            const teachingStandard = document.querySelectorAll('input[name="teachingStandard"]:checked');
+            const eligibilityCoaching = document.querySelectorAll('input[name="eligibilityCoaching"]:checked');
+            
+            if (subjects.length === 0) {
+                alert('Please select at least one subject you can teach.');
+                return;
+            }
+            
+            if (teachingStandard.length === 0) {
+                alert('Please select at least one teaching standard.');
+                return;
+            }
+            
+            if (eligibilityCoaching.length === 0) {
+                alert('Please select at least one eligibility coaching option.');
+                return;
+            }
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            console.log('Form data:', data);
+            
+            // Track form submission
+            trackFormSubmission('tutor', data);
+            
+            // Save to Excel export system
+            if (window.excelHandler) {
+                console.log('Excel handler found, saving data...');
+                window.excelHandler.addTutorData(data);
+                console.log('Data saved to Excel handler');
+            } else {
+                console.error('Excel handler not found!');
+            }
+            
+            // Show success message
+            showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.registration);
+            this.reset();
+        });
+    }
+    
+    // Partner form
+    const partnerForm = document.getElementById('partnerForm');
+    if (partnerForm) {
+        partnerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Partner form submitted!');
+            
+            // Custom validation for checkbox groups
+            const teachersRequired = document.querySelectorAll('input[name="teachersRequired"]:checked');
+            const partnerSubjects = document.querySelectorAll('input[name="partnerSubjects"]:checked');
+            
+            if (teachersRequired.length === 0) {
+                alert('Please select at least one standard for teachers required.');
+                return;
+            }
+            
+            if (partnerSubjects.length === 0) {
+                alert('Please select at least one subject.');
+                return;
+            }
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            console.log('Form data:', data);
+            
+            // Track form submission
+            trackFormSubmission('school', data);
+            
+            // Save to Excel export system
+            if (window.excelHandler) {
+                console.log('Excel handler found, saving data...');
+                window.excelHandler.addSchoolData(data);
+                console.log('Data saved to Excel handler');
+            } else {
+                console.error('Excel handler not found!');
+            }
+            
+            // Show success message
+            showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.partner);
+            this.reset();
+        });
+    }
+    
+    // Collaboration form
+    const collaborationForm = document.getElementById('collaborationForm');
+    if (collaborationForm) {
+        collaborationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Collaboration form submitted');
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Track form submission
+            trackFormSubmission('collaboration', data);
+            
+            // Show success message
+            showNotification('Thank you for your collaboration proposal! We will review and contact you soon.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.collaboration);
+            this.reset();
+        });
+    }
+    
+    // Parent/Student form
+    const parentStudentForm = document.getElementById('parentStudentForm');
+    if (parentStudentForm) {
+        parentStudentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Parent/Student form submitted!');
+            
+            // Custom validation for checkbox groups
+            const tuitionSubjects = document.querySelectorAll('input[name="tuitionSubjects"]:checked');
+            const tuitionLocation = document.querySelectorAll('input[name="tuitionLocation"]:checked');
+            
+            if (tuitionSubjects.length === 0) {
+                alert('Please select at least one subject for tuition.');
+                return;
+            }
+            
+            if (tuitionLocation.length === 0) {
+                alert('Please select at least one tuition location preference.');
+                return;
+            }
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            console.log('Form data:', data);
+            
+            // Track form submission
+            trackFormSubmission('parentStudent', data);
+            
+            // Save to Excel export system
+            if (window.excelHandler) {
+                console.log('Excel handler found, saving data...');
+                window.excelHandler.addParentStudentData(data);
+                console.log('Data saved to Excel handler');
+            } else {
+                console.error('Excel handler not found!');
+            }
+            
+            // Show success message
+            showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
+            
+            // Close modal and reset form
+            closeModal(modals.parentStudent);
+            this.reset();
+        });
+    }
+    
+    console.log('Form listeners initialized');
+}
 
 // Modal functionality
 let modals = {};
@@ -52,8 +278,6 @@ function initializeModals() {
         parentStudent: !!modals.parentStudent
     });
 }
-
-const closeButtons = document.querySelectorAll('.close');
 
 // Open modal functions
 function openRegistrationModal() {
@@ -112,7 +336,7 @@ closeButtons.forEach(button => {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    initializeModals();
+    initializeWebsite();
 });
 
 // Close modal when clicking outside
@@ -144,182 +368,7 @@ function scrollToContact() {
     });
 }
 
-// Form submissions
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
-    
-    // Track form submission
-    trackFormSubmission('contact', data);
-    
-    // Show success message
-    showNotification('Thank you for your message! We will get back to you soon.', 'success');
-    
-    // Reset form
-    this.reset();
-});
-
-document.getElementById('tutorRegistrationForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    console.log('Tutor form submitted!');
-    
-    // Custom validation for checkbox groups
-    const subjects = document.querySelectorAll('input[name="subjects"]:checked');
-    const teachingStandard = document.querySelectorAll('input[name="teachingStandard"]:checked');
-    const eligibilityCoaching = document.querySelectorAll('input[name="eligibilityCoaching"]:checked');
-    
-    if (subjects.length === 0) {
-        alert('Please select at least one subject you can teach.');
-        return;
-    }
-    
-    if (teachingStandard.length === 0) {
-        alert('Please select at least one teaching standard.');
-        return;
-    }
-    
-    if (eligibilityCoaching.length === 0) {
-        alert('Please select at least one eligibility coaching option.');
-        return;
-    }
-    
-    // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
-    
-    console.log('Form data:', data);
-    
-    // Track form submission
-    trackFormSubmission('tutor', data);
-    
-    // Save to Excel export system
-    if (window.excelHandler) {
-        console.log('Excel handler found, saving data...');
-        window.excelHandler.addTutorData(data);
-        console.log('Data saved to Excel handler');
-    } else {
-        console.error('Excel handler not found!');
-    }
-    
-    // Show success message
-    showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.registration);
-    this.reset();
-});
-
-document.getElementById('partnerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    console.log('Partner form submitted!');
-    
-    // Custom validation for checkbox groups
-    const teachersRequired = document.querySelectorAll('input[name="teachersRequired"]:checked');
-    const partnerSubjects = document.querySelectorAll('input[name="partnerSubjects"]:checked');
-    
-    if (teachersRequired.length === 0) {
-        alert('Please select at least one standard for teachers required.');
-        return;
-    }
-    
-    if (partnerSubjects.length === 0) {
-        alert('Please select at least one subject.');
-        return;
-    }
-    
-    // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
-    
-    console.log('Form data:', data);
-    
-    // Track form submission
-    trackFormSubmission('school', data);
-    
-    // Save to Excel export system
-    if (window.excelHandler) {
-        console.log('Excel handler found, saving data...');
-        window.excelHandler.addSchoolData(data);
-        console.log('Data saved to Excel handler');
-    } else {
-        console.error('Excel handler not found!');
-    }
-    
-    // Show success message
-    showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.partner);
-    this.reset();
-});
-
-document.getElementById('collaborationForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
-    
-    // Track form submission
-    trackFormSubmission('collaboration', data);
-    
-    // Show success message
-    showNotification('Thank you for your collaboration proposal! We will review and contact you soon.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.collaboration);
-    this.reset();
-});
-
-document.getElementById('parentStudentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    console.log('Parent/Student form submitted!');
-    
-    // Custom validation for checkbox groups
-    const tuitionSubjects = document.querySelectorAll('input[name="tuitionSubjects"]:checked');
-    const tuitionLocation = document.querySelectorAll('input[name="tuitionLocation"]:checked');
-    
-    if (tuitionSubjects.length === 0) {
-        alert('Please select at least one subject for tuition.');
-        return;
-    }
-    
-    if (tuitionLocation.length === 0) {
-        alert('Please select at least one tuition location preference.');
-        return;
-    }
-    
-    // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
-    
-    console.log('Form data:', data);
-    
-    // Track form submission
-    trackFormSubmission('parentStudent', data);
-    
-    // Save to Excel export system
-    if (window.excelHandler) {
-        console.log('Excel handler found, saving data...');
-        window.excelHandler.addParentStudentData(data);
-        console.log('Data saved to Excel handler');
-    } else {
-        console.error('Excel handler not found!');
-    }
-    
-    // Show success message
-    showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
-    
-    // Close modal and reset form
-    closeModal(modals.parentStudent);
-    this.reset();
-});
+// All form submissions moved to initializeFormListeners function
 
 // Notification system
 function showNotification(message, type = 'info') {
