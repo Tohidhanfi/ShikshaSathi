@@ -5,26 +5,38 @@ let blogLoaded = false;
 function initializeWebsite() {
     console.log('Initializing website...');
     
+    // Debug Excel handler status
+    console.log('🔍 Excel handler status:', {
+        exists: !!window.excelHandler,
+        type: typeof window.excelHandler,
+        hasAddTutorData: window.excelHandler ? typeof window.excelHandler.addTutorData : 'undefined',
+        hasAddSchoolData: window.excelHandler ? typeof window.excelHandler.addSchoolData : 'undefined',
+        hasAddParentStudentData: window.excelHandler ? typeof window.excelHandler.addParentStudentData : 'undefined'
+    });
+    
     // Sync any temporarily stored data when Excel handler is available
     syncTemporaryData();
     
     // Retry mechanism for Excel handler if not available initially
     if (!window.excelHandler) {
-        console.log('Excel handler not available, will retry...');
+        console.log('❌ Excel handler not available, will retry...');
         let retryCount = 0;
         const maxRetries = 5;
         
         const retryInterval = setInterval(() => {
             retryCount++;
+            console.log(`🔄 Retry attempt ${retryCount} for Excel handler...`);
             if (window.excelHandler && typeof window.excelHandler.addTutorData === 'function') {
-                console.log('Excel handler found on retry attempt', retryCount);
+                console.log('✅ Excel handler found on retry attempt', retryCount);
                 syncTemporaryData();
                 clearInterval(retryInterval);
             } else if (retryCount >= maxRetries) {
-                console.warn('Excel handler not available after', maxRetries, 'retries');
+                console.warn('⚠️ Excel handler not available after', maxRetries, 'retries');
                 clearInterval(retryInterval);
             }
         }, 1000); // Retry every 1 second
+    } else {
+        console.log('✅ Excel handler is available and ready!');
     }
     
     // Mobile Navigation Toggle
@@ -116,45 +128,46 @@ function initializeFormListeners() {
     // Tutor registration form
     const tutorForm = document.getElementById('tutorRegistrationForm');
     if (tutorForm) {
+        console.log('Tutor form found, adding submit listener...');
         tutorForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('Tutor form submitted!');
+            console.log('🎯 Tutor form submitted!');
             
             // Custom validation for checkbox groups
             const subjects = document.querySelectorAll('input[name="subjects"]:checked');
             const teachingStandard = document.querySelectorAll('input[name="teachingStandard"]:checked');
             const eligibilityCoaching = document.querySelectorAll('input[name="eligibilityCoaching"]:checked');
             
-            console.log('Validation check:', {
+            console.log('🔍 Validation check:', {
                 subjects: subjects.length,
                 teachingStandard: teachingStandard.length,
                 eligibilityCoaching: eligibilityCoaching.length
             });
             
             if (subjects.length === 0) {
-                console.log('Subjects validation failed');
+                console.log('❌ Subjects validation failed');
                 showNotification('Please select at least one subject you can teach.', 'error');
                 return;
             }
             
             if (teachingStandard.length === 0) {
-                console.log('Teaching standard validation failed');
+                console.log('❌ Teaching standard validation failed');
                 showNotification('Please select at least one teaching standard.', 'error');
                 return;
             }
             
             if (eligibilityCoaching.length === 0) {
-                console.log('Eligibility coaching validation failed');
+                console.log('❌ Eligibility coaching validation failed');
                 showNotification('Please select at least one eligibility coaching option.', 'error');
                 return;
             }
             
-            console.log('All validations passed!');
+            console.log('✅ All validations passed!');
             
             // Check if "Other" subjects is selected and text is filled
             const otherSubjectsChecked = document.querySelector('input[name="subjects"][value="other"]:checked');
             const subjectsOtherText = document.getElementById('subjectsOtherText');
-            console.log('Other subjects check:', {
+            console.log('🔍 Other subjects check:', {
                 otherChecked: !!otherSubjectsChecked,
                 otherTextElement: !!subjectsOtherText,
                 otherTextDisplay: subjectsOtherText ? subjectsOtherText.style.display : 'N/A',
@@ -163,7 +176,7 @@ function initializeFormListeners() {
             
             if (otherSubjectsChecked && subjectsOtherText && subjectsOtherText.style.display !== 'none') {
                 if (!subjectsOtherText.value.trim()) {
-                    console.log('Other subjects text validation failed');
+                    console.log('❌ Other subjects text validation failed');
                     showNotification('Please specify the other subjects you can teach.', 'error');
                     subjectsOtherText.focus();
                     return;
@@ -174,40 +187,52 @@ function initializeFormListeners() {
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
             
-            console.log('Form data:', data);
+            console.log('📝 Form data collected:', data);
             
             // Track form submission
             trackFormSubmission('tutor', data);
             
             // Save to Excel export system
             if (window.excelHandler && typeof window.excelHandler.addTutorData === 'function') {
-                console.log('Excel handler found, saving data...');
-                window.excelHandler.addTutorData(data);
-                console.log('Data saved to Excel handler');
+                console.log('💾 Excel handler found, saving data...');
+                try {
+                    const result = window.excelHandler.addTutorData(data);
+                    console.log('✅ Data saved to Excel handler:', result);
+                } catch (error) {
+                    console.error('❌ Error saving to Excel handler:', error);
+                }
             } else {
-                console.error('Excel handler not found or not properly initialized!');
+                console.error('❌ Excel handler not found or not properly initialized!');
+                console.log('🔍 Window excelHandler:', window.excelHandler);
+                console.log('🔍 Type of addTutorData:', typeof (window.excelHandler ? window.excelHandler.addTutorData : 'undefined'));
+                
                 // Fallback: store in localStorage temporarily
                 const tempData = JSON.parse(localStorage.getItem('tempTutorData') || '[]');
                 tempData.push(data);
                 localStorage.setItem('tempTutorData', JSON.stringify(tempData));
-                console.log('Data stored temporarily in localStorage');
+                console.log('💾 Data stored temporarily in localStorage');
             }
             
             // Show success message
+            console.log('🎉 Showing success notification...');
             showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
             
             // Close modal and reset form
-            if (modals && modals.registration) {
-                closeModal(modals.registration);
+            console.log('🚪 Closing modal...');
+            const modal = document.getElementById('registrationModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                console.log('✅ Modal closed');
             } else {
-                // Fallback: find modal directly
-                const modal = document.getElementById('registrationModal');
-                if (modal) {
-                    closeModal(modal);
-                }
+                console.error('❌ Modal not found');
             }
+            
             this.reset();
+            console.log('✅ Form reset complete');
         });
+    } else {
+        console.error('❌ Tutor form not found!');
     }
     
     // Partner form
@@ -1521,45 +1546,48 @@ function trackFormSubmission(formType, formData) {
     try {
         let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
     
-    // Increment appropriate counter
-    switch(formType) {
-        case 'tutor':
-            analytics.tutorRegistrations = (analytics.tutorRegistrations || 0) + 1;
-            analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
-            break;
-        case 'school':
-            analytics.schoolRegistrations = (analytics.schoolRegistrations || 0) + 1;
-            analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
-            break;
-        case 'parentStudent':
-            analytics.parentStudentRegistrations = (analytics.parentStudentRegistrations || 0) + 1;
-            analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
-            break;
-        case 'collaboration':
-            analytics.collaborationRequests = (analytics.collaborationRequests || 0) + 1;
-            break;
-        case 'contact':
-            analytics.contactSubmissions = (analytics.contactSubmissions || 0) + 1;
-            break;
+        // Increment appropriate counter
+        switch(formType) {
+            case 'tutor':
+                analytics.tutorRegistrations = (analytics.tutorRegistrations || 0) + 1;
+                analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
+                break;
+            case 'school':
+                analytics.schoolRegistrations = (analytics.schoolRegistrations || 0) + 1;
+                analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
+                break;
+            case 'parentStudent':
+                analytics.parentStudentRegistrations = (analytics.parentStudentRegistrations || 0) + 1;
+                analytics.todayRegistrations = (analytics.todayRegistrations || 0) + 1;
+                break;
+            case 'collaboration':
+                analytics.collaborationRequests = (analytics.collaborationRequests || 0) + 1;
+                break;
+            case 'contact':
+                analytics.contactSubmissions = (analytics.contactSubmissions || 0) + 1;
+                break;
+        }
+        
+        // Add to registration history
+        if (!analytics.registrationHistory) {
+            analytics.registrationHistory = [];
+        }
+        
+        analytics.registrationHistory.push({
+            timestamp: new Date().toLocaleString(),
+            type: formType,
+            data: formData
+        });
+        
+        // Keep only last 50 registrations
+        if (analytics.registrationHistory.length > 50) {
+            analytics.registrationHistory = analytics.registrationHistory.slice(-50);
+        }
+        
+        localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
+    } catch (error) {
+        console.error('Error tracking form submission:', error);
     }
-    
-    // Add to registration history
-    if (!analytics.registrationHistory) {
-        analytics.registrationHistory = [];
-    }
-    
-    analytics.registrationHistory.push({
-        timestamp: new Date().toLocaleString(),
-        type: formType,
-        data: formData
-    });
-    
-    // Keep only last 50 registrations
-    if (analytics.registrationHistory.length > 50) {
-        analytics.registrationHistory = analytics.registrationHistory.slice(-50);
-    }
-    
-    localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(analytics));
 }
 
 // Track page views for specific pages
