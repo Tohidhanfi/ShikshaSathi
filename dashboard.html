@@ -808,7 +808,7 @@
                 <i class="fas fa-file-csv"></i> Export All as CSV
             </button>
             <button class="btn btn-success" onclick="forceUpdateExcelFiles()">
-                <i class="fas fa-sync-alt"></i> Force Update Excel Files
+                <i class="fas fa-sync-alt"></i> Refresh Excel Timestamps
             </button>
             <button class="btn btn-outline" onclick="refreshData()">
                 <i class="fas fa-sync-alt"></i> Refresh Data
@@ -1442,16 +1442,16 @@
             alert('Data refreshed successfully!');
         }
 
-        // Force update all Excel files
+        // Refresh Excel file timestamps
         function forceUpdateExcelFiles() {
             if (window.excelHandler) {
                 const updated = window.excelHandler.forceUpdateAllExcelFiles();
                 if (updated) {
-                    console.log('✅ All Excel files updated successfully!');
-                    alert('✅ All Excel files updated successfully!\n\nNow when you download Excel files, they will contain the latest data.');
+                    console.log('✅ All Excel timestamps refreshed successfully!');
+                    alert('✅ All Excel timestamps refreshed successfully!\n\nNow when you download Excel files, they will contain the latest data.');
                 } else {
-                    console.log('❌ Some Excel files failed to update');
-                    alert('❌ Some Excel files failed to update. Check console for details.');
+                    console.log('❌ Some Excel timestamps failed to refresh');
+                    alert('❌ Some Excel timestamps failed to refresh. Check console for details.');
                 }
             } else {
                 alert('❌ Excel handler not available');

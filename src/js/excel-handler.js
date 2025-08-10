@@ -209,44 +209,32 @@ class ExcelDataHandler {
     // Update Excel file in localStorage (without downloading)
     updateExcelFile(dataKey, filename) {
         try {
-            // Check if SheetJS is available
-            if (typeof XLSX === 'undefined') {
-                console.log('SheetJS not loaded, updating localStorage only');
-                return false;
-            }
+            // Store the latest data timestamp for this data type
+            const timestamp = new Date().toISOString();
+            const storageKey = `excel_${dataKey}_timestamp`;
+            localStorage.setItem(storageKey, timestamp);
             
-            // Get the data to update
-            let data = [];
+            // Also store the data count for verification
+            let dataCount = 0;
             switch(dataKey) {
                 case 'tutorRegistrations':
-                    data = this.tutorData;
+                    dataCount = this.tutorData.length;
                     break;
                 case 'schoolRegistrations':
-                    data = this.schoolData;
+                    dataCount = this.schoolData.length;
                     break;
                 case 'parentStudentRegistrations':
-                    data = this.parentStudentData;
+                    dataCount = this.parentStudentData.length;
                     break;
                 default:
                     console.error('Unknown data key:', dataKey);
                     return false;
             }
             
-            // Create workbook and worksheet
-            const workbook = XLSX.utils.book_new();
-            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            const countKey = `excel_${dataKey}_count`;
+            localStorage.setItem(countKey, dataCount.toString());
             
-            // Add worksheet to workbook
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-            
-            // Convert to binary string and store in localStorage
-            const excelBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
-            
-            // Store the Excel file data in localStorage
-            const storageKey = `excel_${dataKey}`;
-            localStorage.setItem(storageKey, excelBinary);
-            
-            console.log(`✅ Excel file updated for ${dataKey} and stored in localStorage`);
+            console.log(`✅ Excel update timestamp stored for ${dataKey}: ${dataCount} entries at ${timestamp}`);
             return true;
             
         } catch (error) {
@@ -260,46 +248,23 @@ class ExcelDataHandler {
         try {
             // Check if SheetJS is available
             if (typeof XLSX === 'undefined') {
-                console.log('SheetJS not loaded, saving to localStorage only');
+                console.log('SheetJS not loaded, cannot generate Excel file');
                 return;
             }
 
-            // First, try to get the stored Excel data from localStorage
-            const storageKey = `excel_${dataKey}`;
-            const storedExcelData = localStorage.getItem(storageKey);
+            // Always create fresh Excel file from current data
+            console.log(`🔄 Generating fresh Excel file for ${dataKey}`);
             
-            if (storedExcelData) {
-                // Use the stored Excel data (which contains the latest updates)
-                console.log(`📥 Using stored Excel data for ${dataKey}`);
-                
-                // Convert binary string back to workbook
-                const workbook = XLSX.read(storedExcelData, { type: 'binary' });
-                
-                // Download the stored Excel file
-                XLSX.writeFile(workbook, filename);
-                
-                console.log(`✅ Excel file ${filename} downloaded from stored data`);
-                console.log(`💡 This file contains the latest updates!`);
-                
-                return;
-            }
-
-            // Fallback: create new Excel file from current data
-            console.log(`⚠️ No stored Excel data found, creating new file from current data`);
-            
-            let data, headers;
+            let data;
             switch (dataKey) {
                 case 'tutorRegistrations':
                     data = this.tutorData;
-                    headers = this.getTutorHeaders();
                     break;
                 case 'schoolRegistrations':
                     data = this.schoolData;
-                    headers = this.getSchoolHeaders();
                     break;
                 case 'parentStudentRegistrations':
                     data = this.parentStudentData;
-                    headers = this.getParentStudentHeaders();
                     break;
                 default:
                     console.error('Unknown data key:', dataKey);
@@ -316,9 +281,7 @@ class ExcelDataHandler {
             // Generate Excel file and download
             XLSX.writeFile(wb, filename);
             
-            console.log(`✅ Excel file ${filename} created and downloaded from current data`);
-            
-
+            console.log(`✅ Fresh Excel file ${filename} generated and downloaded with ${data.length} entries`);
             
         } catch (error) {
             console.error('Error downloading Excel file:', error);
@@ -397,16 +360,12 @@ class ExcelDataHandler {
             // Store in localStorage for real-time access
             localStorage.setItem('shikshaSathiRealTimeData', JSON.stringify(syncData));
             
-            // Also store individual Excel files for quick access
-            const tutorUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
-            const schoolUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
-            const parentUpdated = this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+            // Update Excel file timestamps for tracking
+            this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+            this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+            this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
             
-            console.log('📊 Excel files updated:', {
-                tutors: tutorUpdated ? '✅' : '❌',
-                schools: schoolUpdated ? '✅' : '❌',
-                parents: parentUpdated ? '✅' : '❌'
-            });
+            console.log('📊 Excel update timestamps refreshed for all data types');
 
             // Update last sync time
             localStorage.setItem('lastSyncTime', new Date().toISOString());
@@ -451,9 +410,9 @@ class ExcelDataHandler {
         };
     }
 
-    // Force update all Excel files immediately
+    // Force update all Excel file timestamps immediately
     forceUpdateAllExcelFiles() {
-        console.log('🔄 Force updating all Excel files...');
+        console.log('🔄 Force updating all Excel file timestamps...');
         
         const tutorUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
         const schoolUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
@@ -465,7 +424,7 @@ class ExcelDataHandler {
             tutors: tutorUpdated ? '✅' : '❌',
             schools: schoolUpdated ? '✅' : '❌',
             parents: parentUpdated ? '✅' : '❌',
-            overall: allUpdated ? '✅ ALL UPDATED' : '❌ SOME FAILED'
+            overall: allUpdated ? '✅ ALL TIMESTAMPS UPDATED' : '❌ SOME FAILED'
         });
         
         return allUpdated;
