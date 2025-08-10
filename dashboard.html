@@ -551,16 +551,81 @@
                 grid-template-columns: 1fr;
             }
 
-            /* Real-time sync animations */
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
+                    /* Pagination styling */
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
 
-            @keyframes slideInLeft {
-                from { transform: translateX(-100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
+        .page-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .page-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .page-number {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            min-width: 40px;
+            transition: all 0.2s;
+        }
+
+        .page-number:hover {
+            background: #d1d5db;
+        }
+
+        .page-number.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .page-ellipsis {
+            color: #6b7280;
+            padding: 0 8px;
+            font-weight: bold;
+        }
+
+        /* Real-time sync animations */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
         }
     </style>
 </head>
@@ -730,76 +795,9 @@
             </div>
         </div>
 
-        <!-- Real-Time Sync Status -->
-        <div class="realtime-sync-status" style="margin-top: 30px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border-radius: 12px; padding: 25px; border: 1px solid #1d4ed8;">
-            <h3 style="margin: 0 0 20px 0; display: flex; align-items: center;">
-                <i class="fas fa-sync-alt" style="margin-right: 10px; animation: spin 2s linear infinite;"></i>
-                Real-Time Data Sync Status
-            </h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
-                    <h4 style="margin: 0 0 15px 0; opacity: 0.9;">🔄 Sync Status</h4>
-                    <div id="syncStatus" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-                        <div style="margin-bottom: 10px;">
-                            <strong>Status:</strong> <span id="syncStatusText">Checking...</span>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong>Last Sync:</strong> <span id="lastSyncTime">Never</span>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong>Total Entries:</strong> <span id="totalEntries">0</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <button id="toggleSyncBtn" class="btn" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px;">
-                            <i class="fas fa-play"></i> Enable Sync
-                        </button>
-                        <button onclick="refreshSyncStatus()" class="btn" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <h4 style="margin: 0 0 15px 0; opacity: 0.9;">💡 How Real-Time Sync Works</h4>
-                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-                        <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
-                            <li><strong>Auto-Sync:</strong> Data updates every 30 seconds automatically</li>
-                            <li><strong>Instant Updates:</strong> New registrations appear immediately</li>
-                            <li><strong>No Downloads:</strong> Excel files stay current without manual downloads</li>
-                            <li><strong>Smart Notifications:</strong> Get alerts when new data arrives</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Excel Management Guide -->
-        <div class="excel-guide" style="margin-top: 30px; background: #f8fafc; border-radius: 12px; padding: 25px; border: 1px solid #e2e8f0;">
-            <h3 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center;">
-                <i class="fas fa-file-excel" style="color: #059669; margin-right: 10px;"></i>
-                Excel File Management Guide
-            </h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
-                    <h4 style="color: #374151; margin: 0 0 15px 0;">📥 How to Download Updated Excel Files</h4>
-                    <ol style="margin: 0; padding-left: 20px; color: #4b5563; line-height: 1.6;">
-                        <li>Click any "Download Updated Excel" button above</li>
-                        <li>Choose where to save the file on your computer</li>
-                        <li>Replace the old Excel file with the new one</li>
-                        <li>Your Excel sheet will now have the latest data!</li>
-                    </ol>
-                </div>
-                <div>
-                    <h4 style="color: #374151; margin: 0 0 15px 0;">💡 Pro Tips for Excel Management</h4>
-                    <ul style="margin: 0; padding-left: 20px; color: #4b5563; line-height: 1.6;">
-                        <li><strong>Consistent Naming:</strong> Always use the same filename to keep organized</li>
-                        <li><strong>Regular Updates:</strong> Download after every 10-20 new registrations</li>
-                        <li><strong>Backup Strategy:</strong> Keep a copy of important data in a separate folder</li>
-                        <li><strong>Auto-Update:</strong> Excel files are always current in the system</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
+
 
         <!-- Global Actions -->
         <div class="action-buttons" style="margin-top: 30px; justify-content: center;">
@@ -860,7 +858,7 @@
         }
 
         // Display tutors table with pagination
-        function displayTutorsTable(page = 1, pageSize = 50) {
+        function displayTutorsTable(page = 1, pageSize = 10) {
             const container = document.getElementById('tutorsTable');
             const data = excelHandler.tutorData;
             
@@ -912,15 +910,19 @@
             
             tableHTML += '</tbody></table>';
             
-            // Add pagination controls
+            // Add pagination controls with page numbers
             if (totalPages > 1) {
                 tableHTML += `
                     <div class="pagination-controls">
-                        <button onclick="changePage('tutors', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                        <button onclick="changePage('tutors', ${page - 1})" ${page <= 1 ? 'disabled' : ''} class="page-btn">
                             <i class="fas fa-chevron-left"></i> Previous
                         </button>
-                        <span class="page-info">Page ${page} of ${totalPages}</span>
-                        <button onclick="changePage('tutors', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                        
+                        <div class="page-numbers">
+                            ${generatePageNumbers('tutors', page, totalPages)}
+                        </div>
+                        
+                        <button onclick="changePage('tutors', ${page + 1})" ${page >= totalPages ? 'disabled' : ''} class="page-btn">
                             Next <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -931,7 +933,7 @@
         }
 
         // Display schools table with pagination
-        function displaySchoolsTable(page = 1, pageSize = 50) {
+        function displaySchoolsTable(page = 1, pageSize = 10) {
             const container = document.getElementById('schoolsTable');
             const data = excelHandler.schoolData;
             
@@ -983,15 +985,19 @@
             
             tableHTML += '</tbody></table>';
             
-            // Add pagination controls
+            // Add pagination controls with page numbers
             if (totalPages > 1) {
                 tableHTML += `
                     <div class="pagination-controls">
-                        <button onclick="changePage('schools', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                        <button onclick="changePage('schools', ${page - 1})" ${page <= 1 ? 'disabled' : ''} class="page-btn">
                             <i class="fas fa-chevron-left"></i> Previous
                         </button>
-                        <span class="page-info">Page ${page} of ${totalPages}</span>
-                        <button onclick="changePage('schools', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                        
+                        <div class="page-numbers">
+                            ${generatePageNumbers('schools', page, totalPages)}
+                        </div>
+                        
+                        <button onclick="changePage('schools', ${page + 1})" ${page >= totalPages ? 'disabled' : ''} class="page-btn">
                             Next <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -1002,7 +1008,7 @@
         }
 
         // Display parents table with pagination
-        function displayParentsTable(page = 1, pageSize = 50) {
+        function displayParentsTable(page = 1, pageSize = 10) {
             const container = document.getElementById('parentsTable');
             const data = excelHandler.parentStudentData;
             
@@ -1058,11 +1064,15 @@
             if (totalPages > 1) {
                 tableHTML += `
                     <div class="pagination-controls">
-                        <button onclick="changePage('parents', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                        <button onclick="changePage('parents', ${page - 1})" ${page <= 1 ? 'disabled' : ''} class="page-btn">
                             <i class="fas fa-chevron-left"></i> Previous
                         </button>
-                        <span class="page-info">Page ${page} of ${totalPages}</span>
-                        <button onclick="changePage('parents', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                        
+                        <div class="page-numbers">
+                            ${generatePageNumbers('parents', page, totalPages)}
+                        </div>
+                        
+                        <button onclick="changePage('parents', ${page + 1})" ${page >= totalPages ? 'disabled' : ''} class="page-btn">
                             Next <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -1078,15 +1088,49 @@
             
             switch(tabType) {
                 case 'tutors':
-                    displayTutorsTable(newPage, 50);
+                    displayTutorsTable(newPage, 10);
                     break;
                 case 'schools':
-                    displaySchoolsTable(newPage, 50);
+                    displaySchoolsTable(newPage, 10);
                     break;
                 case 'parents':
-                    displayParentsTable(newPage, 50);
+                    displayParentsTable(newPage, 10);
                     break;
             }
+        }
+
+        // Generate page numbers for pagination
+        function generatePageNumbers(tabType, currentPage, totalPages) {
+            let pageNumbers = '';
+            
+            // Always show first page
+            pageNumbers += `<button onclick="changePage('${tabType}', 1)" class="page-number ${currentPage === 1 ? 'active' : ''}">1</button>`;
+            
+            // Show pages around current page
+            const startPage = Math.max(2, currentPage - 1);
+            const endPage = Math.min(totalPages - 1, currentPage + 1);
+            
+            // Add ellipsis if there's a gap
+            if (startPage > 2) {
+                pageNumbers += '<span class="page-ellipsis">...</span>';
+            }
+            
+            // Add middle pages
+            for (let i = startPage; i <= endPage; i++) {
+                pageNumbers += `<button onclick="changePage('${tabType}', ${i})" class="page-number ${currentPage === i ? 'active' : ''}">${i}</button>`;
+            }
+            
+            // Add ellipsis if there's a gap
+            if (endPage < totalPages - 1) {
+                pageNumbers += '<span class="page-ellipsis">...</span>';
+            }
+            
+            // Always show last page if more than 1 page
+            if (totalPages > 1) {
+                pageNumbers += `<button onclick="changePage('${tabType}', ${totalPages})" class="page-number ${currentPage === totalPages ? 'active' : ''}">${totalPages}</button>`;
+            }
+            
+            return pageNumbers;
         }
 
         // Performance optimization for large datasets
@@ -1115,18 +1159,18 @@
         // Filter table data with pagination
         function filterTable(tabName, searchTerm) {
             if (!searchTerm.trim()) {
-                // If search is empty, show all data with pagination
-                switch(tabName) {
-                    case 'tutors':
-                        displayTutorsTable(1, 50);
-                        break;
-                    case 'schools':
-                        displaySchoolsTable(1, 50);
-                        break;
-                    case 'parents':
-                        displayParentsTable(1, 50);
-                        break;
-                }
+                            // If search is empty, show all data with pagination
+            switch(tabName) {
+                case 'tutors':
+                    displayTutorsTable(1, 10);
+                    break;
+                case 'schools':
+                    displaySchoolsTable(1, 10);
+                    break;
+                case 'parents':
+                    displayParentsTable(1, 10);
+                    break;
+            }
                 return;
             }
             
@@ -1395,41 +1439,20 @@
             alert('Data refreshed successfully!');
         }
 
-        // Real-time sync functions
+        // Real-time sync functions (silent operation)
         function refreshSyncStatus() {
-            if (window.excelHandler) {
-                const status = window.excelHandler.getRealTimeStatus();
-                
-                // Update status display
-                document.getElementById('syncStatusText').textContent = status.syncEnabled ? '🟢 Active' : '🔴 Inactive';
-                document.getElementById('lastSyncTime').textContent = status.lastSync ? new Date(status.lastSync).toLocaleString() : 'Never';
-                document.getElementById('totalEntries').textContent = status.totalRegistrations;
-                
-                // Update toggle button
-                const toggleBtn = document.getElementById('toggleSyncBtn');
-                if (status.syncEnabled) {
-                    toggleBtn.innerHTML = '<i class="fas fa-pause"></i> Disable Sync';
-                    toggleBtn.onclick = () => disableRealTimeSync();
-                } else {
-                    toggleBtn.innerHTML = '<i class="fas fa-play"></i> Enable Sync';
-                    toggleBtn.onclick = () => enableRealTimeSync();
-                }
-            }
+            // Silent operation - no UI updates
         }
 
         function enableRealTimeSync() {
             if (window.excelHandler) {
                 window.excelHandler.enableRealTimeSync();
-                refreshSyncStatus();
-                // Silent operation - no notifications
             }
         }
 
         function disableRealTimeSync() {
             if (window.excelHandler) {
                 window.excelHandler.disableRealTimeSync();
-                refreshSyncStatus();
-                // Silent operation - no notifications
             }
         }
 
@@ -1493,12 +1516,7 @@
             // Dashboard content is hidden by default until password is entered
             document.getElementById('adminContent').style.display = 'none';
             
-            // Initialize real-time sync status
-            setTimeout(() => {
-                if (window.excelHandler) {
-                    refreshSyncStatus();
-                }
-            }, 1000);
+            // Real-time sync works silently in background
         });
         
         // Analytics Dashboard Functions
