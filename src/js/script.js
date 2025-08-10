@@ -5,6 +5,28 @@ let blogLoaded = false;
 function initializeWebsite() {
     console.log('Initializing website...');
     
+    // Sync any temporarily stored data when Excel handler is available
+    syncTemporaryData();
+    
+    // Retry mechanism for Excel handler if not available initially
+    if (!window.excelHandler) {
+        console.log('Excel handler not available, will retry...');
+        let retryCount = 0;
+        const maxRetries = 5;
+        
+        const retryInterval = setInterval(() => {
+            retryCount++;
+            if (window.excelHandler && typeof window.excelHandler.addTutorData === 'function') {
+                console.log('Excel handler found on retry attempt', retryCount);
+                syncTemporaryData();
+                clearInterval(retryInterval);
+            } else if (retryCount >= maxRetries) {
+                console.warn('Excel handler not available after', maxRetries, 'retries');
+                clearInterval(retryInterval);
+            }
+        }, 1000); // Retry every 1 second
+    }
+    
     // Mobile Navigation Toggle
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
@@ -158,12 +180,17 @@ function initializeFormListeners() {
             trackFormSubmission('tutor', data);
             
             // Save to Excel export system
-            if (window.excelHandler) {
+            if (window.excelHandler && typeof window.excelHandler.addTutorData === 'function') {
                 console.log('Excel handler found, saving data...');
                 window.excelHandler.addTutorData(data);
                 console.log('Data saved to Excel handler');
             } else {
-                console.error('Excel handler not found!');
+                console.error('Excel handler not found or not properly initialized!');
+                // Fallback: store in localStorage temporarily
+                const tempData = JSON.parse(localStorage.getItem('tempTutorData') || '[]');
+                tempData.push(data);
+                localStorage.setItem('tempTutorData', JSON.stringify(tempData));
+                console.log('Data stored temporarily in localStorage');
             }
             
             // Show success message
@@ -225,12 +252,17 @@ function initializeFormListeners() {
             trackFormSubmission('school', data);
             
             // Save to Excel export system
-            if (window.excelHandler) {
+            if (window.excelHandler && typeof window.excelHandler.addSchoolData === 'function') {
                 console.log('Excel handler found, saving data...');
                 window.excelHandler.addSchoolData(data);
                 console.log('Data saved to Excel handler');
             } else {
-                console.error('Excel handler not found!');
+                console.error('Excel handler not found or not properly initialized!');
+                // Fallback: store in localStorage temporarily
+                const tempData = JSON.parse(localStorage.getItem('tempSchoolData') || '[]');
+                tempData.push(data);
+                localStorage.setItem('tempSchoolData', JSON.stringify(tempData));
+                console.log('Data stored temporarily in localStorage');
             }
             
             // Show success message
@@ -323,12 +355,17 @@ function initializeFormListeners() {
             trackFormSubmission('parentStudent', data);
             
             // Save to Excel export system
-            if (window.excelHandler) {
+            if (window.excelHandler && typeof window.excelHandler.addParentStudentData === 'function') {
                 console.log('Excel handler found, saving data...');
                 window.excelHandler.addParentStudentData(data);
                 console.log('Data saved to Excel handler');
             } else {
-                console.error('Excel handler not found!');
+                console.error('Excel handler not found or not properly initialized!');
+                // Fallback: store in localStorage temporarily
+                const tempData = JSON.parse(localStorage.getItem('tempParentStudentData') || '[]');
+                tempData.push(data);
+                localStorage.setItem('tempParentStudentData', JSON.stringify(tempData));
+                console.log('Data stored temporarily in localStorage');
             }
             
             // Show success message
@@ -1223,13 +1260,15 @@ function toggleQualificationOther() {
     const qualificationOtherGroup = document.getElementById('qualificationOtherGroup');
     const qualificationOtherInput = document.getElementById('qualificationOther');
     
-    if (qualificationSelect.value === 'other') {
-        qualificationOtherGroup.style.display = 'block';
-        qualificationOtherInput.required = true;
-    } else {
-        qualificationOtherGroup.style.display = 'none';
-        qualificationOtherInput.required = false;
-        qualificationOtherInput.value = '';
+    if (qualificationSelect && qualificationOtherGroup && qualificationOtherInput) {
+        if (qualificationSelect.value === 'other') {
+            qualificationOtherGroup.style.display = 'block';
+            qualificationOtherInput.required = true;
+        } else {
+            qualificationOtherGroup.style.display = 'none';
+            qualificationOtherInput.required = false;
+            qualificationOtherInput.value = '';
+        }
     }
 }
 
@@ -1238,13 +1277,15 @@ function toggleSubjectsOther() {
     const subjectsOtherGroup = document.getElementById('subjectsOtherGroup');
     const subjectsOtherTextInput = document.getElementById('subjectsOtherText');
     
-    if (subjectsOtherCheckbox.checked) {
-        subjectsOtherGroup.style.display = 'block';
-        subjectsOtherTextInput.required = true;
-    } else {
-        subjectsOtherGroup.style.display = 'none';
-        subjectsOtherTextInput.required = false;
-        subjectsOtherTextInput.value = '';
+    if (subjectsOtherCheckbox && subjectsOtherGroup && subjectsOtherTextInput) {
+        if (subjectsOtherCheckbox.checked) {
+            subjectsOtherGroup.style.display = 'block';
+            subjectsOtherTextInput.required = true;
+        } else {
+            subjectsOtherGroup.style.display = 'none';
+            subjectsOtherTextInput.required = false;
+            subjectsOtherTextInput.value = '';
+        }
     }
 }
 
@@ -1253,13 +1294,15 @@ function togglePartnerSubjectsOther() {
     const partnerSubjectsOtherGroup = document.getElementById('partnerSubjectsOtherGroup');
     const partnerSubjectsOtherTextInput = document.getElementById('partnerSubjectsOtherText');
     
-    if (partnerSubjectsOtherCheckbox.checked) {
-        partnerSubjectsOtherGroup.style.display = 'block';
-        partnerSubjectsOtherTextInput.required = true;
-    } else {
-        partnerSubjectsOtherGroup.style.display = 'none';
-        partnerSubjectsOtherTextInput.required = false;
-        partnerSubjectsOtherTextInput.value = '';
+    if (partnerSubjectsOtherCheckbox && partnerSubjectsOtherGroup && partnerSubjectsOtherTextInput) {
+        if (partnerSubjectsOtherCheckbox.checked) {
+            partnerSubjectsOtherGroup.style.display = 'block';
+            partnerSubjectsOtherTextInput.required = true;
+        } else {
+            partnerSubjectsOtherGroup.style.display = 'none';
+            partnerSubjectsOtherTextInput.required = false;
+            partnerSubjectsOtherTextInput.value = '';
+        }
     }
 }
 
@@ -1268,24 +1311,28 @@ function toggleTuitionSubjectsOther() {
     const tuitionSubjectsOtherGroup = document.getElementById('tuitionSubjectsOtherGroup');
     const tuitionSubjectsOtherTextInput = document.getElementById('tuitionSubjectsOtherText');
     
-    if (tuitionSubjectsOtherCheckbox.checked) {
-        tuitionSubjectsOtherGroup.style.display = 'block';
-        tuitionSubjectsOtherTextInput.required = true;
-    } else {
-        tuitionSubjectsOtherGroup.style.display = 'none';
-        tuitionSubjectsOtherTextInput.required = false;
-        tuitionSubjectsOtherTextInput.value = '';
+    if (tuitionSubjectsOtherCheckbox && tuitionSubjectsOtherGroup && tuitionSubjectsOtherTextInput) {
+        if (tuitionSubjectsOtherCheckbox.checked) {
+            tuitionSubjectsOtherGroup.style.display = 'block';
+            tuitionSubjectsOtherTextInput.required = true;
+        } else {
+            tuitionSubjectsOtherGroup.style.display = 'none';
+            tuitionSubjectsOtherTextInput.required = false;
+            tuitionSubjectsOtherTextInput.value = '';
+        }
     }
 }
 
 // Phone number validation
 function validatePhoneNumber(input) {
-    // Remove any non-numeric characters
-    input.value = input.value.replace(/[^0-9]/g, '');
-    
-    // Limit to 10 digits
-    if (input.value.length > 10) {
-        input.value = input.value.slice(0, 10);
+    if (input && input.value !== undefined) {
+        // Remove any non-numeric characters
+        input.value = input.value.replace(/[^0-9]/g, '');
+        
+        // Limit to 10 digits
+        if (input.value.length > 10) {
+            input.value = input.value.slice(0, 10);
+        }
     }
 }
 
@@ -1293,11 +1340,13 @@ function validatePhoneNumber(input) {
 document.addEventListener('DOMContentLoaded', function() {
     // Add phone validation to all phone inputs
     const phoneInputs = document.querySelectorAll('input[type="tel"]');
-    phoneInputs.forEach(input => {
-        input.addEventListener('input', function() {
-            validatePhoneNumber(this);
+    if (phoneInputs.length > 0) {
+        phoneInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                validatePhoneNumber(this);
+            });
         });
-    });
+    }
     
     // Track website analytics
     trackWebsiteAnalytics();
@@ -1305,25 +1354,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Website analytics tracking
 function trackWebsiteAnalytics() {
-    // Get existing analytics data
-    let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {
-        totalVisitors: 0,
-        pageViews: 0,
-        todayVisitors: 0,
-        avgTimeOnSite: 0,
-        visitHistory: [],
-        today: new Date().toDateString(),
-        sessionStartTime: Date.now(),
+    try {
+        // Get existing analytics data
+        let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {
+            totalVisitors: 0,
+            pageViews: 0,
+            todayVisitors: 0,
+            avgTimeOnSite: 0,
+            visitHistory: [],
+            today: new Date().toDateString(),
+            sessionStartTime: Date.now(),
             // New tracking fields
-    tutorRegistrations: 0,
-    schoolRegistrations: 0,
-    parentStudentRegistrations: 0,
-    collaborationRequests: 0,
-    contactSubmissions: 0,
-    testimonialsViews: 0,
-    registrationHistory: [],
-    todayRegistrations: 0
-    };
+            tutorRegistrations: 0,
+            schoolRegistrations: 0,
+            parentStudentRegistrations: 0,
+            collaborationRequests: 0,
+            contactSubmissions: 0,
+            testimonialsViews: 0,
+            registrationHistory: [],
+            todayRegistrations: 0
+        };
     
     // Check if this is a new day
     if (analytics.today !== new Date().toDateString()) {
@@ -1376,11 +1426,15 @@ function trackWebsiteAnalytics() {
         updatedAnalytics.avgTimeOnSite = (updatedAnalytics.avgTimeOnSite + timeOnPage) / 2;
         localStorage.setItem('shikshaSathiAnalytics', JSON.stringify(updatedAnalytics));
     });
+    } catch (error) {
+        console.error('Error in analytics tracking:', error);
+    }
 }
 
 // Track form submissions
 function trackFormSubmission(formType, formData) {
-    let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
+    try {
+        let analytics = JSON.parse(localStorage.getItem('shikshaSathiAnalytics')) || {};
     
     // Increment appropriate counter
     switch(formType) {
@@ -1437,21 +1491,61 @@ function trackPageView(pageName) {
 // Scroll to Top functionality
 const scrollToTopBtn = document.getElementById('scrollToTop');
 
-// Show/hide scroll to top button based on scroll position
-window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 300) {
-        scrollToTopBtn.classList.add('show');
-    } else {
-        scrollToTopBtn.classList.remove('show');
-    }
-});
-
-// Scroll to top when button is clicked
-scrollToTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+if (scrollToTopBtn) {
+    // Show/hide scroll to top button based on scroll position
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.classList.add('show');
+        } else {
+            scrollToTopBtn.classList.remove('show');
+        }
     });
-});
 
-// Navbar is now always visible at the top 
+    // Scroll to top when button is clicked
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+// Navbar is now always visible at the top
+
+// Sync any temporarily stored data when Excel handler becomes available
+function syncTemporaryData() {
+    if (window.excelHandler && typeof window.excelHandler.addTutorData === 'function') {
+        // Sync tutor data
+        const tempTutorData = JSON.parse(localStorage.getItem('tempTutorData') || '[]');
+        if (tempTutorData.length > 0) {
+            console.log(`Syncing ${tempTutorData.length} temporary tutor registrations...`);
+            tempTutorData.forEach(data => {
+                window.excelHandler.addTutorData(data);
+            });
+            localStorage.removeItem('tempTutorData');
+            console.log('Temporary tutor data synced successfully');
+        }
+        
+        // Sync school data
+        const tempSchoolData = JSON.parse(localStorage.getItem('tempSchoolData') || '[]');
+        if (tempSchoolData.length > 0) {
+            console.log(`Syncing ${tempSchoolData.length} temporary school registrations...`);
+            tempSchoolData.forEach(data => {
+                window.excelHandler.addSchoolData(data);
+            });
+            localStorage.removeItem('tempSchoolData');
+            console.log('Temporary school data synced successfully');
+        }
+        
+        // Sync parent/student data
+        const tempParentStudentData = JSON.parse(localStorage.getItem('tempParentStudentData') || '[]');
+        if (tempParentStudentData.length > 0) {
+            console.log(`Syncing ${tempParentStudentData.length} temporary parent/student registrations...`);
+            tempParentStudentData.forEach(data => {
+                window.excelHandler.addParentStudentData(data);
+            });
+            localStorage.removeItem('tempParentStudentData');
+            console.log('Temporary parent/student data synced successfully');
+        }
+    }
+} 
