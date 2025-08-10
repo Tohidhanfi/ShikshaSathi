@@ -17,6 +17,12 @@ class ExcelDataHandler {
         if (!this.parentStudentData.length) {
             this.parentStudentData = [this.getParentStudentHeaders()];
         }
+        
+        // Auto-generate Excel files on initialization
+        this.autoGenerateAllExcelFiles();
+        
+        // Auto-refresh Excel files when page loads
+        this.autoRefreshOnPageLoad();
     }
 
     // Load data from localStorage
@@ -125,12 +131,8 @@ class ExcelDataHandler {
         this.tutorData.push(row);
         this.saveData('tutorRegistrations', this.tutorData);
         
-        // Update Excel file in localStorage (don't download automatically)
-        const excelUpdated = this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
-        console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
-        
-        // Auto-generate the main Excel file with all data
-        this.autoGenerateMainExcelFile();
+        // Auto-generate fresh Excel files immediately after new data
+        this.autoGenerateAllExcelFiles();
         
         // Enable real-time sync for new data
         this.enableRealTimeSync();
@@ -160,12 +162,8 @@ class ExcelDataHandler {
         this.schoolData.push(row);
         this.saveData('schoolRegistrations', this.schoolData);
         
-        // Update Excel file in localStorage (don't download automatically)
-        const excelUpdated = this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
-        console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
-        
-        // Auto-generate the main Excel file with all data
-        this.autoGenerateMainExcelFile();
+        // Auto-generate fresh Excel files immediately after new data
+        this.autoGenerateAllExcelFiles();
         
         // Enable real-time sync for new data
         this.enableRealTimeSync();
@@ -196,12 +194,8 @@ class ExcelDataHandler {
         this.parentStudentData.push(row);
         this.saveData('parentStudentRegistrations', this.parentStudentData);
         
-        // Update Excel file in localStorage (don't download automatically)
-        const excelUpdated = this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
-        console.log(`📊 Excel update result: ${excelUpdated ? 'SUCCESS' : 'FAILED'}`);
-        
-        // Auto-generate the main Excel file with all data
-        this.autoGenerateMainExcelFile();
+        // Auto-generate fresh Excel files immediately after new data
+        this.autoGenerateAllExcelFiles();
         
         return true;
     }
@@ -213,6 +207,48 @@ class ExcelDataHandler {
             return values.join(', ');
         }
         return values;
+    }
+
+    // Auto-generate ALL Excel files whenever data changes
+    autoGenerateAllExcelFiles() {
+        try {
+            // Check if SheetJS is available
+            if (typeof XLSX === 'undefined') {
+                console.log('SheetJS not loaded, skipping auto-generation');
+                return false;
+            }
+
+            console.log('🔄 Auto-generating ALL Excel files with latest data...');
+            
+            // Generate individual Excel files for each data type
+            const tutorGenerated = this.generateAndStoreExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+            const schoolGenerated = this.generateAndStoreExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+            const parentGenerated = this.generateAndStoreExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+            
+            // Generate the main combined Excel file
+            const mainGenerated = this.autoGenerateMainExcelFile();
+            
+            // Update timestamps for all data types
+            this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+            this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+            this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+            
+            const allGenerated = tutorGenerated && schoolGenerated && parentGenerated && mainGenerated;
+            
+            console.log('📊 Auto-generation result:', {
+                tutors: tutorGenerated ? '✅' : '❌',
+                schools: schoolGenerated ? '✅' : '❌',
+                parents: parentGenerated ? '✅' : '❌',
+                main: mainGenerated ? '✅' : '❌',
+                overall: allGenerated ? '✅ ALL FILES UPDATED' : '❌ SOME FAILED'
+            });
+            
+            return allGenerated;
+            
+        } catch (error) {
+            console.error('Error auto-generating all Excel files:', error);
+            return false;
+        }
     }
 
     // Update Excel file in localStorage (without downloading)
@@ -252,7 +288,7 @@ class ExcelDataHandler {
         }
     }
 
-    // Download Excel file (only when explicitly requested)
+    // Download Excel file (now always contains the latest data)
     async downloadExcelFile(dataKey, filename) {
         try {
             // Check if SheetJS is available
@@ -264,8 +300,31 @@ class ExcelDataHandler {
             // Force refresh data from localStorage to ensure we have the latest
             this.refreshDataFromStorage();
             
-            // Always create fresh Excel file from current data
-            console.log(`🔄 Generating fresh Excel file for ${dataKey}`);
+            // Check if we have a pre-generated file in localStorage
+            const storedExcelKey = `${dataKey}_ExcelFile`;
+            const storedExcelData = localStorage.getItem(storedExcelKey);
+            
+            if (storedExcelData) {
+                console.log(`📥 Using pre-generated Excel file for ${dataKey}...`);
+                
+                try {
+                    // Convert binary string back to workbook
+                    const workbook = XLSX.read(storedExcelData, { type: 'binary' });
+                    
+                    // Download the stored Excel file
+                    XLSX.writeFile(workbook, filename);
+                    
+                    console.log(`✅ Excel file ${filename} downloaded from stored data`);
+                    console.log(`💡 This file contains the latest updates!`);
+                    
+                    return;
+                } catch (error) {
+                    console.log('Error reading stored Excel file, generating fresh...');
+                }
+            }
+
+            // Fallback: generate fresh file
+            console.log(`🔄 Generating fresh Excel file for ${dataKey}...`);
             
             let data;
             switch (dataKey) {
@@ -324,16 +383,20 @@ class ExcelDataHandler {
             if (storedExcelData) {
                 console.log('📥 Using pre-generated Excel file from localStorage...');
                 
-                // Convert binary string back to workbook
-                const workbook = XLSX.read(storedExcelData, { type: 'binary' });
-                
-                // Download the stored Excel file
-                XLSX.writeFile(workbook, filename);
-                
-                console.log(`✅ Excel file ${filename} downloaded from stored data`);
-                console.log(`💡 This file contains the latest updates!`);
-                
-                return;
+                try {
+                    // Convert binary string back to workbook
+                    const workbook = XLSX.read(storedExcelData, { type: 'binary' });
+                    
+                    // Download the stored Excel file
+                    XLSX.writeFile(workbook, filename);
+                    
+                    console.log(`✅ Excel file ${filename} downloaded from stored data`);
+                    console.log(`💡 This file contains the latest updates!`);
+                    
+                    return;
+                } catch (error) {
+                    console.log('Error reading stored Excel file, generating fresh...');
+                }
             }
 
             // Fallback: generate fresh file
@@ -383,7 +446,7 @@ class ExcelDataHandler {
             // Check if SheetJS is available
             if (typeof XLSX === 'undefined') {
                 console.log('SheetJS not loaded, skipping auto-generation');
-                return;
+                return false;
             }
 
             console.log('🔄 Auto-generating main Excel file...');
@@ -416,8 +479,61 @@ class ExcelDataHandler {
             console.log('✅ Main Excel file auto-generated and stored in localStorage');
             console.log(`📊 Total entries: ${this.tutorData.length + this.schoolData.length + this.parentStudentData.length}`);
             
+            return true;
+            
         } catch (error) {
             console.error('Error auto-generating main Excel file:', error);
+            return false;
+        }
+    }
+
+    // Generate and store individual Excel files for instant access
+    generateAndStoreExcelFile(dataKey, filename) {
+        try {
+            // Check if SheetJS is available
+            if (typeof XLSX === 'undefined') {
+                console.log('SheetJS not loaded, cannot generate Excel file');
+                return false;
+            }
+
+            // Force refresh data from localStorage to ensure we have the latest
+            this.refreshDataFromStorage();
+            
+            console.log(`🔄 Generating and storing Excel file for ${dataKey}...`);
+            
+            let data;
+            switch (dataKey) {
+                case 'tutorRegistrations':
+                    data = this.tutorData;
+                    break;
+                case 'schoolRegistrations':
+                    data = this.schoolData;
+                    break;
+                case 'parentStudentRegistrations':
+                    data = this.parentStudentData;
+                    break;
+                default:
+                    console.error('Unknown data key:', dataKey);
+                    return false;
+            }
+            
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
+            
+            // Store the Excel file in localStorage for instant access
+            const excelBinary = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            localStorage.setItem(`${dataKey}_ExcelFile`, excelBinary);
+            
+            console.log(`✅ Excel file ${filename} generated and stored for instant access`);
+            console.log(`📊 Contains ${data.length} entries`);
+            
+            return true;
+            
+        } catch (error) {
+            console.error('Error generating and storing Excel file:', error);
+            return false;
         }
     }
 
@@ -439,8 +555,6 @@ class ExcelDataHandler {
         console.log(`${dataKey} data:`, data);
         console.log('Copy this data and paste into Excel manually if needed.');
     }
-
-
 
     // Real-time data sync system
     enableRealTimeSync() {
@@ -476,6 +590,9 @@ class ExcelDataHandler {
         
         // Force sync to cloud
         this.syncDataToCloud();
+        
+        // Auto-generate fresh Excel files
+        this.autoGenerateAllExcelFiles();
         
         console.log('✅ All data force synced successfully');
         return true;
@@ -630,6 +747,9 @@ class ExcelDataHandler {
             this.saveData('schoolRegistrations', this.schoolData);
             this.saveData('parentStudentRegistrations', this.parentStudentData);
             
+            // Auto-generate fresh Excel files after clearing
+            this.autoGenerateAllExcelFiles();
+            
             alert('All data has been cleared.');
             return true;
         }
@@ -645,6 +765,130 @@ class ExcelDataHandler {
             totalRegistrations: (this.tutorData.length + this.schoolData.length + this.parentStudentData.length) - 3,
             lastUpdated: new Date().toLocaleString()
         };
+    }
+
+    // Auto-refresh Excel files when page loads
+    autoRefreshOnPageLoad() {
+        console.log('🔄 Auto-refreshing Excel files on page load...');
+        
+        // Check if we need to refresh (e.g., if data has changed since last load)
+        const lastRefresh = localStorage.getItem('lastExcelRefresh');
+        const now = Date.now();
+        const timeSinceLastRefresh = lastRefresh ? (now - parseInt(lastRefresh)) : Infinity;
+        
+        // Refresh if it's been more than 5 minutes or if this is the first load
+        if (timeSinceLastRefresh > 5 * 60 * 1000 || !lastRefresh) {
+            console.log('📊 Data may be stale, refreshing Excel files...');
+            this.autoGenerateAllExcelFiles();
+            localStorage.setItem('lastExcelRefresh', now.toString());
+        } else {
+            console.log('📊 Excel files are recent, no refresh needed');
+        }
+    }
+
+    // Manual refresh function for users
+    manualRefreshExcelFiles() {
+        console.log('🔄 Manual refresh requested by user...');
+        
+        // Force refresh data from storage
+        this.refreshDataFromStorage();
+        
+        // Generate fresh Excel files
+        const result = this.autoGenerateAllExcelFiles();
+        
+        if (result) {
+            console.log('✅ Excel files refreshed successfully');
+            return true;
+        } else {
+            console.error('❌ Failed to refresh Excel files');
+            return false;
+        }
+    }
+
+    // Get Excel file status for admin dashboard
+    getExcelFileStatus() {
+        const tutorTimestamp = localStorage.getItem('excel_tutorRegistrations_timestamp');
+        const schoolTimestamp = localStorage.getItem('excel_schoolRegistrations_timestamp');
+        const parentTimestamp = localStorage.getItem('excel_parentStudentRegistrations_timestamp');
+        const lastRefresh = localStorage.getItem('lastExcelRefresh');
+        
+        return {
+            tutorRegistrations: {
+                lastUpdated: tutorTimestamp ? new Date(tutorTimestamp).toLocaleString() : 'Never',
+                count: this.tutorData.length - 1,
+                fileReady: !!localStorage.getItem('tutorRegistrations_ExcelFile')
+            },
+                                    schoolRegistrations: {
+                            lastUpdated: schoolTimestamp ? new Date(schoolTimestamp).toLocaleString() : 'Never',
+                            count: this.schoolData.length - 1,
+                            fileReady: !!localStorage.getItem('schoolRegistrations_ExcelFile')
+                        },
+            parentStudentRegistrations: {
+                lastUpdated: parentTimestamp ? new Date(parentTimestamp).toLocaleString() : 'Never',
+                count: this.parentStudentData.length - 1,
+                fileReady: !!localStorage.getItem('parentStudentRegistrations_ExcelFile')
+            },
+            mainExcelFile: {
+                lastUpdated: lastRefresh ? new Date(parseInt(lastRefresh)).toLocaleString() : 'Never',
+                fileReady: !!localStorage.getItem('mainExcelFile')
+            },
+            overallStatus: {
+                allFilesReady: !!(localStorage.getItem('tutorRegistrations_ExcelFile') && 
+                                 localStorage.getItem('schoolRegistrations_ExcelFile') && 
+                                 localStorage.getItem('parentStudentRegistrations_ExcelFile') && 
+                                 localStorage.getItem('mainExcelFile')),
+                lastRefresh: lastRefresh ? new Date(parseInt(lastRefresh)).toLocaleString() : 'Never'
+            }
+        };
+    }
+
+    // Force update Excel file for a specific data key
+    forceUpdateExcelFile(dataKey) {
+        try {
+            console.log(`🔄 Force updating Excel file for ${dataKey}...`);
+            
+            // Refresh data from storage first
+            this.refreshDataFromStorage();
+            
+            let filename;
+            let dataArray;
+            
+            // Determine which data and filename to use based on dataKey
+            switch(dataKey) {
+                case 'tutorRegistrations':
+                    filename = 'Tutor_Registrations.xlsx';
+                    dataArray = this.tutorData;
+                    break;
+                case 'schoolRegistrations':
+                    filename = 'Partner_Schools.xlsx';
+                    dataArray = this.schoolData;
+                    break;
+                case 'parentStudentRegistrations':
+                    filename = 'Parent_Student_Registrations.xlsx';
+                    dataArray = this.parentStudentData;
+                    break;
+                default:
+                    console.error(`Unknown data key: ${dataKey}`);
+                    return false;
+            }
+            
+            // Generate and store the specific Excel file
+            const success = this.generateAndStoreExcelFile(dataKey, filename);
+            
+            if (success) {
+                // Update timestamp for this specific file
+                this.updateExcelFile(dataKey, filename);
+                console.log(`✅ Excel file for ${dataKey} force updated successfully!`);
+                return true;
+            } else {
+                console.error(`❌ Failed to force update Excel file for ${dataKey}`);
+                return false;
+            }
+            
+        } catch (error) {
+            console.error(`Error force updating Excel file for ${dataKey}:`, error);
+            return false;
+        }
     }
 }
 

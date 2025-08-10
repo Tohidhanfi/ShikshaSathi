@@ -626,6 +626,50 @@
             from { transform: translateX(-100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Live Preview Styles */
+        .live-preview {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+        }
+
+        .preview-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .preview-card h6 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .preview-card .count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+
+        .preview-card small {
+            color: #6c757d;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .col-md-4 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+            padding: 0 10px;
+        }
         }
     </style>
 </head>
@@ -756,6 +800,12 @@
             <div id="tutors" class="tab-content active">
                 <div class="action-buttons">
                     <input type="text" class="search-box" placeholder="Search tutors..." onkeyup="filterTable('tutors', this.value)">
+                    <button class="btn btn-success" onclick="refreshExcelFiles('tutorRegistrations')" title="Refresh Excel file with latest data">
+                        <i class="fas fa-sync-alt"></i> Refresh Excel
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadExcel('tutorRegistrations', 'Tutor_Registrations.xlsx')">
+                        <i class="fas fa-download"></i> Download Excel
+                    </button>
                     <button class="btn btn-secondary" onclick="exportAsCSV('tutors')">
                         <i class="fas fa-file-csv"></i> Export CSV
                     </button>
@@ -767,6 +817,12 @@
             <div id="schools" class="tab-content">
                 <div class="action-buttons">
                     <input type="text" class="search-box" placeholder="Search schools..." onkeyup="filterTable('schools', this.value)">
+                    <button class="btn btn-success" onclick="refreshExcelFiles('schoolRegistrations')" title="Refresh Excel file with latest data">
+                        <i class="fas fa-sync-alt"></i> Refresh Excel
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadExcel('schoolRegistrations', 'Partner_Schools.xlsx')">
+                        <i class="fas fa-download"></i> Download Excel
+                    </button>
                     <button class="btn btn-secondary" onclick="exportAsCSV('schools')">
                         <i class="fas fa-file-csv"></i> Export CSV
                     </button>
@@ -778,6 +834,12 @@
             <div id="parents" class="tab-content">
                 <div class="action-buttons">
                     <input type="text" class="search-box" placeholder="Search parents/students..." onkeyup="filterTable('parents', this.value)">
+                    <button class="btn btn-success" onclick="refreshExcelFiles('parentStudentRegistrations')" title="Refresh Excel file with latest data">
+                        <i class="fas fa-sync-alt"></i> Refresh Excel
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadExcel('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx')">
+                        <i class="fas fa-download"></i> Download Excel
+                    </button>
                     <button class="btn btn-secondary" onclick="exportAsCSV('parents')">
                         <i class="fas fa-file-csv"></i> Export CSV
                     </button>
@@ -786,22 +848,36 @@
             </div>
         </div>
 
-
-
-
+        <!-- Live Data Preview -->
+        <div class="live-preview" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h4><i class="fas fa-eye"></i> Live Data Preview</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="preview-card">
+                        <h6>Tutor Registrations</h6>
+                        <div class="count" id="tutorCount">0</div>
+                        <small class="text-muted">Latest: <span id="tutorLatest">None</span></small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="preview-card">
+                        <h6>Partner Schools</h6>
+                        <div class="count" id="schoolCount">0</div>
+                        <small class="text-muted">Latest: <span id="schoolLatest">None</span></small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="preview-card">
+                        <h6>Parent/Student</h6>
+                        <div class="count" id="parentCount">0</div>
+                        <small class="text-muted">Latest: <span id="parentLatest">None</span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Global Actions -->
-        <div class="action-actions" style="margin-top: 30px; text-align: center;">
-            <div class="alert alert-info" style="margin-bottom: 20px;">
-                <i class="fas fa-info-circle"></i> 
-                <strong>ONE Excel File Solution:</strong> Download this single file anytime and it will always contain the latest data. 
-                No need to download multiple files or worry about updates!
-            </div>
-            
-            <div class="action-buttons" style="justify-content: center;">
-                <button class="btn btn-primary" onclick="downloadAllDataInOneFile()">
-                    <i class="fas fa-download"></i> Download ALL Data in ONE Excel File
-                </button>
+                    <div class="action-buttons" style="margin-top: 30px; justify-content: center;">
             <button class="btn btn-secondary" onclick="exportAllAsCSV()">
                 <i class="fas fa-file-csv"></i> Export All as CSV
             </button>
@@ -1344,12 +1420,34 @@
             excelHandler.downloadExcelFile(dataKey, filename);
         }
 
+        // Refresh Excel files for a specific data key
+        function refreshExcelFiles(dataKey) {
+            if (window.excelHandler) {
+                const updated = window.excelHandler.forceUpdateExcelFile(dataKey);
+                if (updated) {
+                    console.log(`✅ Excel file for ${dataKey} refreshed successfully!`);
+                    alert(`✅ Excel file for ${dataKey} refreshed successfully!\n\nNow when you download it, it will contain the latest data.`);
+                    // Reload the current tab to reflect the updated data
+                    const activeTab = document.querySelector('.tabContent.active');
+                    if (activeTab) {
+                        const tabName = activeTab.id;
+                        loadTabData(tabName);
+                    }
+                } else {
+                    console.log(`❌ Excel file for ${dataKey} failed to refresh`);
+                    alert(`❌ Excel file for ${dataKey} failed to refresh. Check console for details.`);
+                }
+            } else {
+                alert('❌ Excel handler not available');
+            }
+        }
+
         // Download ALL data in ONE Excel file
         function downloadAllDataInOneFile() {
             if (window.excelHandler) {
                 window.excelHandler.downloadAllDataInOneFile();
             } else {
-                alert('Excel handler not available');
+                alert('Excel functionality not available. Please use CSV export instead.');
             }
         }
 
@@ -1520,6 +1618,49 @@
             document.getElementById('totalSchools').textContent = stats.totalSchoolRegistrations;
             document.getElementById('totalParents').textContent = stats.totalParentStudentRegistrations;
             document.getElementById('totalRegistrations').textContent = stats.totalRegistrations;
+
+            // Update live preview
+            updateLivePreview();
+        }
+
+        // Update live preview with latest data
+        function updateLivePreview() {
+            try {
+                // Update counts
+                const tutorCount = excelHandler.tutorData.length - 1;
+                const schoolCount = excelHandler.schoolData.length - 1;
+                const parentCount = excelHandler.parentStudentData.length - 1;
+
+                document.getElementById('tutorCount').textContent = tutorCount;
+                document.getElementById('schoolCount').textContent = schoolCount;
+                document.getElementById('parentCount').textContent = parentCount;
+
+                // Update latest entries
+                if (tutorCount > 0) {
+                    const latestTutor = excelHandler.tutorData[excelHandler.tutorData.length - 1];
+                    document.getElementById('tutorLatest').textContent = latestTutor[1] || 'N/A'; // Name field
+                } else {
+                    document.getElementById('tutorLatest').textContent = 'None';
+                }
+
+                if (schoolCount > 0) {
+                    const latestSchool = excelHandler.schoolData[excelHandler.schoolData.length - 1];
+                    document.getElementById('schoolLatest').textContent = latestSchool[1] || 'N/A'; // School name field
+                } else {
+                    document.getElementById('schoolLatest').textContent = 'None';
+                }
+
+                if (parentCount > 0) {
+                    const latestParent = excelHandler.parentStudentData[excelHandler.parentStudentData.length - 1];
+                    document.getElementById('parentLatest').textContent = latestParent[1] || 'N/A'; // Name field
+                } else {
+                    document.getElementById('parentLatest').textContent = 'None';
+                }
+
+                console.log('✅ Live preview updated with latest data');
+            } catch (error) {
+                console.error('Error updating live preview:', error);
+            }
         }
 
         // Password protection
