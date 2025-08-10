@@ -198,6 +198,12 @@ function initializeFormListeners() {
                 try {
                     const result = window.excelHandler.addTutorData(data);
                     console.log('✅ Data saved to Excel handler:', result);
+                    
+                    // Force refresh data immediately after saving
+                    if (window.excelHandler.refreshDataFromStorage) {
+                        window.excelHandler.refreshDataFromStorage();
+                        console.log('🔄 Data refreshed immediately after saving');
+                    }
                 } catch (error) {
                     console.error('❌ Error saving to Excel handler:', error);
                 }
@@ -279,8 +285,14 @@ function initializeFormListeners() {
             // Save to Excel export system
             if (window.excelHandler && typeof window.excelHandler.addSchoolData === 'function') {
                 console.log('Excel handler found, saving data...');
-                window.excelHandler.addSchoolData(data);
-                console.log('Data saved to Excel handler');
+                const result = window.excelHandler.addSchoolData(data);
+                console.log('Data saved to Excel handler:', result);
+                
+                // Force refresh data immediately after saving
+                if (window.excelHandler.refreshDataFromStorage) {
+                    window.excelHandler.refreshDataFromStorage();
+                    console.log('🔄 Data refreshed immediately after saving');
+                }
             } else {
                 console.error('Excel handler not found or not properly initialized!');
                 // Fallback: store in localStorage temporarily
@@ -382,8 +394,14 @@ function initializeFormListeners() {
             // Save to Excel export system
             if (window.excelHandler && typeof window.excelHandler.addParentStudentData === 'function') {
                 console.log('Excel handler found, saving data...');
-                window.excelHandler.addParentStudentData(data);
-                console.log('Data saved to Excel handler');
+                const result = window.excelHandler.addParentStudentData(data);
+                console.log('Data saved to Excel handler:', result);
+                
+                // Force refresh data immediately after saving
+                if (window.excelHandler.refreshDataFromStorage) {
+                    window.excelHandler.refreshDataFromStorage();
+                    console.log('🔄 Data refreshed immediately after saving');
+                }
             } else {
                 console.error('Excel handler not found or not properly initialized!');
                 // Fallback: store in localStorage temporarily

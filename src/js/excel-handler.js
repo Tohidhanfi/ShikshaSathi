@@ -252,6 +252,9 @@ class ExcelDataHandler {
                 return;
             }
 
+            // Force refresh data from localStorage to ensure we have the latest
+            this.refreshDataFromStorage();
+            
             // Always create fresh Excel file from current data
             console.log(`🔄 Generating fresh Excel file for ${dataKey}`);
             
@@ -270,6 +273,13 @@ class ExcelDataHandler {
                     console.error('Unknown data key:', dataKey);
                     return;
             }
+            
+            // Debug: Show exactly what data we're using
+            console.log(`📊 Data for ${dataKey}:`, {
+                dataLength: data.length,
+                dataPreview: data.slice(0, 3), // Show first 3 entries
+                lastEntry: data.length > 0 ? data[data.length - 1] : 'No data'
+            });
 
             // Create workbook and worksheet
             const wb = XLSX.utils.book_new();
@@ -333,7 +343,21 @@ class ExcelDataHandler {
         localStorage.setItem('realTimeSyncEnabled', 'true');
         localStorage.setItem('lastSyncTime', new Date().toISOString());
         
-        console.log('✅ Real-time sync enabled - data will sync every 30 seconds');
+        console.log('✅ Real-time sync enabled - data will sync every 10 seconds');
+    }
+
+    // Force immediate sync of all data
+    forceSyncAllData() {
+        console.log('🔄 Force syncing all data immediately...');
+        
+        // Force refresh data from storage
+        this.refreshDataFromStorage();
+        
+        // Force sync to cloud
+        this.syncDataToCloud();
+        
+        console.log('✅ All data force synced successfully');
+        return true;
     }
 
     // Disable real-time sync
@@ -428,6 +452,24 @@ class ExcelDataHandler {
         });
         
         return allUpdated;
+    }
+
+    // Force refresh all data from localStorage to ensure we have the latest
+    refreshDataFromStorage() {
+        console.log('🔄 Refreshing data from localStorage...');
+        
+        // Reload all data from localStorage
+        this.tutorData = this.loadData('tutorRegistrations');
+        this.schoolData = this.loadData('schoolRegistrations');
+        this.parentStudentData = this.loadData('parentStudentRegistrations');
+        
+        console.log('📊 Data refreshed:', {
+            tutors: this.tutorData.length,
+            schools: this.schoolData.length,
+            parents: this.parentStudentData.length
+        });
+        
+        return true;
     }
 
     // Export all data as CSV (fallback method)

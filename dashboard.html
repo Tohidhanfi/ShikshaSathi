@@ -810,6 +810,9 @@
             <button class="btn btn-success" onclick="forceUpdateExcelFiles()">
                 <i class="fas fa-sync-alt"></i> Refresh Excel Timestamps
             </button>
+            <button class="btn btn-info" onclick="forceSyncAllData()">
+                <i class="fas fa-sync-alt"></i> Force Sync All Data
+            </button>
             <button class="btn btn-outline" onclick="refreshData()">
                 <i class="fas fa-sync-alt"></i> Refresh Data
             </button>
@@ -1452,6 +1455,22 @@
                 } else {
                     console.log('❌ Some Excel timestamps failed to refresh');
                     alert('❌ Some Excel timestamps failed to refresh. Check console for details.');
+                }
+            } else {
+                alert('❌ Excel handler not available');
+            }
+        }
+
+        // Force sync all data immediately
+        function forceSyncAllData() {
+            if (window.excelHandler) {
+                const synced = window.excelHandler.forceSyncAllData();
+                if (synced) {
+                    console.log('✅ All data force synced successfully!');
+                    alert('✅ All data force synced successfully!\n\nNow when you download Excel files, they will contain the latest data.');
+                } else {
+                    console.log('❌ Data sync failed');
+                    alert('❌ Data sync failed. Check console for details.');
                 }
             } else {
                 alert('❌ Excel handler not available');
