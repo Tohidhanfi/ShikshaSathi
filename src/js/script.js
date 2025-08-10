@@ -536,8 +536,17 @@ function closeModal(modal) {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded event fired');
     initializeWebsite();
 });
+
+// Also try to initialize immediately if DOM is already loaded
+if (document.readyState === 'loading') {
+    console.log('DOM still loading, waiting for DOMContentLoaded');
+} else {
+    console.log('DOM already loaded, initializing immediately');
+    initializeWebsite();
+}
 
 // Close modal when clicking outside
 window.addEventListener('click', (e) => {

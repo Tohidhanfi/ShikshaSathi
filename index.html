@@ -51,10 +51,11 @@
                 <h1 class="hero-title">Empowering Educators. Enabling Learning.</h1>
                 <p class="hero-subtitle">A Mission To Transform Unemployed Graduates Into Trained Private Tutors For Students Across Maharashtra.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="openRegistrationModal()">Register as a Tutor</button>
-                    <button class="btn btn-secondary" onclick="openPartnerModal()">Join as a Partner School</button>
-                    <button class="btn btn-tertiary" onclick="openParentStudentModal()">Join as a Parent/Student</button>
-                    <button class="btn btn-outline" onclick="scrollToContact()">Contact Us</button>
+                    <button class="btn btn-primary" onclick="openRegistrationModal(); console.log('Registration button clicked');">Register as a Tutor</button>
+                    <button class="btn btn-secondary" onclick="openPartnerModal(); console.log('Partner button clicked');">Join as a Partner School</button>
+                    <button class="btn btn-tertiary" onclick="openParentStudentModal(); console.log('Parent/Student button clicked');">Join as a Parent/Student</button>
+                    <button class="btn btn-outline" onclick="scrollToContact(); console.log('Contact button clicked');">Contact Us</button>
+                    <button style="background: red; color: white; margin: 10px; padding: 10px;" onclick="console.log('Test button clicked'); document.getElementById('registrationModal').style.display='block'; console.log('Modal display set to block');">TEST MODAL</button>
                 </div>
             </div>
             <div class="hero-image">
