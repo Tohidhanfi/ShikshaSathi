@@ -125,8 +125,8 @@ class ExcelDataHandler {
         this.tutorData.push(row);
         this.saveData('tutorRegistrations', this.tutorData);
         
-        // Also save to Excel file
-        this.downloadExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+        // Update Excel file in localStorage (don't download automatically)
+        this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
         
         return true;
     }
@@ -153,8 +153,8 @@ class ExcelDataHandler {
         this.schoolData.push(row);
         this.saveData('schoolRegistrations', this.schoolData);
         
-        // Also save to Excel file
-        this.downloadExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+        // Update Excel file in localStorage (don't download automatically)
+        this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
         
         return true;
     }
@@ -182,8 +182,8 @@ class ExcelDataHandler {
         this.parentStudentData.push(row);
         this.saveData('parentStudentRegistrations', this.parentStudentData);
         
-        // Also save to Excel file
-        this.downloadExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+        // Update Excel file in localStorage (don't download automatically)
+        this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
         
         return true;
     }
@@ -197,7 +197,56 @@ class ExcelDataHandler {
         return values;
     }
 
-    // Download Excel file
+    // Update Excel file in localStorage (without downloading)
+    updateExcelFile(dataKey, filename) {
+        try {
+            // Check if SheetJS is available
+            if (typeof XLSX === 'undefined') {
+                console.log('SheetJS not loaded, updating localStorage only');
+                return false;
+            }
+            
+            // Get the data to update
+            let data = [];
+            switch(dataKey) {
+                case 'tutorRegistrations':
+                    data = this.tutorData;
+                    break;
+                case 'schoolRegistrations':
+                    data = this.schoolData;
+                    break;
+                case 'parentStudentRegistrations':
+                    data = this.parentStudentData;
+                    break;
+                default:
+                    console.error('Unknown data key:', dataKey);
+                    return false;
+            }
+            
+            // Create workbook and worksheet
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+            
+            // Convert to binary string and store in localStorage
+            const excelBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+            
+            // Store the Excel file data in localStorage
+            const storageKey = `excel_${dataKey}`;
+            localStorage.setItem(storageKey, excelBinary);
+            
+            console.log(`✅ Excel file updated for ${dataKey} and stored in localStorage`);
+            return true;
+            
+        } catch (error) {
+            console.error('Error updating Excel file:', error);
+            return false;
+        }
+    }
+
+    // Download Excel file (only when explicitly requested)
     async downloadExcelFile(dataKey, filename) {
         try {
             // Check if SheetJS is available
