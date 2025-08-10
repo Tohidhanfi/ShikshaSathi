@@ -156,11 +156,16 @@ document.getElementById('tutorRegistrationForm').addEventListener('submit', func
     e.preventDefault();
     
     // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
+    const FormData = new FormData(this);
+    const data = Object.fromEntries(FormData);
     
     // Track form submission
     trackFormSubmission('tutor', data);
+    
+    // Save to Excel export system
+    if (window.excelExporter) {
+        window.excelExporter.addTutorData(data);
+    }
     
     // Show success message
     showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
@@ -174,11 +179,16 @@ document.getElementById('partnerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
+    const FormData = new FormData(this);
+    const data = Object.fromEntries(FormData);
     
     // Track form submission
     trackFormSubmission('school', data);
+    
+    // Save to Excel export system
+    if (window.excelExporter) {
+        window.excelExporter.addSchoolData(data);
+    }
     
     // Show success message
     showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
@@ -210,11 +220,16 @@ document.getElementById('parentStudentForm').addEventListener('submit', function
     e.preventDefault();
     
     // Get form data
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
+    const FormData = new FormData(this);
+    const data = Object.fromEntries(FormData);
     
     // Track form submission
     trackFormSubmission('parentStudent', data);
+    
+    // Save to Excel export system
+    if (window.excelExporter) {
+        window.excelExporter.addParentStudentData(data);
+    }
     
     // Show success message
     showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');

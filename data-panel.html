@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShikshaSathi Data Panel</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <style>
+        .data-panel {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .panel-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+        }
+        
+        .panel-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-label {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .export-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 3030px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .export-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .export-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .export-card:hover {
+            border-color: #28a745;
+            background: #e8f5e8;
+        }
+        
+        .export-icon {
+            font-size: 2.5rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+        
+        .export-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .export-desc {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        
+        .export-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .export-btn.secondary {
+            background: #007bff;
+        }
+        
+        .export-btn.secondary:hover {
+            background: #0056b3;
+        }
+        
+        .export-btn.danger {
+            background: #dc3545;
+        }
+        
+        .export-btn.danger:hover {
+            background: #c82333;
+        }
+        
+        .data-preview {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .data-preview h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .preview-tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-tab.active {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .preview-content {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .preview-table th,
+        .preview-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .preview-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .preview-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+        
+        @media (max-width: 768px) {
+            .data-panel {
+                padding: 1rem;
+            }
+            
+            .panel-header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .export-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-tabs {
+                flex-direction: column;
+            }
+            
+            .preview-tab {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="data-panel">
+        <div class="panel-header">
+            <h1><i class="fas fa-database"></i> ShikshaSathi Data Panel</h1>
+            <p>View and export form submission data</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" data-stat="tutor">-</div>
+                <div class="stat-label">Tutor Registrations</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" data-stat="school">-</div>
+                <div class="stat-label">School Partnerships</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" data-stat="parentStudent">-</div>
+                <div class="stat-label">Parent/Student Registrations</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" data-stat="total">-</div>
+                <div class="stat-label">Total Submissions</div>
+            </div>
+        </div>
+        
+        <div class="export-section">
+            <h2><i class="fas fa-download"></i> Export Data</h2>
+            <div class="export-grid">
+                <div class="export-card">
+                    <div class="export-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="export-title">Tutor Registrations</div>
+                    <div class="export-desc">Download all tutor registration data in CSV format</div>
+                    <button class="export-btn" onclick="exportTutorData()">
+                        <i class="fas fa-file-csv"></i> Download CSV
+                    </button>
+                </div>
+                
+                <div class="export-card">
+                    <div class="export-icon">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <div class="export-title">School Partnerships</div>
+                    <div class="export-desc">Download all school partnership requests in CSV format</div>
+                    <button class="export-btn" onclick="exportSchoolData()">
+                        <i class="fas fa-file-csv"></i> Download CSV
+                    </button>
+                </div>
+                
+                <div class="export-card">
+                    <div class="export-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="export-title">Parent/Student Registrations</div>
+                    <div class="export-desc">Download all parent/student registration data in CSV format</div>
+                    <button class="export-btn" onclick="exportParentStudentData()">
+                        <i class="fas fa-file-csv"></i> Download CSV
+                    </button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="export-btn secondary" onclick="exportAllData()">
+                    <i class="fas fa-download"></i> Download All Data
+                </button>
+                <button class="export-btn danger" onclick="clearAllData()">
+                    <i class="fas fa-trash"></i> Clear All Data
+                </button>
+                <button class="refresh-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+        
+        <div class="data-preview">
+            <h2><i class="fas fa-eye"></i> Data Preview</h2>
+            <div class="preview-tabs">
+                <button class="preview-tab active" onclick="showPreviewTab('tutor')">Tutor Data</button>
+                <button class="preview-tab" onclick="showPreviewTab('school')">School Data</button>
+                <button class="preview-tab" onclick="showPreviewTab('parentStudent')">Parent/Student Data</button>
+            </div>
+            
+            <div class="preview-content" id="previewContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Include the Excel export system -->
+    <script src="src/js/excel-export.js"></script>
+    
+    <script>
+        let currentPreviewTab = 'tutor';
+        
+        // Initialize the panel
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            showPreviewTab('tutor');
+        });
+        
+        // Refresh data and update display
+        function refreshData() {
+            if (window.excelExporter) {
+                window.excelExporter.updateStatsDisplay();
+                showPreviewTab(currentPreviewTab);
+            }
+        }
+        
+        // Show preview tab
+        function showPreviewTab(tabName) {
+            currentPreviewTab = tabName;
+            
+            // Update active tab
+            document.querySelectorAll('.preview-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load preview content
+            loadPreviewContent(tabName);
+        }
+        
+        // Load preview content for selected tab
+        function loadPreviewContent(tabName) {
+            const previewContent = document.getElementById('previewContent');
+            
+            if (!window.excelExporter) {
+                previewContent.innerHTML = '<div class="no-data">Excel export system not loaded</div>';
+                return;
+            }
+            
+            let data;
+            let title;
+            
+            switch(tabName) {
+                case 'tutor':
+                    data = window.excelExporter.tutorData;
+                    title = 'Tutor Registrations';
+                    break;
+                case 'school':
+                    data = window.excelExporter.schoolData;
+                    title = 'School Partnerships';
+                    break;
+                case 'parentStudent':
+                    data = window.excelExporter.parentStudentData;
+                    title = 'Parent/Student Registrations';
+                    break;
+                default:
+                    data = [];
+                    title = 'Unknown';
+            }
+            
+            if (data.length === 0) {
+                previewContent.innerHTML = `<div class="no-data">No ${title.toLowerCase()} data available</div>`;
+                return;
+            }
+            
+            // Create table
+            let tableHTML = '<table class="preview-table"><thead><tr>';
+            
+            // Headers
+            const headers = Object.keys(data[0]);
+            headers.forEach(header => {
+                tableHTML += `<th>${header.charAt(0).toUpperCase() + header.slice(1).replace(/([A-Z])/g, ' $1')}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+            
+            // Data rows (show last 20 entries)
+            const recentData = data.slice(-20);
+            recentData.forEach(row => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    let value = row[header] || '';
+                    // Truncate long values
+                    if (value.length > 50) {
+                        value = value.substring(0, 47) + '...';
+                    }
+                    tableHTML += `<td title="${row[header] || ''}">${value}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            
+            tableHTML += '</tbody></table>';
+            
+            if (data.length > 20) {
+                tableHTML += `<p style="text-align: center; color: #666; margin-top: 1rem;">Showing last 20 of ${data.length} entries</p>`;
+            }
+            
+            previewContent.innerHTML = tableHTML;
+        }
+        
+        // Override tab click to fix event handling
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('preview-tab')) {
+                const tabName = e.target.textContent.toLowerCase().replace(/\s+/g, '').replace('/', '');
+                showPreviewTab(tabName);
+            }
+        });
+    </script>
+</body>
+</html> 
