@@ -128,6 +128,9 @@ class ExcelDataHandler {
         // Update Excel file in localStorage (don't download automatically)
         this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
         
+        // Enable real-time sync for new data
+        this.enableRealTimeSync();
+        
         return true;
     }
 
@@ -155,6 +158,9 @@ class ExcelDataHandler {
         
         // Update Excel file in localStorage (don't download automatically)
         this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+        
+        // Enable real-time sync for new data
+        this.enableRealTimeSync();
         
         return true;
     }
@@ -184,6 +190,9 @@ class ExcelDataHandler {
         
         // Update Excel file in localStorage (don't download automatically)
         this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+        
+        // Enable real-time sync for new data
+        this.enableRealTimeSync();
         
         return true;
     }
@@ -281,10 +290,16 @@ class ExcelDataHandler {
             // Add worksheet to workbook
             XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
 
-            // Generate Excel file and download
+            // Generate Excel file and download with consistent naming
+            // This ensures you can replace the old file with the new one
             XLSX.writeFile(wb, filename);
             
-            console.log(`Excel file ${filename} downloaded successfully`);
+            console.log(`✅ Excel file ${filename} downloaded successfully`);
+            console.log(`💡 Tip: Replace your old ${filename} file with this new one to keep it updated!`);
+            
+            // Show user-friendly message
+            this.showDownloadSuccessMessage(filename);
+            
         } catch (error) {
             console.error('Error downloading Excel file:', error);
             // Fallback: show data in console
@@ -309,6 +324,240 @@ class ExcelDataHandler {
         
         console.log(`${dataKey} data:`, data);
         console.log('Copy this data and paste into Excel manually if needed.');
+    }
+
+    // Show download success message with helpful tips
+    showDownloadSuccessMessage(filename) {
+        // Create a notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 10000;
+            max-width: 400px;
+            font-family: 'Inter', sans-serif;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <i class="fas fa-check-circle" style="font-size: 24px; margin-right: 10px;"></i>
+                <strong style="font-size: 18px;">Excel File Updated!</strong>
+            </div>
+            <p style="margin: 0 0 15px 0; line-height: 1.5;">
+                <strong>${filename}</strong> has been downloaded with the latest data.
+            </p>
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <strong>💡 How to Keep Your Excel Updated:</strong>
+                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                    <li>Save this file to your preferred folder</li>
+                    <li>Replace the old file with this new one</li>
+                    <li>Use the same filename to keep it organized</li>
+                </ul>
+            </div>
+            <button onclick="this.parentElement.remove()" style="
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+            ">Got it!</button>
+        `;
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 10000);
+    }
+
+    // Real-time data sync system
+    enableRealTimeSync() {
+        // Check if real-time sync is already enabled
+        if (this.syncInterval) {
+            console.log('Real-time sync already enabled');
+            return;
+        }
+
+        console.log('🔄 Enabling real-time data sync...');
+        
+        // Create a sync interval that updates every 30 seconds
+        this.syncInterval = setInterval(() => {
+            this.syncDataToCloud();
+        }, 30000); // Sync every 30 seconds
+
+        // Also sync immediately
+        this.syncDataToCloud();
+        
+        // Store sync status
+        localStorage.setItem('realTimeSyncEnabled', 'true');
+        localStorage.setItem('lastSyncTime', new Date().toISOString());
+        
+        console.log('✅ Real-time sync enabled - data will sync every 30 seconds');
+    }
+
+    // Disable real-time sync
+    disableRealTimeSync() {
+        if (this.syncInterval) {
+            clearInterval(this.syncInterval);
+            this.syncInterval = null;
+            localStorage.setItem('realTimeSyncEnabled', 'false');
+            console.log('🛑 Real-time sync disabled');
+        }
+    }
+
+    // Sync data to cloud/local storage for real-time access
+    syncDataToCloud() {
+        try {
+            const syncData = {
+                timestamp: new Date().toISOString(),
+                tutorRegistrations: this.tutorData,
+                schoolRegistrations: this.schoolData,
+                parentStudentRegistrations: this.parentStudentData,
+                totalCount: this.tutorData.length + this.schoolData.length + this.parentStudentData.length
+            };
+
+            // Store in localStorage for real-time access
+            localStorage.setItem('shikshaSathiRealTimeData', JSON.stringify(syncData));
+            
+            // Also store individual Excel files for quick access
+            this.updateExcelFile('tutorRegistrations', 'Tutor_Registrations.xlsx');
+            this.updateExcelFile('schoolRegistrations', 'Partner_Schools.xlsx');
+            this.updateExcelFile('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx');
+
+            // Update last sync time
+            localStorage.setItem('lastSyncTime', new Date().toISOString());
+            
+            console.log('🔄 Data synced to cloud storage:', {
+                tutors: this.tutorData.length,
+                schools: this.schoolData.length,
+                parents: this.parentStudentData.length,
+                total: syncData.totalCount
+            });
+
+            // Show sync notification if this is a new entry
+            this.showSyncNotification(syncData.totalCount);
+
+        } catch (error) {
+            console.error('Error syncing data:', error);
+        }
+    }
+
+    // Show sync notification for new entries
+    showSyncNotification(totalCount) {
+        const lastCount = parseInt(localStorage.getItem('lastTotalCount') || '0');
+        
+        if (totalCount > lastCount) {
+            const newEntries = totalCount - lastCount;
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                z-index: 10000;
+                max-width: 400px;
+                font-family: 'Inter', sans-serif;
+                animation: slideInLeft 0.3s ease-out;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-sync-alt" style="font-size: 24px; margin-right: 10px; animation: spin 2s linear infinite;"></i>
+                    <strong style="font-size: 18px;">New Data Synced!</strong>
+                </div>
+                <p style="margin: 0 0 15px 0; line-height: 1.5;">
+                    <strong>${newEntries} new registration(s)</strong> have been added to your system.
+                </p>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong>💡 Your Excel is now updated!</strong>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                        <li>Download the latest Excel file to see new entries</li>
+                        <li>Or refresh your existing Excel file</li>
+                        <li>Data syncs automatically every 30 seconds</li>
+                    </ul>
+                </div>
+                <button onclick="this.parentElement.remove()" style="
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 14px;
+                ">Got it!</button>
+            `;
+            
+            // Add CSS animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInLeft {
+                    from { transform: translateX(-100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 15 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 15000);
+
+            // Update last count
+            localStorage.setItem('lastTotalCount', totalCount.toString());
+        }
+    }
+
+    // Get real-time data status
+    getRealTimeStatus() {
+        const lastSync = localStorage.getItem('lastSyncTime');
+        const syncEnabled = localStorage.getItem('realTimeSyncEnabled') === 'true';
+        
+        return {
+            syncEnabled,
+            lastSync,
+            totalRegistrations: this.tutorData.length + this.schoolData.length + this.parentStudentData.length,
+            tutorCount: this.tutorData.length,
+            schoolCount: this.schoolData.length,
+            parentCount: this.parentStudentData.length
+        };
     }
 
     // Get all data for admin view

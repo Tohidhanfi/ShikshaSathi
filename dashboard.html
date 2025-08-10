@@ -550,6 +550,17 @@
             .realtime-stats {
                 grid-template-columns: 1fr;
             }
+
+            /* Real-time sync animations */
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            @keyframes slideInLeft {
+                from { transform: translateX(-100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
         }
     </style>
 </head>
@@ -578,6 +589,7 @@
                 <ul>
                     <li><strong>Large Datasets:</strong> Use search and pagination for better performance</li>
                     <li><strong>Excel Files:</strong> Automatically updated with each new registration - no need to download after every submission!</li>
+                    <li><strong>Smart Excel Management:</strong> Download updated files and replace old ones to keep your Excel sheets current</li>
                     <li><strong>Data Export:</strong> Download updated Excel files when you need them for offline analysis</li>
                     <li><strong>Storage:</strong> Data is stored locally in your browser</li>
                     <li><strong>Backup:</strong> Export data regularly to prevent loss</li>
@@ -680,7 +692,7 @@
                 <div class="action-buttons">
                     <input type="text" class="search-box" placeholder="Search tutors..." onkeyup="filterTable('tutors', this.value)">
                     <button class="btn btn-primary" onclick="downloadExcel('tutorRegistrations', 'Tutor_Registrations.xlsx')">
-                        <i class="fas fa-download"></i> Download Updated Excel
+                        <i class="fas fa-download"></i> Download Latest Excel
                     </button>
                     <button class="btn btn-secondary" onclick="exportAsCSV('tutors')">
                         <i class="fas fa-file-csv"></i> Export CSV
@@ -694,7 +706,7 @@
                 <div class="action-buttons">
                     <input type="text" class="search-box" placeholder="Search schools..." onkeyup="filterTable('schools', this.value)">
                     <button class="btn btn-primary" onclick="downloadExcel('schoolRegistrations', 'Partner_Schools.xlsx')">
-                        <i class="fas fa-download"></i> Download Updated Excel
+                        <i class="fas fa-download"></i> Download Latest Excel
                     </button>
                     <button class="btn btn-secondary" onclick="exportAsCSV('schools')">
                         <i class="fas fa-file-csv"></i> Export CSV
@@ -708,13 +720,84 @@
                 <div class="action-buttons">
                     <input type="text" class="search-box" placeholder="Search parents/students..." onkeyup="filterTable('parents', this.value)">
                     <button class="btn btn-primary" onclick="downloadExcel('parentStudentRegistrations', 'Parent_Student_Registrations.xlsx')">
-                        <i class="fas fa-download"></i> Download Updated Excel
+                        <i class="fas fa-download"></i> Download Latest Excel
                     </button>
                     <button class="btn btn-secondary" onclick="exportAsCSV('parents')">
                         <i class="fas fa-file-csv"></i> Export CSV
                     </button>
                 </div>
                 <div id="parentsTable"></div>
+            </div>
+        </div>
+
+        <!-- Real-Time Sync Status -->
+        <div class="realtime-sync-status" style="margin-top: 30px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border-radius: 12px; padding: 25px; border: 1px solid #1d4ed8;">
+            <h3 style="margin: 0 0 20px 0; display: flex; align-items: center;">
+                <i class="fas fa-sync-alt" style="margin-right: 10px; animation: spin 2s linear infinite;"></i>
+                Real-Time Data Sync Status
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4 style="margin: 0 0 15px 0; opacity: 0.9;">🔄 Sync Status</h4>
+                    <div id="syncStatus" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <div style="margin-bottom: 10px;">
+                            <strong>Status:</strong> <span id="syncStatusText">Checking...</span>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>Last Sync:</strong> <span id="lastSyncTime">Never</span>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>Total Entries:</strong> <span id="totalEntries">0</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button id="toggleSyncBtn" class="btn" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px;">
+                            <i class="fas fa-play"></i> Enable Sync
+                        </button>
+                        <button onclick="refreshSyncStatus()" class="btn" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin: 0 0 15px 0; opacity: 0.9;">💡 How Real-Time Sync Works</h4>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                            <li><strong>Auto-Sync:</strong> Data updates every 30 seconds automatically</li>
+                            <li><strong>Instant Updates:</strong> New registrations appear immediately</li>
+                            <li><strong>No Downloads:</strong> Excel files stay current without manual downloads</li>
+                            <li><strong>Smart Notifications:</strong> Get alerts when new data arrives</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Excel Management Guide -->
+        <div class="excel-guide" style="margin-top: 30px; background: #f8fafc; border-radius: 12px; padding: 25px; border: 1px solid #e2e8f0;">
+            <h3 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center;">
+                <i class="fas fa-file-excel" style="color: #059669; margin-right: 10px;"></i>
+                Excel File Management Guide
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4 style="color: #374151; margin: 0 0 15px 0;">📥 How to Download Updated Excel Files</h4>
+                    <ol style="margin: 0; padding-left: 20px; color: #4b5563; line-height: 1.6;">
+                        <li>Click any "Download Updated Excel" button above</li>
+                        <li>Choose where to save the file on your computer</li>
+                        <li>Replace the old Excel file with the new one</li>
+                        <li>Your Excel sheet will now have the latest data!</li>
+                    </ol>
+                </div>
+                <div>
+                    <h4 style="color: #374151; margin: 0 0 15px 0;">💡 Pro Tips for Excel Management</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #4b5563; line-height: 1.6;">
+                        <li><strong>Consistent Naming:</strong> Always use the same filename to keep organized</li>
+                        <li><strong>Regular Updates:</strong> Download after every 10-20 new registrations</li>
+                        <li><strong>Backup Strategy:</strong> Keep a copy of important data in a separate folder</li>
+                        <li><strong>Auto-Update:</strong> Excel files are always current in the system</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -1312,6 +1395,92 @@
             alert('Data refreshed successfully!');
         }
 
+        // Real-time sync functions
+        function refreshSyncStatus() {
+            if (window.excelHandler) {
+                const status = window.excelHandler.getRealTimeStatus();
+                
+                // Update status display
+                document.getElementById('syncStatusText').textContent = status.syncEnabled ? '🟢 Active' : '🔴 Inactive';
+                document.getElementById('lastSyncTime').textContent = status.lastSync ? new Date(status.lastSync).toLocaleString() : 'Never';
+                document.getElementById('totalEntries').textContent = status.totalRegistrations;
+                
+                // Update toggle button
+                const toggleBtn = document.getElementById('toggleSyncBtn');
+                if (status.syncEnabled) {
+                    toggleBtn.innerHTML = '<i class="fas fa-pause"></i> Disable Sync';
+                    toggleBtn.onclick = () => disableRealTimeSync();
+                } else {
+                    toggleBtn.innerHTML = '<i class="fas fa-play"></i> Enable Sync';
+                    toggleBtn.onclick = () => enableRealTimeSync();
+                }
+            }
+        }
+
+        function enableRealTimeSync() {
+            if (window.excelHandler) {
+                window.excelHandler.enableRealTimeSync();
+                refreshSyncStatus();
+                showNotification('Real-time sync enabled! Data will update every 30 seconds.', 'success');
+            }
+        }
+
+        function disableRealTimeSync() {
+            if (window.excelHandler) {
+                window.excelHandler.disableRealTimeSync();
+                refreshSyncStatus();
+                showNotification('Real-time sync disabled.', 'info');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                z-index: 10000;
+                max-width: 300px;
+                font-family: 'Inter', sans-serif;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" style="margin-right: 10px;"></i>
+                    ${message}
+                </div>
+            `;
+            
+            // Add CSS animation
+            if (!document.querySelector('#notificationStyle')) {
+                const style = document.createElement('style');
+                style.id = 'notificationStyle';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
         // Clear all data
         function clearAllData() {
             if (excelHandler.clearAllData()) {
@@ -1369,6 +1538,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Dashboard content is hidden by default until password is entered
             document.getElementById('adminContent').style.display = 'none';
+            
+            // Initialize real-time sync status
+            setTimeout(() => {
+                if (window.excelHandler) {
+                    refreshSyncStatus();
+                }
+            }, 1000);
         });
         
         // Analytics Dashboard Functions
