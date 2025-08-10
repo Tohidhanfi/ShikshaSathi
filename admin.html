@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - ShikshaSathi</title>
+    <title>Admin Login - ShikshaSathi</title>
     
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon_io/apple-touch-icon.png">
@@ -15,270 +15,15 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- SheetJS for Excel functionality -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <!-- Chart.js for Analytics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin: 0;
             font-family: 'Inter', sans-serif;
-        }
-        
-        /* Dashboard Container */
-        .dashboard-container {
-            display: none;
-            min-height: 100vh;
-            background: #f1f5f9;
-        }
-        
-        .admin-header {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .admin-header h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        
-        .admin-header p {
-            margin: 0;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .admin-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* Statistics Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border-left: 4px solid #2563eb;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            color: #6b7280;
-            font-size: 1rem;
-        }
-        
-        /* Analytics Section */
-        .analytics-section {
-            margin: 40px 0;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .section-title {
-            color: #1e293b;
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            text-align: center;
-            border-bottom: 3px solid #2563eb;
-            padding-bottom: 15px;
-        }
-        
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .analytics-card {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 25px;
-            border-left: 4px solid #2563eb;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        
-        .analytics-card h3 {
-            color: #1e293b;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .analytics-card h3 i {
-            color: #2563eb;
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 250px;
-            margin-top: 15px;
-        }
-        
-        .realtime-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .realtime-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .realtime-item .label {
-            color: #64748b;
-            font-weight: 500;
-        }
-        
-        .realtime-item .value {
-            color: #2563eb;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 30px 0;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-        
-        .btn-secondary {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #059669;
-        }
-        
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            color: #2563eb;
-            border: 2px solid #2563eb;
-        }
-        
-        .btn-outline:hover {
-            background: #2563eb;
-            color: white;
-        }
-        
-        /* Login Container */
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            margin: 50px auto;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .admin-content {
-                padding: 10px;
-            }
-            
-            .admin-header {
-                padding: 20px;
-            }
-            
-            .admin-header h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .analytics-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .realtime-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-                justify-content: center;
-            }
         }
         
         .login-container {
@@ -355,10 +100,6 @@
             font-size: 1.1rem;
         }
         
-        .password-toggle:hover {
-            color: #2563eb;
-        }
-        
         .login-btn {
             width: 100%;
             padding: 12px;
@@ -370,6 +111,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            position: relative;
         }
         
         .login-btn:hover {
@@ -381,47 +123,47 @@
             cursor: not-allowed;
         }
         
-        .error-message {
-            color: #dc2626;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+        .loading {
             display: none;
         }
         
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid #fecaca;
+        }
+        
         .back-link {
+            display: inline-block;
             margin-top: 20px;
             color: #6b7280;
             text-decoration: none;
             font-size: 0.9rem;
+            transition: color 0.3s ease;
         }
         
         .back-link:hover {
-            color: #2563eb;
+            color: #374151;
         }
         
-        .loading {
-            display: none;
-            margin-left: 10px;
-        }
-        
-        @media (max-width: 480px) {
-            .login-container {
-                margin: 20px;
-                padding: 30px 20px;
-            }
+        .back-link i {
+            margin-right: 8px;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-                                    <div class="login-header">
-                    <h1>ShikshaSathi</h1>
-                    <h2>Admin Login</h2>
-                    <p>Enter your credentials to access the dashboard</p>
-                </div>
+        <div class="login-header">
+            <div class="login-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1>Admin Access</h1>
+            <p>Enter your credentials to access the dashboard</p>
+        </div>
         
         <div class="error-message" id="errorMessage">
             Invalid username or password. Please try again.
@@ -456,112 +198,6 @@
         </a>
     </div>
 
-    <!-- Dashboard Container (Hidden by default) -->
-    <div class="dashboard-container" id="dashboardContainer">
-        <div class="admin-header">
-            <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
-            <p>Real-time analytics and data management for ShikshaSathi</p>
-        </div>
-        
-        <div class="admin-content">
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number" id="totalTutors">0</div>
-                    <div class="stat-label">Tutor Registrations</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalSchools">0</div>
-                    <div class="stat-label">Partner Schools</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalParents">0</div>
-                    <div class="stat-label">Parent/Student Registrations</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalRegistrations">0</div>
-                    <div class="stat-label">Total Registrations</div>
-                </div>
-            </div>
-
-            <!-- Analytics Dashboard -->
-            <div class="analytics-section">
-                <h2 class="section-title">
-                    <i class="fas fa-chart-line"></i> Real-Time Analytics Dashboard
-                </h2>
-                
-                <div class="analytics-grid">
-                    <!-- Visitor Analytics -->
-                    <div class="analytics-card">
-                        <h3><i class="fas fa-users"></i> Visitor Analytics</h3>
-                        <div class="chart-container">
-                            <canvas id="visitorChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <!-- Form Submissions -->
-                    <div class="analytics-card">
-                        <h3><i class="fas fa-clipboard-list"></i> Form Submissions</h3>
-                        <div class="chart-container">
-                            <canvas id="submissionChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <!-- Registration Trends -->
-                    <div class="analytics-card">
-                        <h3><i class="fas fa-trending-up"></i> Registration Trends</h3>
-                        <div class="chart-container">
-                            <canvas id="trendChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <!-- Real-time Stats -->
-                    <div class="analytics-card">
-                        <h3><i class="fas fa-clock"></i> Real-time Activity</h3>
-                        <div class="realtime-stats">
-                            <div class="realtime-item">
-                                <span class="label">Active Users:</span>
-                                <span class="value" id="activeUsers">0</span>
-                            </div>
-                            <div class="realtime-item">
-                                <span class="label">Today's Visits:</span>
-                                <span class="value" id="todayVisits">0</span>
-                            </div>
-                            <div class="realtime-item">
-                                <span class="label">This Week:</span>
-                                <span class="value" id="weekVisits">0</span>
-                            </div>
-                            <div class="realtime-item">
-                                <span class="label">Last Updated:</span>
-                                <span class="value" id="lastUpdated">Just now</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="downloadAllData()">
-                    <i class="fas fa-download"></i> Download All Data
-                </button>
-                <button class="btn btn-secondary" onclick="exportAllAsCSV()">
-                    <i class="fas fa-file-csv"></i> Export All as CSV
-                </button>
-                <button class="btn btn-outline" onclick="refreshData()">
-                    <i class="fas fa-sync-alt"></i> Refresh Data
-                </button>
-                <button class="btn btn-danger" onclick="clearAllData()">
-                    <i class="fas fa-trash"></i> Clear All Data
-                </button>
-                <button class="btn btn-outline" onclick="logout()" style="border-color: #dc2626; color: #dc2626;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script src="../src/js/excel-handler.js"></script>
     <script>
         // Admin credentials (you can change these)
         const ADMIN_CREDENTIALS = {
@@ -602,12 +238,12 @@
             setTimeout(() => {
                 // Check credentials
                 if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                                    // Store admin session and login time
-                localStorage.setItem('shikshaSathiAdminSession', 'true');
-                localStorage.setItem('shikshaSathiAdminLoginTime', Date.now().toString());
-                
-                // Show dashboard
-                showDashboard();
+                    // Store admin session and login time
+                    localStorage.setItem('shikshaSathiAdminSession', 'true');
+                    localStorage.setItem('shikshaSathiAdminLoginTime', Date.now().toString());
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
                 } else {
                     // Show error message
                     errorMessage.style.display = 'block';
@@ -624,333 +260,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const adminSession = localStorage.getItem('shikshaSathiAdminSession');
             if (adminSession === 'true') {
-                showDashboard();
+                window.location.href = 'dashboard.html';
             }
         });
-        
-        // Dashboard Functions
-        function showDashboard() {
-            document.querySelector('.login-container').style.display = 'none';
-            document.getElementById('dashboardContainer').style.display = 'block';
-            document.body.style.display = 'block';
-            
-            // Initialize dashboard
-            updateStatistics();
-            initializeAnalytics();
-        }
-        
-        function logout() {
-            // Stop analytics updates
-            stopRealTimeUpdates();
-            
-            // Clear session
-            localStorage.removeItem('shikshaSathiAdminSession');
-            localStorage.removeItem('shikshaSathiAdminLoginTime');
-            
-            // Show login form
-            document.querySelector('.login-container').style.display = 'block';
-            document.getElementById('dashboardContainer').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('errorMessage').style.display = 'none';
-        }
-        
-        // Analytics Dashboard Functions
-        let visitorChart, submissionChart, trendChart;
-        let analyticsInterval;
-        
-        // Initialize Analytics Dashboard
-        function initializeAnalytics() {
-            createVisitorChart();
-            createSubmissionChart();
-            createTrendChart();
-            startRealTimeUpdates();
-        }
-        
-        // Create Visitor Analytics Chart
-        function createVisitorChart() {
-            const ctx = document.getElementById('visitorChart');
-            if (!ctx) return;
-            
-            visitorChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: generateTimeLabels(24),
-                    datasets: [{
-                        label: 'Page Views',
-                        data: generateRandomData(24, 50, 200),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Create Form Submissions Chart
-        function createSubmissionChart() {
-            const ctx = document.getElementById('submissionChart');
-            if (!ctx) return;
-            
-            submissionChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Tutors', 'Schools', 'Parents/Students'],
-                    datasets: [{
-                        data: [0, 0, 0],
-                        backgroundColor: [
-                            '#2563eb',
-                            '#10b981',
-                            '#f59e0b'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Create Registration Trends Chart
-        function createTrendChart() {
-            const ctx = document.getElementById('trendChart');
-            if (!ctx) return;
-            
-            trendChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: generateDateLabels(7),
-                    datasets: [{
-                        label: 'New Registrations',
-                        data: generateRandomData(7, 5, 25),
-                        backgroundColor: '#10b981',
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Generate time labels for charts
-        function generateTimeLabels(hours) {
-            const labels = [];
-            const now = new Date();
-            for (let i = hours - 1; i >= 0; i--) {
-                const time = new Date(now.getTime() - (i * 60 * 60 * 1000));
-                labels.push(time.getHours() + ':00');
-            }
-            return labels;
-        }
-        
-        // Generate date labels for charts
-        function generateDateLabels(days) {
-            const labels = [];
-            const now = new Date();
-            for (let i = days - 1; i >= 0; i--) {
-                const date = new Date(now.getTime() - (i * 24 * 60 * 60 * 1000));
-                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-            }
-            return labels;
-        }
-        
-        // Generate random data for demo purposes
-        function generateRandomData(count, min, max) {
-            return Array.from({ length: count }, () => Math.floor(Math.random() * (max - min + 1)) + min);
-        }
-        
-        // Start real-time updates
-        function startRealTimeUpdates() {
-            updateRealTimeStats();
-            analyticsInterval = setInterval(updateRealTimeStats, 5000); // Update every 5 seconds
-        }
-        
-        // Update real-time statistics
-        function updateRealTimeStats() {
-            // Update visitor count (simulated)
-            const activeUsers = Math.floor(Math.random() * 50) + 10;
-            document.getElementById('activeUsers').textContent = activeUsers;
-            
-            // Update today's visits
-            const todayVisits = Math.floor(Math.random() * 200) + 100;
-            document.getElementById('todayVisits').textContent = todayVisits;
-            
-            // Update week visits
-            const weekVisits = Math.floor(Math.random() * 1000) + 500;
-            document.getElementById('weekVisits').textContent = weekVisits;
-            
-            // Update last updated time
-            const now = new Date();
-            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
-            
-            // Update charts with real data
-            updateChartsWithRealData();
-        }
-        
-        // Update charts with real data from localStorage
-        function updateChartsWithRealData() {
-            if (submissionChart) {
-                const stats = excelHandler.getStatistics();
-                submissionChart.data.datasets[0].data = [
-                    stats.totalTutorRegistrations,
-                    stats.totalSchoolRegistrations,
-                    stats.totalParentStudentRegistrations
-                ];
-                submissionChart.update();
-            }
-        }
-        
-        // Stop real-time updates
-        function stopRealTimeUpdates() {
-            if (analyticsInterval) {
-                clearInterval(analyticsInterval);
-            }
-        }
-        
-        // Data Management Functions
-        function updateStatistics() {
-            if (typeof excelHandler !== 'undefined') {
-                const stats = excelHandler.getStatistics();
-                document.getElementById('totalTutors').textContent = stats.totalTutorRegistrations;
-                document.getElementById('totalSchools').textContent = stats.totalSchoolRegistrations;
-                document.getElementById('totalParents').textContent = stats.totalParentStudentRegistrations;
-                document.getElementById('totalRegistrations').textContent = stats.totalRegistrations;
-            } else {
-                // Fallback if excelHandler is not available
-                document.getElementById('totalTutors').textContent = '0';
-                document.getElementById('totalSchools').textContent = '0';
-                document.getElementById('totalParents').textContent = '0';
-                document.getElementById('totalRegistrations').textContent = '0';
-            }
-        }
-        
-        function downloadAllData() {
-            try {
-                if (typeof XLSX === 'undefined') {
-                    alert('Excel functionality not available. Please use CSV export instead.');
-                    return;
-                }
-                
-                if (typeof excelHandler === 'undefined') {
-                    alert('Data handler not available. Please refresh the page.');
-                    return;
-                }
-                
-                // Create workbook with multiple sheets
-                const wb = XLSX.utils.book_new();
-                
-                // Add tutor data sheet
-                if (excelHandler.tutorData && excelHandler.tutorData.length > 1) {
-                    const ws1 = XLSX.utils.aoa_to_sheet(excelHandler.tutorData);
-                    XLSX.utils.book_append_sheet(wb, ws1, 'Tutor_Registrations');
-                }
-                
-                // Add school data sheet
-                if (excelHandler.schoolData && excelHandler.schoolData.length > 1) {
-                    const ws2 = XLSX.utils.aoa_to_sheet(excelHandler.schoolData);
-                    XLSX.utils.book_append_sheet(wb, ws2, 'Partner_Schools');
-                }
-                
-                // Add parent/student data sheet
-                if (excelHandler.parentStudentData && excelHandler.parentStudentData.length > 1) {
-                    const ws3 = XLSX.utils.aoa_to_sheet(excelHandler.parentStudentData);
-                    XLSX.utils.book_append_sheet(wb, ws3, 'Parent_Student_Registrations');
-                }
-                
-                // Download the file
-                XLSX.writeFile(wb, 'ShikshaSathi_All_Data.xlsx');
-                
-            } catch (error) {
-                console.error('Error downloading all data:', error);
-                alert('Error downloading data. Please try CSV export instead.');
-            }
-        }
-        
-        function exportAllAsCSV() {
-            if (typeof excelHandler !== 'undefined') {
-                excelHandler.exportAllAsCSV();
-            } else {
-                alert('Data handler not available. Please refresh the page.');
-            }
-        }
-        
-        function refreshData() {
-            if (typeof excelHandler !== 'undefined') {
-                // Reload data from localStorage
-                excelHandler.tutorData = excelHandler.loadData('tutorRegistrations');
-                excelHandler.schoolData = excelHandler.loadData('schoolRegistrations');
-                excelHandler.parentStudentData = excelHandler.loadData('parentStudentRegistrations');
-                
-                // Update statistics
-                updateStatistics();
-                updateChartsWithRealData();
-                
-                alert('Data refreshed successfully!');
-            } else {
-                alert('Data handler not available. Please refresh the page.');
-            }
-        }
-        
-        function clearAllData() {
-            if (typeof excelHandler !== 'undefined' && excelHandler.clearAllData()) {
-                updateStatistics();
-                updateChartsWithRealData();
-                alert('All data has been cleared.');
-            } else {
-                alert('Data handler not available. Please refresh the page.');
-            }
-        }
     </script>
 </body>
 </html> 
