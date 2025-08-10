@@ -114,6 +114,26 @@
             background: #b91c1c;
         }
         
+        .session-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .session-timer {
+            background: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            color: #475569;
+        }
+        
+        .session-warning {
+            color: #dc2626;
+        }
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -390,6 +410,10 @@
         <div class="main-content">
             <div class="dashboard-header">
                 <h1>Dashboard</h1>
+                <div class="session-status">
+                    <span>Session expires in:</span>
+                    <span class="session-timer" id="sessionTimer">30:00</span>
+                </div>
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
@@ -594,6 +618,84 @@
             window.location.href = 'admin.html';
         }
 
+        // Session timeout management (30 minutes)
+        let sessionTimeout;
+        const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+        function startSessionTimer() {
+            // Clear any existing timeout
+            if (sessionTimeout) {
+                clearTimeout(sessionTimeout);
+            }
+            
+            // Set new timeout
+            sessionTimeout = setTimeout(() => {
+                alert('Your session has expired due to inactivity. Please login again.');
+                logout();
+            }, SESSION_DURATION);
+        }
+
+        function resetSessionTimer() {
+            startSessionTimer();
+            updateSessionTimer(); // Update the display immediately
+        }
+
+        // Start session timer when dashboard loads
+        startSessionTimer();
+
+        // Reset timer on user activity
+        document.addEventListener('mousemove', resetSessionTimer);
+        document.addEventListener('keypress', resetSessionTimer);
+        document.addEventListener('click', resetSessionTimer);
+        document.addEventListener('scroll', resetSessionTimer);
+
+        // Check session validity every minute and update timer
+        setInterval(() => {
+            const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
+            if (loginTime) {
+                const currentTime = Date.now();
+                const timeDiff = currentTime - parseInt(loginTime);
+                
+                if (timeDiff >= SESSION_DURATION) {
+                    alert('Your session has expired. Please login again.');
+                    logout();
+                } else {
+                    // Update session timer display
+                    updateSessionTimer();
+                }
+            }
+        }, 1000); // Update every second for real-time countdown
+
+        function updateSessionTimer() {
+            const loginTime = localStorage.getItem('shikshaSathiAdminLoginTime');
+            if (loginTime) {
+                const currentTime = Date.now();
+                const timeDiff = currentTime - parseInt(loginTime);
+                const remainingTime = SESSION_DURATION - timeDiff;
+                
+                if (remainingTime <= 0) {
+                    logout();
+                    return;
+                }
+                
+                const minutes = Math.floor(remainingTime / 60000);
+                const seconds = Math.floor((remainingTime % 60000) / 1000);
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerElement = document.getElementById('sessionTimer');
+                if (timerElement) {
+                    timerElement.textContent = timeString;
+                    
+                    // Add warning color when less than 5 minutes remaining
+                    if (remainingTime <= 5 * 60 * 1000) {
+                        timerElement.classList.add('session-warning');
+                    } else {
+                        timerElement.classList.remove('session-warning');
+                    }
+                }
+            }
+        }
+
         // Navigation
         function showSection(sectionId) {
             // Hide all sections
@@ -615,8 +717,16 @@
 
         // Logout
         function logout() {
+            // Clear session timeout
+            if (sessionTimeout) {
+                clearTimeout(sessionTimeout);
+            }
+            
+            // Clear all admin data
             localStorage.removeItem('shikshaSathiAdminSession');
             localStorage.removeItem('shikshaSathiAdminLoginTime');
+            
+            // Redirect to login
             window.location.href = 'admin.html';
         }
 
@@ -706,6 +816,44 @@
             if (event.target === modal) {
                 closePhotoUploadModal();
             }
+        }
+    </script>
+    
+    <!-- Excel Handler Script -->
+    <script src="src/js/excel-handler.js"></script>
+    
+    <!-- Data Display Script -->
+    <script>
+        // Initialize data display when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show overview by default
+            showSection('overview');
+            
+            // Load initial data
+            loadDashboardData();
+        });
+        
+        function loadDashboardData() {
+            // Get data from excel handler
+            const tutors = window.excelHandler ? window.excelHandler.getTutors() : [];
+            const schools = window.excelHandler ? window.excelHandler.getSchools() : [];
+            const parents = window.excelHandler ? window.excelHandler.getParents() : [];
+            
+            // Update statistics
+            updateStats(tutors.length, schools.length, parents.length);
+        }
+        
+        function updateStats(tutorCount, schoolCount, parentCount) {
+            const totalRegistrations = tutorCount + schoolCount + parentCount;
+            
+            // Update the stats display
+            const totalElement = document.querySelector('.stat-card:nth-child(1) .stat-value');
+            const tutorsElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
+            const schoolsElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
+            
+            if (totalElement) totalElement.textContent = totalRegistrations;
+            if (tutorsElement) tutorsElement.textContent = tutorCount;
+            if (schoolsElement) tutorsElement.textContent = schoolCount;
         }
     </script>
 </body>

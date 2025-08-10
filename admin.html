@@ -241,8 +241,9 @@
             setTimeout(() => {
                 // Check credentials
                 if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                    // Store admin session
+                    // Store admin session and login time
                     localStorage.setItem('shikshaSathiAdminSession', 'true');
+                    localStorage.setItem('shikshaSathiAdminLoginTime', Date.now().toString());
                     
                     // Redirect to dashboard
                     window.location.href = 'dashboard.html';
