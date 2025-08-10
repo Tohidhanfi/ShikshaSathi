@@ -60,6 +60,15 @@ function initializeWebsite() {
 function initializeFormListeners() {
     console.log('Initializing form listeners...');
     
+    // Debug: Check what forms are available
+    console.log('Available forms:', {
+        contactForm: !!document.getElementById('contactForm'),
+        tutorForm: !!document.getElementById('tutorRegistrationForm'),
+        partnerForm: !!document.getElementById('partnerForm'),
+        collaborationForm: !!document.getElementById('collaborationForm'),
+        parentStudentForm: !!document.getElementById('parentStudentForm')
+    });
+    
     // Contact form
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
@@ -94,19 +103,49 @@ function initializeFormListeners() {
             const teachingStandard = document.querySelectorAll('input[name="teachingStandard"]:checked');
             const eligibilityCoaching = document.querySelectorAll('input[name="eligibilityCoaching"]:checked');
             
+            console.log('Validation check:', {
+                subjects: subjects.length,
+                teachingStandard: teachingStandard.length,
+                eligibilityCoaching: eligibilityCoaching.length
+            });
+            
             if (subjects.length === 0) {
-                alert('Please select at least one subject you can teach.');
+                console.log('Subjects validation failed');
+                showNotification('Please select at least one subject you can teach.', 'error');
                 return;
             }
             
             if (teachingStandard.length === 0) {
-                alert('Please select at least one teaching standard.');
+                console.log('Teaching standard validation failed');
+                showNotification('Please select at least one teaching standard.', 'error');
                 return;
             }
             
             if (eligibilityCoaching.length === 0) {
-                alert('Please select at least one eligibility coaching option.');
+                console.log('Eligibility coaching validation failed');
+                showNotification('Please select at least one eligibility coaching option.', 'error');
                 return;
+            }
+            
+            console.log('All validations passed!');
+            
+            // Check if "Other" subjects is selected and text is filled
+            const otherSubjectsChecked = document.querySelector('input[name="subjects"][value="other"]:checked');
+            const subjectsOtherText = document.getElementById('subjectsOtherText');
+            console.log('Other subjects check:', {
+                otherChecked: !!otherSubjectsChecked,
+                otherTextElement: !!subjectsOtherText,
+                otherTextDisplay: subjectsOtherText ? subjectsOtherText.style.display : 'N/A',
+                otherTextValue: subjectsOtherText ? subjectsOtherText.value : 'N/A'
+            });
+            
+            if (otherSubjectsChecked && subjectsOtherText && subjectsOtherText.style.display !== 'none') {
+                if (!subjectsOtherText.value.trim()) {
+                    console.log('Other subjects text validation failed');
+                    showNotification('Please specify the other subjects you can teach.', 'error');
+                    subjectsOtherText.focus();
+                    return;
+                }
             }
             
             // Get form data
@@ -131,7 +170,15 @@ function initializeFormListeners() {
             showNotification('Thank you for registering! We will contact you soon with next steps.', 'success');
             
             // Close modal and reset form
-            closeModal(modals.registration);
+            if (modals && modals.registration) {
+                closeModal(modals.registration);
+            } else {
+                // Fallback: find modal directly
+                const modal = document.getElementById('registrationModal');
+                if (modal) {
+                    closeModal(modal);
+                }
+            }
             this.reset();
         });
     }
@@ -148,13 +195,24 @@ function initializeFormListeners() {
             const partnerSubjects = document.querySelectorAll('input[name="partnerSubjects"]:checked');
             
             if (teachersRequired.length === 0) {
-                alert('Please select at least one standard for teachers required.');
+                showNotification('Please select at least one standard for teachers required.', 'error');
                 return;
             }
             
             if (partnerSubjects.length === 0) {
-                alert('Please select at least one subject.');
+                showNotification('Please select at least one subject.', 'error');
                 return;
+            }
+            
+            // Check if "Other" subjects is selected and text is filled
+            const otherPartnerSubjectsChecked = document.querySelector('input[name="partnerSubjects"][value="Other"]:checked');
+            const partnerSubjectsOtherText = document.getElementById('partnerSubjectsOtherText');
+            if (otherPartnerSubjectsChecked && partnerSubjectsOtherText && partnerSubjectsOtherText.style.display !== 'none') {
+                if (!partnerSubjectsOtherText.value.trim()) {
+                    showNotification('Please specify the other subjects.', 'error');
+                    partnerSubjectsOtherText.focus();
+                    return;
+                }
             }
             
             // Get form data
@@ -179,7 +237,15 @@ function initializeFormListeners() {
             showNotification('Thank you for your partnership request! We will contact you soon.', 'success');
             
             // Close modal and reset form
-            closeModal(modals.partner);
+            if (modals && modals.partner) {
+                closeModal(modals.partner);
+            } else {
+                // Fallback: find modal directly
+                const modal = document.getElementById('partnerModal');
+                if (modal) {
+                    closeModal(modal);
+                }
+            }
             this.reset();
         });
     }
@@ -202,7 +268,15 @@ function initializeFormListeners() {
             showNotification('Thank you for your collaboration proposal! We will review and contact you soon.', 'success');
             
             // Close modal and reset form
-            closeModal(modals.collaboration);
+            if (modals && modals.collaboration) {
+                closeModal(modals.collaboration);
+            } else {
+                // Fallback: find modal directly
+                const modal = document.getElementById('collaborationModal');
+                if (modal) {
+                    closeModal(modal);
+                }
+            }
             this.reset();
         });
     }
@@ -219,13 +293,24 @@ function initializeFormListeners() {
             const tuitionLocation = document.querySelectorAll('input[name="tuitionLocation"]:checked');
             
             if (tuitionSubjects.length === 0) {
-                alert('Please select at least one subject for tuition.');
+                showNotification('Please select at least one subject for tuition.', 'error');
                 return;
             }
             
             if (tuitionLocation.length === 0) {
-                alert('Please select at least one tuition location preference.');
+                showNotification('Please select at least one tuition location preference.', 'error');
                 return;
+            }
+            
+            // Check if "Other" subjects is selected and text is filled
+            const otherTuitionSubjectsChecked = document.querySelector('input[name="tuitionSubjects"][value="Other"]:checked');
+            const tuitionSubjectsOtherText = document.getElementById('tuitionSubjectsOtherText');
+            if (otherTuitionSubjectsChecked && tuitionSubjectsOtherText && tuitionSubjectsOtherText.style.display !== 'none') {
+                if (!tuitionSubjectsOtherText.value.trim()) {
+                    showNotification('Please specify the other subjects for tuition.', 'error');
+                    tuitionSubjectsOtherText.focus();
+                    return;
+                }
             }
             
             // Get form data
@@ -250,7 +335,15 @@ function initializeFormListeners() {
             showNotification('Thank you for your registration! We will contact you soon to match you with a suitable tutor.', 'success');
             
             // Close modal and reset form
-            closeModal(modals.parentStudent);
+            if (modals && modals.parentStudent) {
+                closeModal(modals.parentStudent);
+            } else {
+                // Fallback: find modal directly
+                const modal = document.getElementById('parentStudentModal');
+                if (modal) {
+                    closeModal(modal);
+                }
+            }
             this.reset();
         });
     }
@@ -1204,30 +1297,6 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('input', function() {
             validatePhoneNumber(this);
         });
-    });
-    
-    // Add validation for checkbox groups to ensure at least one is selected
-    const checkboxGroups = document.querySelectorAll('.checkbox-group');
-    checkboxGroups.forEach(group => {
-        const checkboxes = group.querySelectorAll('input[type="checkbox"]');
-        const form = group.closest('form');
-        
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                let hasChecked = false;
-                checkboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        hasChecked = true;
-                    }
-                });
-                
-                if (!hasChecked) {
-                    e.preventDefault();
-                    alert('Please select at least one option.');
-                    return false;
-                }
-            });
-        }
     });
     
     // Track website analytics
