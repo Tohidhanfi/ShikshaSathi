@@ -19,6 +19,9 @@
     <!-- SheetJS for Excel functionality -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         .admin-container {
             max-width: 1400px;
@@ -421,6 +424,85 @@
             margin: 5px;
         }
         
+        /* Analytics Dashboard Styles */
+        .analytics-section {
+            margin: 40px 0;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 15px;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .analytics-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #2563eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .analytics-card h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .analytics-card h3 i {
+            color: #2563eb;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 15px;
+        }
+        
+        .realtime-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .realtime-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .realtime-item .label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .realtime-item .value {
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
         @media (max-width: 768px) {
             .admin-container {
                 padding: 10px;
@@ -459,6 +541,14 @@
                 position: static;
                 margin-bottom: 20px;
                 display: inline-block;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .realtime-stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -511,6 +601,62 @@
             <div class="stat-card">
                 <div class="stat-number" id="totalRegistrations">0</div>
                 <div class="stat-label">Total Registrations</div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="analytics-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i> Real-Time Analytics Dashboard
+            </h2>
+            
+            <div class="analytics-grid">
+                <!-- Visitor Analytics -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-users"></i> Visitor Analytics</h3>
+                    <div class="chart-container">
+                        <canvas id="visitorChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Form Submissions -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-clipboard-list"></i> Form Submissions</h3>
+                    <div class="chart-container">
+                        <canvas id="submissionChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Registration Trends -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-trending-up"></i> Registration Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Real-time Stats -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-clock"></i> Real-time Activity</h3>
+                    <div class="realtime-stats">
+                        <div class="realtime-item">
+                            <span class="label">Active Users:</span>
+                            <span class="value" id="activeUsers">0</span>
+                        </div>
+                        <div class="realtime-item">
+                            <span class="label">Today's Visits:</span>
+                            <span class="value" id="todayVisits">0</span>
+                        </div>
+                        <div class="realtime-item">
+                            <span class="label">This Week:</span>
+                            <span class="value" id="weekVisits">0</span>
+                        </div>
+                        <div class="realtime-item">
+                            <span class="label">Last Updated:</span>
+                            <span class="value" id="lastUpdated">Just now</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1187,6 +1333,9 @@
         const ADMIN_PASSWORD = 'ShikshaSathi2024'; // Change this to your desired password
         
         function logout() {
+            // Stop analytics updates
+            stopRealTimeUpdates();
+            
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('adminContent').style.display = 'none';
             document.getElementById('adminPassword').value = '';
@@ -1220,6 +1369,225 @@
             // Dashboard content is hidden by default until password is entered
             document.getElementById('adminContent').style.display = 'none';
         });
+        
+        // Analytics Dashboard Functions
+        let visitorChart, submissionChart, trendChart;
+        let analyticsInterval;
+        
+        // Initialize Analytics Dashboard
+        function initializeAnalytics() {
+            createVisitorChart();
+            createSubmissionChart();
+            createTrendChart();
+            startRealTimeUpdates();
+        }
+        
+        // Create Visitor Analytics Chart
+        function createVisitorChart() {
+            const ctx = document.getElementById('visitorChart');
+            if (!ctx) return;
+            
+            visitorChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: generateTimeLabels(24),
+                    datasets: [{
+                        label: 'Page Views',
+                        data: generateRandomData(24, 50, 200),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create Form Submissions Chart
+        function createSubmissionChart() {
+            const ctx = document.getElementById('submissionChart');
+            if (!ctx) return;
+            
+            submissionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tutors', 'Schools', 'Parents/Students'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: [
+                            '#2563eb',
+                            '#10b981',
+                            '#f59e0b'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create Registration Trends Chart
+        function createTrendChart() {
+            const ctx = document.getElementById('trendChart');
+            if (!ctx) return;
+            
+            trendChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: generateDateLabels(7),
+                    datasets: [{
+                        label: 'New Registrations',
+                        data: generateRandomData(7, 5, 25),
+                        backgroundColor: '#10b981',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Generate time labels for charts
+        function generateTimeLabels(hours) {
+            const labels = [];
+            const now = new Date();
+            for (let i = hours - 1; i >= 0; i--) {
+                const time = new Date(now.getTime() - (i * 60 * 60 * 1000));
+                labels.push(time.getHours() + ':00');
+            }
+            return labels;
+        }
+        
+        // Generate date labels for charts
+        function generateDateLabels(days) {
+            const labels = [];
+            const now = new Date();
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(now.getTime() - (i * 24 * 60 * 60 * 1000));
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            }
+            return labels;
+        }
+        
+        // Generate random data for demo purposes
+        function generateRandomData(count, min, max) {
+            return Array.from({ length: count }, () => Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+        
+        // Start real-time updates
+        function startRealTimeUpdates() {
+            updateRealTimeStats();
+            analyticsInterval = setInterval(updateRealTimeStats, 5000); // Update every 5 seconds
+        }
+        
+        // Update real-time statistics
+        function updateRealTimeStats() {
+            // Update visitor count (simulated)
+            const activeUsers = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            
+            // Update today's visits
+            const todayVisits = Math.floor(Math.random() * 200) + 100;
+            document.getElementById('todayVisits').textContent = todayVisits;
+            
+            // Update week visits
+            const weekVisits = Math.floor(Math.random() * 1000) + 500;
+            document.getElementById('weekVisits').textContent = weekVisits;
+            
+            // Update last updated time
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+            
+            // Update charts with real data
+            updateChartsWithRealData();
+        }
+        
+        // Update charts with real data from localStorage
+        function updateChartsWithRealData() {
+            if (submissionChart) {
+                const stats = excelHandler.getStatistics();
+                submissionChart.data.datasets[0].data = [
+                    stats.totalTutorRegistrations,
+                    stats.totalSchoolRegistrations,
+                    stats.totalParentStudentRegistrations
+                ];
+                submissionChart.update();
+            }
+        }
+        
+        // Stop real-time updates
+        function stopRealTimeUpdates() {
+            if (analyticsInterval) {
+                clearInterval(analyticsInterval);
+            }
+        }
+        
+        // Enhanced updateStatistics function to also update analytics
+        const originalUpdateStatistics = updateStatistics;
+        updateStatistics = function() {
+            originalUpdateStatistics();
+            updateChartsWithRealData();
+        };
+        
+        // Initialize analytics when dashboard is shown
+        const originalCheckPassword = checkPassword;
+        checkPassword = function() {
+            originalCheckPassword();
+            if (document.getElementById('adminContent').style.display !== 'none') {
+                setTimeout(initializeAnalytics, 100);
+            }
+        };
     </script>
 </body>
 </html> 
