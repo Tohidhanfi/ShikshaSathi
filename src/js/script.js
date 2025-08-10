@@ -326,13 +326,7 @@ function closeModal(modal) {
     document.body.style.overflow = 'auto';
 }
 
-// Close modal when clicking on close button
-closeButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const modal = button.closest('.modal');
-        closeModal(modal);
-    });
-});
+// Close modal when clicking on close button - moved to initializeWebsite function
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
