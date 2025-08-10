@@ -56,6 +56,7 @@
                     <button class="btn btn-tertiary" onclick="openParentStudentModal(); console.log('Parent/Student button clicked');">Join as a Parent/Student</button>
                     <button class="btn btn-outline" onclick="scrollToContact(); console.log('Contact button clicked');">Contact Us</button>
                     <button style="background: red; color: white; margin: 10px; padding: 10px;" onclick="console.log('Test button clicked'); document.getElementById('registrationModal').style.display='block'; console.log('Modal display set to block');">TEST MODAL</button>
+                    <button style="background: green; color: white; margin: 10px; padding: 10px;" onclick="document.getElementById('registrationModal').style.display='none'; console.log('Modal closed');">CLOSE MODAL</button>
                 </div>
             </div>
             <div class="hero-image">
@@ -1074,5 +1075,124 @@
     <script src="src/js/excel-export.js"></script>
     <script src="src/js/excel-handler.js"></script>
     <script src="src/js/script.js"></script>
+    
+    <!-- Temporary Fix: Define functions directly in HTML -->
+    <script>
+        // Check if functions are defined
+        console.log('Checking function availability...');
+        console.log('openRegistrationModal:', typeof openRegistrationModal);
+        console.log('openPartnerModal:', typeof openPartnerModal);
+        console.log('openParentStudentModal:', typeof openParentStudentModal);
+        console.log('scrollToContact:', typeof scrollToContact);
+        
+        // If functions are not defined, define them here
+        if (typeof openRegistrationModal === 'undefined') {
+            console.log('Defining openRegistrationModal function...');
+            window.openRegistrationModal = function() {
+                console.log('openRegistrationModal called');
+                const modal = document.getElementById('registrationModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    console.log('Registration modal opened');
+                } else {
+                    console.error('Registration modal not found');
+                }
+            };
+        }
+        
+        if (typeof openPartnerModal === 'undefined') {
+            console.log('Defining openPartnerModal function...');
+            window.openPartnerModal = function() {
+                console.log('openPartnerModal called');
+                const modal = document.getElementById('partnerModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    console.log('Partner modal opened');
+                } else {
+                    console.error('Partner modal not found');
+                }
+            };
+        }
+        
+        if (typeof openParentStudentModal === 'undefined') {
+            console.log('Defining openParentStudentModal function...');
+            window.openParentStudentModal = function() {
+                console.log('openParentStudentModal called');
+                const modal = document.getElementById('parentStudentModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    console.log('Parent/Student modal opened');
+                } else {
+                    console.error('Parent/Student modal not found');
+                }
+            };
+        }
+        
+        if (typeof scrollToContact === 'undefined') {
+            console.log('Defining scrollToContact function...');
+            window.scrollToContact = function() {
+                console.log('scrollToContact called');
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                    contactSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    console.log('Scrolled to contact section');
+                } else {
+                    console.error('Contact section not found');
+                }
+            };
+        }
+        
+        // Add close functionality for all modals
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Adding close functionality to modals...');
+            
+            // Add close buttons to all modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                // Check if modal already has close button
+                if (!modal.querySelector('.close')) {
+                    const closeBtn = document.createElement('span');
+                    closeBtn.className = 'close';
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.onclick = function() {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                        console.log('Modal closed via close button');
+                    };
+                    modal.appendChild(closeBtn);
+                }
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                modals.forEach(modal => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                        console.log('Modal closed via outside click');
+                    }
+                });
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    modals.forEach(modal => {
+                        if (modal.style.display === 'block') {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                            console.log('Modal closed via Escape key');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html> 
