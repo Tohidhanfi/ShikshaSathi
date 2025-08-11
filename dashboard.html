@@ -200,6 +200,38 @@
             margin-top: 20px;
             padding: 20px 0;
         }
+        
+        /* Session Status Styles */
+        .session-status {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .session-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .session-info i {
+            font-size: 1.2rem;
+        }
+        
+        .session-info span {
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            border-radius: 6px;
+        }
 
         .pagination-controls button {
             background: #2563eb;
@@ -693,6 +725,18 @@
         <div class="admin-header">
             <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
             <p>Manage and view all form submissions from ShikshaSathi</p>
+            
+            <!-- Session Status Indicator -->
+            <div class="session-status" id="sessionStatus" style="display: none;">
+                <div class="session-info">
+                    <i class="fas fa-clock"></i>
+                    <span id="sessionTimeRemaining">Session Active</span>
+                    <button onclick="logout()" class="btn btn-outline btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+            
             <div class="data-management-tips">
                 <h4><i class="fas fa-lightbulb"></i> Data Management Tips</h4>
                 <ul>
@@ -1670,24 +1714,127 @@
             // Stop analytics updates
             stopRealTimeUpdates();
             
+            // Clear session data
+            localStorage.removeItem('dashboardSession');
+            
+            // Hide session status
+            const sessionStatus = document.getElementById('sessionStatus');
+            if (sessionStatus) {
+                sessionStatus.style.display = 'none';
+            }
+            
+            // Show login overlay
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('adminContent').style.display = 'none';
             document.getElementById('adminPassword').value = '';
             document.getElementById('adminPassword').focus();
+            
+            console.log('🚪 Logged out successfully');
         }
         
         function checkPassword() {
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
+                // Set session start time (10 minutes = 600 seconds)
+                const sessionStart = Date.now();
+                const sessionTimeout = 10 * 60 * 1000; // 10 minutes in milliseconds
+                
+                // Store session info in localStorage
+                localStorage.setItem('dashboardSession', JSON.stringify({
+                    startTime: sessionStart,
+                    timeout: sessionTimeout
+                }));
+                
+                // Hide login overlay and show dashboard
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('adminContent').style.display = 'block';
+                
                 // Initialize dashboard after successful login
                 updateStatistics();
                 displayTutorsTable();
+                
+                // Start session monitoring
+                startSessionMonitoring();
+                
+                console.log('✅ Login successful! Session started for 10 minutes');
             } else {
                 alert('Incorrect password. Please try again.');
                 document.getElementById('adminPassword').value = '';
                 document.getElementById('adminPassword').focus();
+            }
+        }
+        
+        // Function to start session monitoring
+        function startSessionMonitoring() {
+            // Show session status
+            const sessionStatus = document.getElementById('sessionStatus');
+            if (sessionStatus) {
+                sessionStatus.style.display = 'block';
+            }
+            
+            // Check session every 30 seconds
+            const sessionCheckInterval = setInterval(() => {
+                const sessionData = localStorage.getItem('dashboardSession');
+                
+                if (!sessionData) {
+                    // No session data, logout
+                    logout();
+                    clearInterval(sessionCheckInterval);
+                    return;
+                }
+                
+                try {
+                    const session = JSON.parse(sessionData);
+                    const currentTime = Date.now();
+                    const sessionAge = currentTime - session.startTime;
+                    
+                    if (sessionAge >= session.timeout) {
+                        // Session expired, logout
+                        console.log('⏰ Session expired after 10 minutes');
+                        logout();
+                        clearInterval(sessionCheckInterval);
+                    } else {
+                        // Session still valid, show remaining time
+                        const remainingMinutes = Math.ceil((session.timeout - sessionAge) / 60000);
+                        const remainingSeconds = Math.ceil((session.timeout - sessionAge) / 1000) % 60;
+                        console.log(`⏰ Session active - ${remainingMinutes}m ${remainingSeconds}s remaining`);
+                        
+                        // Update session status display
+                        updateSessionStatus(remainingMinutes, remainingSeconds);
+                    }
+                } catch (error) {
+                    console.error('Error checking session:', error);
+                    logout();
+                    clearInterval(sessionCheckInterval);
+                }
+            }, 30000); // Check every 30 seconds
+        }
+        
+        // Function to update session status display
+        function updateSessionStatus(minutes, seconds) {
+            const sessionTimeRemaining = document.getElementById('sessionTimeRemaining');
+            if (sessionTimeRemaining) {
+                if (minutes > 0) {
+                    sessionTimeRemaining.textContent = `Session Active - ${minutes}m ${seconds}s remaining`;
+                } else {
+                    sessionTimeRemaining.textContent = `Session Active - ${seconds}s remaining`;
+                }
+            }
+        }
+        
+        // Function to check if session is still valid
+        function isSessionValid() {
+            const sessionData = localStorage.getItem('dashboardSession');
+            if (!sessionData) return false;
+            
+            try {
+                const session = JSON.parse(sessionData);
+                const currentTime = Date.now();
+                const sessionAge = currentTime - session.startTime;
+                
+                return sessionAge < session.timeout;
+            } catch (error) {
+                return false;
             }
         }
         
@@ -1700,8 +1847,21 @@
         
         // Initialize dashboard when page loads (but keep hidden until login)
         document.addEventListener('DOMContentLoaded', function() {
-            // Dashboard content is hidden by default until password is entered
-            document.getElementById('adminContent').style.display = 'none';
+            // Check if there's a valid session
+            if (isSessionValid()) {
+                console.log('✅ Valid session found, auto-login...');
+                // Auto-login with existing session
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                updateStatistics();
+                displayTutorsTable();
+                startSessionMonitoring();
+            } else {
+                // No valid session, show login overlay
+                console.log('❌ No valid session, showing login...');
+                document.getElementById('adminContent').style.display = 'none';
+                document.getElementById('loginOverlay').style.display = 'flex';
+            }
             
             // Real-time sync works silently in background
         });
