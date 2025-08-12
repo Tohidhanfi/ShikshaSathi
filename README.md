@@ -1,19 +1,19 @@
 # ShikshaSathi - Form Management System
 
-A comprehensive form management system for ShikshaSathi that collects data from three different user types and stores it in Excel format without requiring a backend server.
+A comprehensive form management system for ShikshaSathi.
+
+Important: Registration buttons now open Google Forms in a new tab. The in-page forms and offline/local Excel storage are bypassed when using Google Forms. See "Google Forms Navigation" below for details and how to change URLs.
 
 ## Features
 
-### 🎯 Three Registration Forms
-1. **Register as a Tutor** - For unemployed graduates to become private tutors
-2. **Join as a Partner School** - For schools to partner with ShikshaSathi
-3. **Join as a Parent/Student** - For parents and students to access tutoring services
+### 🎯 Three Registration Flows
+1. **Register as a Tutor** → Opens Google Form
+2. **Join as a Partner School** → Opens Google Form
+3. **Register as a Parent/Student** → Opens Google Form
 
 ### 📊 Data Storage
-- **No Backend Required** - All data is stored locally in the browser
-- **Excel Format** - Data is automatically formatted for Excel export
-- **Local Storage** - Data persists between browser sessions
-- **Real-time Updates** - Data is immediately available after form submission
+- When using Google Forms: Data is collected and stored in Google Forms/Sheets per your form configuration.
+- When using in-page forms (legacy option): Data can be stored locally in the browser and exported to Excel. This path is currently disabled by default.
 
 ### 🔧 Admin Dashboard
 - **View All Submissions** - See data from all three forms in organized tables
@@ -26,13 +26,37 @@ A comprehensive form management system for ShikshaSathi that collects data from 
 
 ### For Users (Form Submission)
 1. Open `index.html` in a web browser
-2. Click on any of the three registration buttons:
+2. Click one of the registration buttons:
    - "Register as a Tutor"
-   - "Join as a Partner School" 
-   - "Join as a Parent/Student"
-3. Fill out the form with required information
-4. Click "Submit" to save your registration
-5. Your data will be automatically stored and available in the admin dashboard
+   - "Register as a Partner School"
+   - "Register as a Parent/Student"
+3. A Google Form opens in a new tab. Complete and submit the form there.
+4. Submissions are stored in the corresponding Google Form/Sheet.
+
+Note: The in-page modals and local storage submission flow described below are inactive when Google Forms redirection is enabled.
+
+## Google Forms Navigation
+
+The following buttons in `index.html` open Google Forms:
+
+- Tutor Registration: `https://forms.gle/FdpQ2G7GUagdjFht5`
+- Partner School Registration: `https://forms.gle/UnnpivhYwQBAZywj8`
+- Parent/Student Registration: `https://forms.gle/FjxPLqaXu1r1ThedA`
+
+Where to update URLs in `index.html`:
+
+- Hero section buttons
+- Join Us section cards
+
+Buttons use `window.open` in their `onclick` attributes. Example:
+
+```html
+<button class="btn btn-primary" onclick="window.open('https://forms.gle/XXXXXXXX', '_blank')">
+  Register as a Tutor
+</button>
+```
+
+Replace `https://forms.gle/XXXXXXXX` with your actual Google Form link for each button.
 
 
 
@@ -71,7 +95,11 @@ ShikshaSathi/
 
 ## Troubleshooting
 
-### Data Not Appearing
+### Data Not Appearing (Google Forms)
+- Verify submissions in your Google Form/Sheet
+- Ensure the Google Form is published and accessible to users
+
+### Data Not Appearing (Legacy in-page forms)
 - Check if the browser supports localStorage
 - Ensure JavaScript is enabled
 - Try refreshing the page
@@ -79,9 +107,8 @@ ShikshaSathi/
 
 
 ### Form Submission Problems
-- Verify all required fields are filled
-- Check browser console for validation errors
-- Ensure the form is properly connected to the data handler
+- Google Forms: Verify required fields in the Google Form and sharing settings
+- In-page forms (legacy): Check browser console for validation errors and data handler availability
 
 ## Future Enhancements
 - Data backup and restore functionality
