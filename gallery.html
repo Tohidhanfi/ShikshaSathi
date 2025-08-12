@@ -16,6 +16,157 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Training Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        
+        .training-content {
+            margin-top: 2rem;
+        }
+        
+        .methodology-section,
+        .outcomes-section {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .methodology-section h3,
+        .outcomes-section h3 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .methodology-section h3 i,
+        .outcomes-section h3 i {
+            color: #2563eb;
+        }
+        
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .methodology-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .methodology-item i {
+            font-size: 1.2rem;
+            color: #2563eb;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .methodology-item span {
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .outcomes-section p {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .outcomes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .outcome-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #2563eb;
+        }
+        
+        .outcome-item i {
+            color: #059669;
+            font-size: 1rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+        
+        .outcome-item span {
+            color: #374151;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 1.5rem;
+            }
+            
+            .methodology-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .methodology-section,
+            .outcomes-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+    <style>
         .gallery-hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -209,7 +360,7 @@
                         <p style="color: #6b7280; margin: 0; font-size: 0.95rem;">15 Days comprehensive training module for aspiring educators</p>
                     </div>
                     <div class="card-footer">
-                        <a href="/#program" class="btn btn-outline" style="text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 6px; border: 2px solid #dc2626; color: #dc2626; font-size: 0.9rem; font-weight: 500;">Learn More</a>
+                        <button class="btn btn-outline" onclick="openTrainingModal()" style="text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 6px; border: 2px solid #dc2626; color: #dc2626; font-size: 0.9rem; font-weight: 500; background: transparent; cursor: pointer;">Learn More</button>
                     </div>
                 </div>
             </div>
@@ -280,12 +431,99 @@
         <i class="fas fa-arrow-up"></i>
     </div>
 
+    <!-- Training Module Modal -->
+    <div id="trainingModal" class="modal">
+        <div class="modal-content scrollable-modal">
+            <span class="close" onclick="closeTrainingModal()">&times;</span>
+            <h2>15 Days Training Module</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem; text-align: center;">Comprehensive Training for Aspiring Educators</p>
+            
+            <div class="training-content">
+                <div class="methodology-section">
+                    <h3><i class="fas fa-cogs"></i> Methodology</h3>
+                    <div class="methodology-grid">
+                        <div class="methodology-item">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Interactive Lectures</span>
+                        </div>
+                        <div class="methodology-item">
+                            <i class="fas fa-theater-masks"></i>
+                            <span>Role Plays & Simulations</span>
+                        </div>
+                        <div class="methodology-item">
+                            <i class="fas fa-microphone"></i>
+                            <span>Micro-Teaching Sessions</span>
+                        </div>
+                        <div class="methodology-item">
+                            <i class="fas fa-users"></i>
+                            <span>Peer Learning</span>
+                        </div>
+                        <div class="methodology-item">
+                            <i class="fas fa-video"></i>
+                            <span>Audio-Visual Presentations</span>
+                        </div>
+                        <div class="methodology-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Real-Life Case Studies</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="outcomes-section">
+                    <h3><i class="fas fa-target"></i> Expected Outcomes</h3>
+                    <p>By the end of 15 days, trainees will:</p>
+                    <div class="outcomes-list">
+                        <div class="outcome-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Have solid pedagogy skills for effective classroom delivery</span>
+                        </div>
+                        <div class="outcome-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Communicate clearly and confidently with students and parents</span>
+                        </div>
+                        <div class="outcome-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Teach their subject with clarity, examples, and engagement techniques</span>
+                        </div>
+                        <div class="outcome-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Be interview-ready for private school or tutor jobs</span>
+                        </div>
+                        <div class="outcome-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Receive a Shikshasathi Certified Professional Teacher certificate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="src/js/script.js"></script>
     <script>
         // Track gallery page view
         document.addEventListener('DOMContentLoaded', function() {
             trackPageView('gallery');
         });
+        
+        // Training Modal Functions
+        function openTrainingModal() {
+            document.getElementById('trainingModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeTrainingModal() {
+            document.getElementById('trainingModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('trainingModal');
+            if (event.target === modal) {
+                closeTrainingModal();
+            }
+        }
     </script>
 </body>
 </html> 
