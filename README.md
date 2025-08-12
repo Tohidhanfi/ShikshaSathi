@@ -34,46 +34,26 @@ A comprehensive form management system for ShikshaSathi that collects data from 
 4. Click "Submit" to save your registration
 5. Your data will be automatically stored and available in the admin dashboard
 
-### For Administrators
-1. Access the admin dashboard by clicking "Admin" in the navigation menu
-2. **Enter the admin password** when prompted (default: `ShikshaSathi2024`)
-3. View real-time statistics on the dashboard
-4. Navigate between different data tabs:
-   - **Tutors** - View all tutor registrations
-   - **Schools** - View all partner school registrations
-   - **Parents/Students** - View all parent/student registrations
-5. Use search boxes to find specific entries
-6. Export data using various formats:
-   - Individual Excel files for each form type
-   - Combined Excel file with multiple sheets
-   - CSV exports for each form type
-   - Combined CSV export
-7. **Logout** when finished to secure the dashboard
+
 
 ## Technical Details
 
-### Data Storage
-- **Local Storage Keys:**
-  - `tutorRegistrations` - Tutor form submissions
-  - `schoolRegistrations` - Partner school submissions
-  - `parentStudentRegistrations` - Parent/student submissions
+
 
 ### File Structure
 ```
 ShikshaSathi/
 ├── index.html                 # Main page with forms
-├── admin-dashboard.html       # Admin dashboard
+
 ├── src/
 │   ├── js/
-│   │   ├── script.js         # Main JavaScript functionality
-│   │   └── excel-handler.js  # Excel data handling
+│   │   └── script.js         # Main JavaScript functionality
 │   └── css/
 │       └── styles.css        # Styling
 └── README.md                 # This file
 ```
 
 ### Dependencies
-- **SheetJS (XLSX)** - For Excel file generation
 - **Font Awesome** - For icons
 - **Google Fonts (Inter)** - For typography
 
@@ -82,23 +62,12 @@ ShikshaSathi/
 - Chrome, Firefox, Safari, Edge (latest versions)
 - Mobile browsers supported
 
-## Data Export Options
 
-### Excel Export
-- Individual Excel files for each form type
-- Combined Excel file with multiple sheets
-- Proper column headers and formatting
-
-### CSV Export
-- Standard CSV format compatible with Excel, Google Sheets, etc.
-- Individual CSV files for each form type
-- Combined CSV export option
 
 ## Security & Privacy
 - **Local Storage Only** - Data never leaves the user's device
 - **No Server Communication** - Complete offline functionality
 - **User Control** - Users can clear their own data
-- **Password Protection** - Admin dashboard requires password (default: `ShikshaSathi2024`)
 
 ## Troubleshooting
 
@@ -107,10 +76,7 @@ ShikshaSathi/
 - Ensure JavaScript is enabled
 - Try refreshing the page
 
-### Export Issues
-- Ensure SheetJS library is loaded for Excel export
-- Use CSV export as fallback if Excel fails
-- Check browser console for error messages
+
 
 ### Form Submission Problems
 - Verify all required fields are filled
