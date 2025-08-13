@@ -274,8 +274,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 160px;
-    min-height: 140px;
+    min-width: 180px;
+    min-height: 120px;
+    overflow: hidden;
 }
 
 .logo-white-container:hover {
@@ -302,8 +303,8 @@ body {
     width: 144px;
     height: 87px;
     object-fit: contain;
-    max-width: 100%;
-    max-height: 100%;
+    max-width: calc(100% - 2rem);
+    max-height: calc(100% - 2rem);
     transition: transform 0.3s ease;
 }
 
@@ -356,8 +357,8 @@ body {
     
     .logo-white-container {
         padding: 1.2rem 1.5rem;
-        min-width: 140px;
-        min-height: 120px;
+        min-width: 160px;
+        min-height: 110px;
     }
     
     .footer-msme-logo {
@@ -408,8 +409,8 @@ body {
     
     .logo-white-container {
         padding: 1rem 1.2rem;
-        min-width: 120px;
-        min-height: 100px;
+        min-width: 140px;
+        min-height: 90px;
     }
     
     .footer-msme-logo {
