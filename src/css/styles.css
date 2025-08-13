@@ -247,130 +247,82 @@ body {
     line-height: 1.3;
 }
 
-/* Footer Logo Section Styles */
-.footer-logo-section {
+/* Footer Logo Box Styles */
+.footer-logo-box {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 3rem;
-    padding: 2rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 4rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 2.5rem 3rem;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
 }
 
-.logo-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-}
-
-.footer-logo-section .main-logo {
+.footer-logo-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
+    gap: 0.5rem;
 }
 
-.footer-logo-section .main-logo:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-}
-
-.footer-logo-image {
-    width: 100px;
-    height: 100px;
+.footer-logo-small {
+    width: 50px;
+    height: 50px;
     object-fit: contain;
     filter: brightness(0) invert(1);
     transition: transform 0.3s ease;
 }
 
-.footer-logo-image:hover {
-    transform: scale(1.05);
+.footer-logo-small:hover {
+    transform: scale(1.1);
 }
 
-.footer-logo-text {
-    font-size: 1.5rem;
-    font-weight: 700;
+.footer-logo-label {
+    font-size: 0.9rem;
+    font-weight: 600;
     color: white;
     text-align: center;
     margin: 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.footer-logo-section .msme-logo {
+.footer-msme-item {
     display: flex;
     align-items: center;
 }
 
-.footer-logo-section .msme-logo-container {
+.footer-msme-box {
     background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-    padding: 1.5rem 2rem;
-    border-radius: 15px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
     text-align: center;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    min-width: 200px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 120px;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
 }
 
-.footer-logo-section .msme-logo-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
+.footer-msme-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-.footer-logo-section .msme-logo-container:hover::before {
-    left: 100%;
-}
-
-.footer-logo-section .msme-logo-container:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-}
-
-.footer-logo-section .msme-logo-text {
-    font-size: 2.2rem;
+.footer-msme-title {
+    font-size: 1.4rem;
     font-weight: 900;
     color: white;
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 0.3rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.footer-logo-section .msme-registration {
-    font-size: 0.85rem;
+.footer-msme-reg {
+    font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 /* Responsive Logo Section */
@@ -403,37 +355,34 @@ body {
         font-size: 0.8rem;
     }
     
-    /* Footer Logo Responsive */
-    .footer-logo-section {
-        padding: 1.5rem 0;
-    }
-    
-    .logo-container {
+    /* Footer Logo Box Responsive */
+    .footer-logo-box {
         flex-direction: column;
-        gap: 2rem;
-        padding: 2rem;
+        gap: 1rem;
+        padding: 1rem;
+        max-width: 300px;
     }
     
-    .footer-logo-image {
-        width: 80px;
-        height: 80px;
+    .footer-logo-small {
+        width: 45px;
+        height: 45px;
     }
     
-    .footer-logo-text {
-        font-size: 1.3rem;
+    .footer-logo-label {
+        font-size: 0.8rem;
     }
     
-    .footer-logo-section .msme-logo-container {
-        padding: 1rem 1.5rem;
-        min-width: 160px;
+    .footer-msme-box {
+        padding: 0.8rem 1.2rem;
+        min-width: 110px;
     }
     
-    .footer-logo-section .msme-logo-text {
-        font-size: 1.8rem;
+    .footer-msme-title {
+        font-size: 1.2rem;
     }
     
-    .footer-logo-section .msme-registration {
-        font-size: 0.75rem;
+    .footer-msme-reg {
+        font-size: 0.65rem;
     }
 }
 
@@ -465,36 +414,33 @@ body {
         font-size: 0.75rem;
     }
     
-    /* Footer Logo Responsive */
-    .footer-logo-section {
-        padding: 1rem 0;
+    /* Footer Logo Box Responsive */
+    .footer-logo-box {
+        gap: 0.8rem;
+        padding: 0.8rem;
+        max-width: 280px;
     }
     
-    .logo-container {
-        gap: 1.5rem;
-        padding: 1.5rem;
+    .footer-logo-small {
+        width: 40px;
+        height: 40px;
     }
     
-    .footer-logo-image {
-        width: 70px;
-        height: 70px;
+    .footer-logo-label {
+        font-size: 0.75rem;
     }
     
-    .footer-logo-text {
-        font-size: 1.2rem;
+    .footer-msme-box {
+        padding: 0.7rem 1rem;
+        min-width: 100px;
     }
     
-    .footer-logo-section .msme-logo-container {
-        padding: 0.8rem 1.2rem;
-        min-width: 150px;
+    .footer-msme-title {
+        font-size: 1.1rem;
     }
     
-    .footer-logo-section .msme-logo-text {
-        font-size: 1.6rem;
-    }
-    
-    .footer-logo-section .msme-registration {
-        font-size: 0.7rem;
+    .footer-msme-reg {
+        font-size: 0.6rem;
     }
 }
 
