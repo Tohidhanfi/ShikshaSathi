@@ -265,7 +265,7 @@ body {
 /* White Container for Both Logos */
 .logo-white-container {
     background: white;
-    padding: 1.5rem 2rem;
+    padding: 2rem 2.5rem;
     border-radius: 12px;
     text-align: center;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -274,9 +274,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 200px;
-    min-height: 140px;
+    min-width: 250px;
+    min-height: 160px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .logo-white-container:hover {
@@ -303,8 +304,8 @@ body {
     width: 130px;
     height: 80px;
     object-fit: contain;
-    max-width: calc(100% - 2rem);
-    max-height: calc(100% - 2rem);
+    max-width: 180px;
+    max-height: 100px;
     transition: transform 0.3s ease;
 }
 
@@ -356,9 +357,9 @@ body {
     }
     
     .logo-white-container {
-        padding: 1.2rem 1.5rem;
-        min-width: 160px;
-        min-height: 110px;
+        padding: 1.5rem 2rem;
+        min-width: 200px;
+        min-height: 130px;
     }
     
     .footer-msme-logo {
@@ -408,9 +409,9 @@ body {
     }
     
     .logo-white-container {
-        padding: 1rem 1.2rem;
-        min-width: 140px;
-        min-height: 90px;
+        padding: 1.2rem 1.5rem;
+        min-width: 180px;
+        min-height: 110px;
     }
     
     .footer-msme-logo {
