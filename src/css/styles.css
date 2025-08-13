@@ -273,8 +273,9 @@ body {
     width: 35px;
     height: 35px;
     object-fit: contain;
-    filter: brightness(0) invert(1);
     transition: transform 0.3s ease;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .footer-logo-small:hover {
@@ -295,7 +296,7 @@ body {
 }
 
 .footer-msme-box {
-    background: linear-gradient(135deg, #ff4757, #ff3838);
+    background: white;
     padding: 1rem 1.5rem;
     border-radius: 8px;
     text-align: center;
@@ -303,6 +304,10 @@ body {
     border: 2px solid rgba(255, 255, 255, 0.3);
     min-width: 120px;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .footer-msme-box:hover {
@@ -310,21 +315,24 @@ body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-.footer-msme-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: white;
-    margin-bottom: 0.3rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.5px;
+.footer-msme-logo {
+    width: 60px;
+    height: 40px;
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.footer-msme-logo:hover {
+    transform: scale(1.05);
 }
 
 .footer-msme-reg {
     font-size: 0.75rem;
-    color: white;
+    color: #333;
     font-weight: 600;
     line-height: 1.2;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Responsive Logo Section */
@@ -379,8 +387,9 @@ body {
         min-width: 110px;
     }
     
-    .footer-msme-title {
-        font-size: 1.2rem;
+    .footer-msme-logo {
+        width: 50px;
+        height: 35px;
     }
     
     .footer-msme-reg {
@@ -437,8 +446,9 @@ body {
         min-width: 100px;
     }
     
-    .footer-msme-title {
-        font-size: 1.1rem;
+    .footer-msme-logo {
+        width: 45px;
+        height: 30px;
     }
     
     .footer-msme-reg {
