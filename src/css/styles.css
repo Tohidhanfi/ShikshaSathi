@@ -285,8 +285,8 @@ body {
 
 /* ShikshaSathi Logo */
 .footer-logo-small {
-    width: 120px;
-    height: 120px;
+    width: 97px;
+    height: 84px;
     object-fit: contain;
     transition: transform 0.3s ease;
     max-width: 100%;
@@ -299,8 +299,8 @@ body {
 
 /* MSME Logo */
 .footer-msme-logo {
-    width: 140px;
-    height: 120px;
+    width: 144px;
+    height: 87px;
     object-fit: contain;
     max-width: 100%;
     max-height: 100%;
